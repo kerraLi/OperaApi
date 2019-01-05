@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+
+    <!--  字符串控制
+        ?todo 为啥 servlet-name 设置 spring-mvc
+     -->
+    <filter>
+        <description>字符编码过滤器</description>
+        <filter-name>encoding-filter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>encoding-filter</filter-name>
+        <servlet-name>spring-mvc</servlet-name>
+    </filter-mapping>
+
+    <!--
+    配置前端控制器
+    这里配置的前端控制器的名字叫dispatcher，SpringMVC默认会加载同目录下的dispatcher-servlet.xml
+    这里为了便于分层管理，不使用dispatcher-servlet.xml，而是自己写一个springmvc.xml，用contextConfigLocation
+    指定SpringMVC的加载位置。
+    要求：spring文件夹的上一层文件夹必须mark为“Resources Root”，同时注意如果一个文件夹一旦配置为“Resources Root”
+    其下的配置文件夹都是可以直接写在路径中的，具体检测方式看能否直接打开
+    springmvc.xml中配置了
+    1、处理器映射器和处理器适配器
+    2、处理器
+    3、视图解析器
+    使用RESTful格式的话，将<url-pattern>标签中的“*.action”变为“/”
+
+    classpath: resources 目录
+    -->
+    <!--spring-mvc前端控制器-->
+    <servlet>
+        <description>spring-mvc的前端控制器</description>
+        <servlet-name>spring-mvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring-mvc.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring-mvc</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+</web-app>
