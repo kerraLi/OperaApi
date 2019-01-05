@@ -16,10 +16,10 @@ public interface AliService {
     public abstract QueryAccountBalanceResponse.Data getAccountBalance() throws Exception;
 
     // ECS：获取服务器列表
-    public abstract List<DescribeInstancesResponse.Instance> getEcsList(Integer pageSize, Integer pageNumber) throws Exception;
+    public abstract List<DescribeInstancesResponse.Instance> getEcsList() throws Exception;
 
     // ECS：获取服务器状态列表
-    public abstract List<DescribeInstanceStatusResponse.InstanceStatus> getEcsStatusList(Integer pageSize, Integer pageNumber) throws Exception;
+    public abstract List<DescribeInstanceStatusResponse.InstanceStatus> getEcsStatusList() throws Exception;
 
     // ECS：服务器启动
     public abstract void startEcs(String regionId, String instanceId) throws Exception;
@@ -34,7 +34,7 @@ public interface AliService {
     public abstract void deleteEcs(String regionId, String instanceId, boolean forceStop) throws Exception;
 
     // CDN：域名列表
-    public abstract List<DescribeUserDomainsResponse.PageData> getCdnDomainList(Integer pageSize, Integer pageNumber) throws Exception;
+    public abstract List<DescribeUserDomainsResponse.PageData> getCdnDomainList() throws Exception;
 
     // CDN：刷新CDN
     public abstract Map<String, String> refreshCdnObjectCaches(String objectPath, String objectType) throws Exception;

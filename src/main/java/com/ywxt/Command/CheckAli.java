@@ -36,12 +36,6 @@ public class CheckAli {
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
-
-            int pageNumber = 1;
-            int pageSize = 50;
-
-            while (true) {
-            }
             for (DescribeInstancesResponse.Instance instance : new AliServiceImpl(e.getKey(), e.getValue()).getEcsList()) {
                 Date expiredTime = df.parse(instance.getExpiredTime().replace("Z", " UTC"));
                 if (expiredTime.before(thresholdDate)) {

@@ -20,6 +20,8 @@ public class AliServiceImpl implements AliService {
 
     private String accessKeyId;
     private String accessKeySecret;
+    private Integer pageSize;
+    private Integer pageNumber;
 
     public AliServiceImpl(String keyId, String keySecret) {
         this.accessKeyId = keyId;
@@ -37,7 +39,8 @@ public class AliServiceImpl implements AliService {
     }
 
     // ecs-查询所有实例的详细信息
-    public List<DescribeInstancesResponse.Instance> getEcsList(Integer pageSize, Integer pageNumber) throws Exception {
+    // ** 包含所有区域及分页信息
+    public List<DescribeInstancesResponse.Instance> getEcsList() throws Exception {
         List<DescribeInstancesResponse.Instance> isList = new ArrayList<>();
         for (AliRegion e : AliRegion.values()) {
             IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
@@ -50,7 +53,7 @@ public class AliServiceImpl implements AliService {
     }
 
     // ecs-批量获取当前用户所有实例的状态信息
-    public List<DescribeInstanceStatusResponse.InstanceStatus> getEcsStatusList(Integer pageSize, Integer pageNumber) throws Exception {
+    public List<DescribeInstanceStatusResponse.InstanceStatus> getEcsStatusList() throws Exception {
         List<DescribeInstanceStatusResponse.InstanceStatus> isList = new ArrayList<>();
         for (AliRegion e : AliRegion.values()) {
             IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
@@ -102,7 +105,8 @@ public class AliServiceImpl implements AliService {
     }
 
     // CDN-域名列表
-    public List<DescribeUserDomainsResponse.PageData> getCdnDomainList(Integer pageSize, Integer pageNumber) throws Exception {
+    // ** 包含所有分页信息
+    public List<DescribeUserDomainsResponse.PageData> getCdnDomainList() throws Exception {
         IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
         DescribeUserDomainsRequest request = new DescribeUserDomainsRequest();
