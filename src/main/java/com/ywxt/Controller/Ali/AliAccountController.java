@@ -28,6 +28,7 @@ public class AliAccountController extends CommonController {
 
 
     @RequestMapping(value = {"/delete/{id}"}, method = RequestMethod.POST)
+    @ResponseBody
     public JSONObject delete(HttpServletRequest request, @PathVariable Integer id) throws Exception {
         if (new AliAccountServiceImpl().deleteAccount(id)) {
             return this.returnObject(null);

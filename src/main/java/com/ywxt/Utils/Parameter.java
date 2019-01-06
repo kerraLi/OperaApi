@@ -7,6 +7,8 @@ public class Parameter {
     private Parameter() {
     }
 
+    // 环境变量["dev":"测试";"prod":"正式"]
+    public static String ENV = "dev";
     // parameters
     // 登陆有效时间（ms）
     public static int loginTtlMs = 60 * 60 * 1000 * 2;
