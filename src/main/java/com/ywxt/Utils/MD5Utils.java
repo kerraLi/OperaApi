@@ -8,6 +8,7 @@ public class MD5Utils {
 
     //写一个md5加密的方法
     public static String md5(String plainText) {
+        plainText = plainText.concat(Parameter.md5Key);
         //定义一个字节数组
         byte[] secretBytes = null;
         try {

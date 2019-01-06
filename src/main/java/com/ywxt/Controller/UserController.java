@@ -1,6 +1,10 @@
 package com.ywxt.Controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.PassToken;
 import com.ywxt.Domain.User;
+import com.ywxt.Service.Impl.UserServiceImpl;
+import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,25 +13,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends CommonController {
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     @ResponseBody
-    public User login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @PassToken
+    public JSONObject login(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String clientUsername = request.getParameter("username");
         String clientPassword = request.getParameter("password");
-        User user = new User();
-        String defaultUsername = Parameter.defaultUsername;
-        String defaultPassword = Parameter.defaultPassword;
-        user.setUsername(defaultUsername);
-        user.setPassword(defaultPassword);
-        if (user.check(clientUsername, clientPassword)) {
-            return user;
-        } else {
-            throw new Exception("no user");
-        }
+        String authToken = new UserServiceImpl().login(clientUsername, clientPassword);
+        return new JSONObject(new HashMap<String, Object>() {{
+            put("msg", "login success");
+            put("token", authToken);
+        }});
+    }
+
+    @RequestMapping(value = {"/info"}, method = RequestMethod.GET)
+    @ResponseBody
+    public User info(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return this.getUserFromAuthToken(request);
     }
 }

@@ -2,14 +2,24 @@ package com.ywxt.Domain;
 
 import com.ywxt.Utils.MD5Utils;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
+@Entity
 public class User {
 
 
+    private long id;
     private String username;
     private String password;
+    private String role;
 
-    public boolean check(String clientUsername, String clientPassword) {
-        return (this.username.equals(clientUsername) && this.password.equals(MD5Utils.md5(clientPassword)));
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -28,4 +38,11 @@ public class User {
         this.password = password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

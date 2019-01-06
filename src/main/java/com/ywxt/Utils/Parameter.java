@@ -7,9 +7,13 @@ public class Parameter {
     private Parameter() {
     }
 
-    // 登陆
-    public static String defaultUsername = "admin";
-    public static String defaultPassword = "e10adc3949ba59abbe56e057f20f883e";
+    // parameters
+    // 登陆有效时间（ms）
+    public static int loginTtlMs = 60 * 60 * 1000 * 2;
+    // 登陆token密钥
+    public static String authoTokenKey = "ywxt2019v1";
+    // md5加密key（不要随意改动）
+    public static String md5Key = "ywxt2019";
 
     // telegram bot
     public static String telegramBotUrl = "https://api.telegram.org/bot739033903:AAHMeAiArCp6jmQIE3u3MT_wkV_vFX2oNK4";

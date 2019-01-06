@@ -20,8 +20,7 @@ public class AliServiceImpl implements AliService {
 
     private String accessKeyId;
     private String accessKeySecret;
-    private Integer pageSize;
-    private Integer pageNumber;
+    private Integer pageSize = 20;
 
     public AliServiceImpl(String keyId, String keySecret) {
         this.accessKeyId = keyId;
@@ -45,9 +44,16 @@ public class AliServiceImpl implements AliService {
         for (AliRegion e : AliRegion.values()) {
             IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
             IAcsClient client = new DefaultAcsClient(profile);
-            DescribeInstancesRequest describe = new DescribeInstancesRequest();
-            DescribeInstancesResponse response = client.getAcsResponse(describe);
-            isList.addAll(response.getInstances());
+            int pageNumber = 1;
+            while (true) {
+                DescribeInstancesRequest describe = new DescribeInstancesRequest();
+                describe.setPageSize(this.pageSize);
+                describe.setPageNumber(pageNumber);
+                DescribeInstancesResponse response = client.getAcsResponse(describe);
+//                if()
+                isList.addAll(response.getInstances());
+            }
+
         }
         return isList;
     }
