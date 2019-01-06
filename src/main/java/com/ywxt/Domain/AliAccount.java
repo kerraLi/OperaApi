@@ -2,15 +2,19 @@ package com.ywxt.Domain;
 
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 
+import javax.persistence.Entity;
+
+@Entity
 public class AliAccount {
 
+    private int id;
     private String userName;
     private String accessKeyId;
     private String accessKeySecret;
     private QueryAccountBalanceResponse.Data balanceData;
     private Boolean isAlertBalance = false;
 
-    private AliAccount() {
+    public AliAccount() {
     }
 
     public AliAccount(String keyId, String keySecret) {
@@ -56,5 +60,13 @@ public class AliAccount {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

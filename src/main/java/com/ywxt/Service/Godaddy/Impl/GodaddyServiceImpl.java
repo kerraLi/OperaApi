@@ -1,7 +1,7 @@
-package com.ywxt.Service.Impl;
+package com.ywxt.Service.Godaddy.Impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.ywxt.Service.GodaddyService;
+import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 

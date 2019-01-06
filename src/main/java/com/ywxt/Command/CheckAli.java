@@ -2,7 +2,7 @@ package com.ywxt.Command;
 
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
-import com.ywxt.Service.Impl.AliServiceImpl;
+import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.TelegramUtils;
 

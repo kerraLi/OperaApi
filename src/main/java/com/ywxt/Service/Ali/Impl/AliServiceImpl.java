@@ -1,4 +1,4 @@
-package com.ywxt.Service.Impl;
+package com.ywxt.Service.Ali.Impl;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
@@ -9,7 +9,7 @@ import com.aliyuncs.ecs.model.v20140526.*;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.ywxt.Enum.AliRegion;
-import com.ywxt.Service.AliService;
+import com.ywxt.Service.Ali.AliService;
 
 import java.util.ArrayList;
 import java.util.HashMap;

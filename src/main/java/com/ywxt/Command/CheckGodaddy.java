@@ -2,7 +2,7 @@ package com.ywxt.Command;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Service.Impl.GodaddyServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.TelegramUtils;
 

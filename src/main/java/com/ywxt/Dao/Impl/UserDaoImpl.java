@@ -42,7 +42,8 @@ public class UserDaoImpl implements UserDao {
         try (Session session = this.sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             // 主键查询，执行查询操作，1：get方法;2：load方法
-            //User u=(User)session.load(User.class, id); 这种方式再try-with中实际使用时，调用数据库时，导致session已关闭
+            // 这种方式再try-with中实际使用时，调用数据库时，导致session已关闭
+            //User u=(User)session.load(User.class, id);
             User u = (User) session.get(User.class, id);
             transaction.commit();
             return u;

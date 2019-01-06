@@ -1,4 +1,4 @@
-package com.ywxt.Service;
+package com.ywxt.Service.Ali;
 
 
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
