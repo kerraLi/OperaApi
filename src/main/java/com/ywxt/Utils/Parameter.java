@@ -9,7 +9,14 @@ public class Parameter {
 
     // 环境变量["dev":"测试";"prod":"正式"]
     public static String ENV = "dev";
-    // parameters
+    // redis
+    public static String redisHost = "127.0.0.1";
+    public static int redisPort = 63790;
+    public static String redisName = "master";
+    // redis-key
+    public static String redisKeyUserToken = "USER_TOKEN_{token}";
+    public static int redisTllUserToken = 60 * 60 * 1000 * 2;
+
     // 登陆有效时间（ms）
     public static int loginTtlMs = 60 * 60 * 1000 * 2;
     // 登陆token密钥

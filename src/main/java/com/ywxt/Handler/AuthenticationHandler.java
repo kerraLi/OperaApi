@@ -9,6 +9,8 @@ import com.ywxt.Annotation.PassToken;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.AuthUtils;
+import com.ywxt.Utils.Parameter;
+import com.ywxt.Utils.RedisUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -55,16 +57,18 @@ public class AuthenticationHandler implements HandlerInterceptor {
         int userId;
         try {
             userId = Integer.parseInt(JWT.decode(authToken).getSubject());
-            System.out.println("userId" + userId);
         } catch (JWTDecodeException j) {
             throw new RuntimeException("401");
+        }
+        // 校验会话是否失效
+        if (!(new RedisUtils().getJedis().exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
+            throw new RuntimeException("会话已失效，请重新登陆");
         }
         // 校验用户是否存在
         User user = new UserServiceImpl().getUserById(userId);
         if (user == null) {
             throw new RuntimeException("用户不存在，请重新登陆");
         }
-        System.out.println("pw" + user.getPassword());
         // check token
         if (!AuthUtils.isVerify(authToken, user)) {
             throw new RuntimeException("非法访问");

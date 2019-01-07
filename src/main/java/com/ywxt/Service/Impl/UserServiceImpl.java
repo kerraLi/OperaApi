@@ -7,6 +7,7 @@ import com.ywxt.Service.UserService;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
+import com.ywxt.Utils.RedisUtils;
 
 public class UserServiceImpl implements UserService {
 
@@ -21,7 +22,17 @@ public class UserServiceImpl implements UserService {
         if (!u.getPassword().equals(MD5Utils.md5(clientPassword))) {
             throw new Exception("账号或密码错误");
         }
-        return AuthUtils.createJWT(Parameter.loginTtlMs, u);
+        String authToken = AuthUtils.createJWT(Parameter.loginTtlMs, u);
+        // 存入redis
+        new RedisUtils().getJedis().setex(Parameter.redisKeyUserToken.replace("{token}", authToken), Parameter.redisTllUserToken, authToken);
+        return authToken;
+    }
+
+    // 退出
+    public boolean logout(String token) {
+        // 删除redis记录
+        new RedisUtils().getJedis().del(Parameter.redisKeyUserToken.replace("{token}", token));
+        return true;
     }
 
     // 注册

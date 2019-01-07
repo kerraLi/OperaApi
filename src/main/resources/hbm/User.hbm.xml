@@ -3,14 +3,23 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated 2016-7-8 1:31:59 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.ywxt.Domain.User" table="user">
+    <class name="com.ywxt.Domain.User" table="users">
         <!-- id主键设置 -->
         <id name="id" type="java.lang.Long">
             <column name="id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <property name="username" type="java.lang.String" length="20" not-null="false" unique="true"/>
-        <property name="password" type="java.lang.String" length="50" not-null="false"/>
-        <property name="role" type="java.lang.String" length="10" not-null="false"/>
+        <property name="username" type="java.lang.String" length="20" not-null="true" unique="true"/>
+        <property name="password" type="java.lang.String" length="50" not-null="true"/>
+        <property name="nickname" type="java.lang.String" length="20" not-null="false"/>
+        <property name="introduction" type="java.lang.String" length="20" not-null="false"/>
+        <property name="avatar" type="java.lang.String" length="200" not-null="false"/>
+        <array name="roles" table="user_roles">
+            <!-- 映射属性集合表的外键列  -->
+            <key column="user_id" not-null="true"/>
+            <!-- 映射集合属性的集合索引列 -->
+            <list-index column="list_index"/>
+            <element type="java.lang.String" column="role_name"/>
+        </array>
     </class>
 </hibernate-mapping>

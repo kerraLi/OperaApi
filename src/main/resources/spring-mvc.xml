@@ -56,5 +56,9 @@
             <mvc:mapping path="/**"/>
             <bean class="com.ywxt.Handler.AuthenticationHandler"></bean>
         </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.ywxt.Handler.AllowCrossDomainHandler"></bean>
+        </mvc:interceptor>
     </mvc:interceptors>
 </beans>
