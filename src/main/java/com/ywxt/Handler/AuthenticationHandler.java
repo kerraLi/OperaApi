@@ -51,7 +51,8 @@ public class AuthenticationHandler implements HandlerInterceptor {
          */
         String authToken = request.getHeader("Authorization");
         if (authToken == null) {
-            throw new RuntimeException("用户鉴权失败，请重新登陆");
+            // 用户鉴权失败，请重新登陆 todo 有空了可以优化异常
+            throw new RuntimeException("401");
         }
         // user id
         int userId;
@@ -62,16 +63,19 @@ public class AuthenticationHandler implements HandlerInterceptor {
         }
         // 校验会话是否失效
         if (!(new RedisUtils().getJedis().exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
-            throw new RuntimeException("会话已失效，请重新登陆");
+            // 会话已失效，请重新登陆
+            throw new RuntimeException("401");
         }
         // 校验用户是否存在
         User user = new UserServiceImpl().getUserById(userId);
         if (user == null) {
-            throw new RuntimeException("用户不存在，请重新登陆");
+            // 用户不存在，请重新登陆
+            throw new RuntimeException("401");
         }
         // check token
         if (!AuthUtils.isVerify(authToken, user)) {
-            throw new RuntimeException("非法访问");
+            // 非法访问
+            throw new RuntimeException("401");
         }
         return true;
     }

@@ -5,16 +5,14 @@ import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.AliAccount;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
-@RequestMapping("/aliaccount")
+@RequestMapping("/ali/account")
 public class AliAccountController extends CommonController {
 
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
@@ -23,15 +21,21 @@ public class AliAccountController extends CommonController {
         return new AliAccountServiceImpl().getList();
     }
 
-    // todo save
-    // public sa
+    @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject save(@ModelAttribute AliAccount aliAccount) {
+        new AliAccountServiceImpl().saveAliAccount(aliAccount);
+        return this.returnObject(new HashMap<String, Object>() {{
+        }});
+    }
 
 
     @RequestMapping(value = {"/delete/{id}"}, method = RequestMethod.POST)
     @ResponseBody
     public JSONObject delete(HttpServletRequest request, @PathVariable Integer id) throws Exception {
         if (new AliAccountServiceImpl().deleteAccount(id)) {
-            return this.returnObject(null);
+            return this.returnObject(new HashMap<String, Object>() {{
+            }});
         }
         throw new Exception("删除失败。");
     }

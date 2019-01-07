@@ -14,5 +14,6 @@
         <!-- 自动更新到数据库配置 -->
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping resource="hbm/User.hbm.xml"/>
+        <mapping resource="hbm/AliAccount.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

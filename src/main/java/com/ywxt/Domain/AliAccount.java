@@ -3,14 +3,20 @@ package com.ywxt.Domain;
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 public class AliAccount {
 
     private int id;
+    @NotBlank
     private String userName;
+    @NotBlank
     private String accessKeyId;
+    @NotBlank
     private String accessKeySecret;
+    // status:正常使用normal/账号异常invalid（取数据错误）
+    private String status = "normal";
     private QueryAccountBalanceResponse.Data balanceData;
     private Boolean isAlertBalance = false;
 
@@ -68,5 +74,13 @@ public class AliAccount {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
