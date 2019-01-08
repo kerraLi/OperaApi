@@ -6,6 +6,7 @@ import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
 
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.HashMap;
@@ -20,6 +21,27 @@ public class AliEcsDaoImpl implements AliEcsDao {
     public AliEcsDaoImpl() {
         Configuration configuration = new Configuration();
         this.sessionFactory = configuration.configure().buildSessionFactory();
+    }
+
+    // 获取数量
+    public int getAliEcsesTotal(HashMap<String, Object> params) {
+        Session session = this.sessionFactory.openSession();
+        Criteria criteria = session.createCriteria(AliEcs.class);
+        if (params != null) {
+            for (Map.Entry<String, Object> e : params.entrySet()) {
+                if (e.getKey().equals("orderAsc")) {
+                    criteria.addOrder(Order.asc((String) e.getValue()));
+                } else if (e.getKey().equals("orderDesc")) {
+                    criteria.addOrder(Order.desc((String) e.getValue()));
+                } else {
+                    criteria.add(Restrictions.eq(e.getKey(), e.getValue()));
+                }
+            }
+        }
+        criteria.addOrder(Order.asc("id"));
+        criteria.setProjection(Projections.rowCount());
+
+        return Integer.parseInt(criteria.uniqueResult().toString());
     }
 
     // 查找所有

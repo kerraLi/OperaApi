@@ -1,5 +1,6 @@
 package com.ywxt.Controller.Ali;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
 import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;
@@ -25,31 +26,13 @@ import java.util.*;
 @RequestMapping("/ali")
 public class AliController {
 
-    // 账号列表
-    @ResponseBody
-    @RequestMapping(value = {"/account/list"}, method = RequestMethod.POST)
-    public List<AliAccount> accountList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List<AliAccount> aaList = new ArrayList<>();
-        for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
-            AliAccount aa = new AliAccount(e.getKey(), e.getValue());
-            QueryAccountBalanceResponse.Data data = new AliServiceImpl(e.getKey(), e.getValue()).getAccountBalance();
-            // ali 金额 带千分符(,)
-            if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue() <= Double.parseDouble(Parameter.alertThresholds.get("ALI_ACCOUNT_BALANCE"))) {
-                aa.setAlertBalance(true);
-            }
-            aa.setBalanceData(data);
-            aaList.add(aa);
-        }
-        return aaList;
-    }
-
     // ecs:服务器列表
     @ResponseBody
     @RequestMapping(value = {"/ecs/list"}, method = RequestMethod.POST)
-    public List<AliEcs> ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        int pageNumber = request.getParameter("pageNumber") == null ? 1 : Integer.parseInt(request.getParameter("pageNumber"));
-        int pageSize = request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize"));
-        return new AliServiceImpl().getEcsList(new HashMap<String, Object>() {{
+    public JSONObject ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
+        int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
+        return new AliServiceImpl().getEcsListPage(new HashMap<String, Object>() {{
         }}, pageNumber, pageSize);
     }
 
@@ -57,8 +40,8 @@ public class AliController {
     @ResponseBody
     @RequestMapping(value = {"/cdn/domain/list"}, method = RequestMethod.POST)
     public List<AliCdn> cdnDomainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        int pageNumber = request.getParameter("pageNumber") == null ? 1 : Integer.parseInt(request.getParameter("pageNumber"));
-        int pageSize = request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize"));
+        int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
+        int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         return new AliServiceImpl().getCdnDomainList(new HashMap<String, Object>() {{
         }}, pageNumber, pageSize);
     }
@@ -74,7 +57,7 @@ public class AliController {
         if (objectType.isEmpty()) {
             objectType = "File";
         }
-        return new AliServiceImpl(accessId, Parameter.aliAccounts.get(accessId)).refreshCdnObjectCaches(objectPath, objectType);
+        return new AliServiceImpl(accessId).refreshCdnObjectCaches(objectPath, objectType);
     }
 
     // cdn:节点刷新任务查看
@@ -83,6 +66,6 @@ public class AliController {
     public DescribeRefreshTasksResponse.CDNTask getRefreshObjectCacheTask(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String accessId = request.getParameter("access-id");
         String taskId = request.getParameter("task-id");
-        return new AliServiceImpl(accessId, Parameter.aliAccounts.get(accessId)).getCdnRefreshTask(taskId).get(0);
+        return new AliServiceImpl(accessId).getCdnRefreshTask(taskId).get(0);
     }
 }

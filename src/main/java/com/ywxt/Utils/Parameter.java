@@ -32,20 +32,6 @@ public class Parameter {
     public static String telegramChatId = "-374037814";
 
     /**
-     * ali account
-     */
-    public static Map<String, String> aliAccounts = new HashMap<String, String>() {{
-        put("LTAIDmBAC9rB3SlR", "C2FD6tBp8r8jE7PvtTJsi63IDZ4tFE");
-        put("LTAIpCUPpQlpKV4M", "qqrvWAoW9bhVauW47JGMY05H2fXcgU");
-        put("LTAIuVUxS5F55kMV", "dGUCUg0nPsm9tSPaWbLmx7ndBCO8Nu");
-    }};
-    public static Map<String, String> aliAccountNames = new HashMap<String, String>() {{
-        put("LTAIDmBAC9rB3SlR", "gongtian");//develop@1077205130889846.onaliyun.com
-        put("LTAIpCUPpQlpKV4M", "sanjing");//develop2@1083905136183150.onaliyun.com
-        put("LTAIuVUxS5F55kMV", "kakasi");//kakasi@1865517655536431.onaliyun.com
-    }};
-
-    /**
      * godaddy account
      */
     public static String godaddyUrl = "https://api.godaddy.com";

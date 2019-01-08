@@ -27,6 +27,17 @@ public class AliAccountDaoImpl implements AliAccountDao {
         return aliAccount;
     }
 
+    // 根据accessKeyId查找账号
+    public AliAccount getAliAccount(String accessKeyId) {
+        Session session = this.sessionFactory.openSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<AliAccount> criteriaQuery = criteriaBuilder.createQuery(AliAccount.class);
+        Root<AliAccount> from = criteriaQuery.from(AliAccount.class);
+        // 设置查询属性
+        criteriaQuery.select(from).where(from.get("accessKeyId").in(accessKeyId));
+        return (AliAccount) session.createQuery(criteriaQuery).getResultList().get(0);
+    }
+
     // 获取正常账号
     public List<AliAccount> getAliAccountsNormal() {
         Session session = this.sessionFactory.openSession();

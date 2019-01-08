@@ -17,8 +17,8 @@
         <!--<property name="instanceChargeType" type="java.lang.String" length="20"/>-->
         <property name="hostName" type="java.lang.String" length="50"/>
         <property name="imageId" type="java.lang.String" length="100"/>
-        <property name="regionId" type="java.lang.String" length="15" not-null="true"/>
-        <property name="zoneId" type="java.lang.String" length="15" not-null="true"/>
+        <property name="regionId" type="java.lang.String" length="30" not-null="true"/>
+        <property name="zoneId" type="java.lang.String" length="30" not-null="true"/>
         <property name="creationTime" type="java.util.Date" not-null="true"/>
         <property name="expiredTime" type="java.util.Date" not-null="true"/>
         <property name="innerIps" type="java.lang.String" length="50"/>

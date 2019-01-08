@@ -1,6 +1,7 @@
 package com.ywxt.Service.Ali;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
 import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;
 import com.aliyuncs.ecs.model.v20140526.DescribeInstanceStatusResponse;
@@ -22,7 +23,7 @@ public interface AliService {
     public abstract List<AliEcs> getEcsList(HashMap<String, Object> params) throws Exception;
 
     // ECS：获取服务器列表&分页
-    public abstract List<AliEcs> getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    public abstract JSONObject getEcsListPage(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 
     // ECS：服务器启动
     public abstract void startEcs(String regionId, String instanceId) throws Exception;

@@ -8,8 +8,11 @@ import com.aliyuncs.cdn.model.v20141111.*;
 import com.aliyuncs.ecs.model.v20140526.*;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Dao.AliAccountDao;
 import com.ywxt.Dao.AliCdnDao;
 import com.ywxt.Dao.AliEcsDao;
+import com.ywxt.Dao.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Impl.AliEcsDaoImpl;
 import com.ywxt.Domain.AliAccount;
@@ -25,10 +28,17 @@ public class AliServiceImpl implements AliService {
 
     private String accessKeyId;
     private String accessKeySecret;
+    private AliAccountDao aliAccountDao = new AliAccountDaoImpl();
     private AliEcsDao aliEcsDao = new AliEcsDaoImpl();
     private AliCdnDao aliCdnDao = new AliCdnDaoImpl();
 
     public AliServiceImpl() {
+    }
+
+    public AliServiceImpl(String accessKeyId) {
+        AliAccount aliAccount = this.aliAccountDao.getAliAccount(accessKeyId);
+        this.accessKeyId = accessKeyId;
+        this.accessKeySecret = aliAccount.getAccessKeySecret();
     }
 
     public AliServiceImpl(String keyId, String keySecret) {
@@ -132,15 +142,20 @@ public class AliServiceImpl implements AliService {
     }
 
     // ecs-查询所有实例的详细信息&分页
-    public List<AliEcs> getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+    public JSONObject getEcsListPage(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         List<AliEcs> list = this.aliEcsDao.getAliEcsesList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (AliEcs ae : list) {
-            ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
+            if (ae.getStatus().equals("Running")) {
+                ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
+            }
         }
-        return list;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", this.aliEcsDao.getAliEcsesTotal(params));
+        jsonObject.put("items", list);
+        return jsonObject;
     }
 
     // ecs-启动

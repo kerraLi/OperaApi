@@ -17,18 +17,17 @@ public class AliAccountController extends CommonController {
 
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
     @ResponseBody
-    public List<AliAccount> list(HttpServletRequest request) {
-        return new AliAccountServiceImpl().getList();
+    public List<AliAccount> list(HttpServletRequest request) throws Exception {
+        return new AliAccountServiceImpl().getList(true);
     }
 
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject save(@ModelAttribute AliAccount aliAccount) throws Exception{
+    public JSONObject save(@ModelAttribute AliAccount aliAccount) throws Exception {
         new AliAccountServiceImpl().saveAliAccount(aliAccount);
         return this.returnObject(new HashMap<String, Object>() {{
         }});
     }
-
 
     @RequestMapping(value = {"/delete/{id}"}, method = RequestMethod.POST)
     @ResponseBody

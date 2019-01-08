@@ -38,6 +38,7 @@ public class AliAccountServiceImpl implements AliAccountService {
             for (AliAccount aa : list) {
                 if (aa.getStatus().equals("normal")) {
                     QueryAccountBalanceResponse.Data data = new AliServiceImpl(aa.getAccessKeyId(), aa.getAccessKeySecret()).getAccountBalance();
+                    aa.setBalanceData(data);
                     // ali 金额 带千分符(,)
                     if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue() <= Double.parseDouble(Parameter.alertThresholds.get("ALI_ACCOUNT_BALANCE"))) {
                         aa.setAlertBalance(true);
@@ -53,11 +54,11 @@ public class AliAccountServiceImpl implements AliAccountService {
         // check ali key
         if (this.checkAccount(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret())) {
             aliAccount.setStatus("normal");
+            // update ali Data
+            new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
         } else {
             aliAccount.setStatus("invalid");
         }
-        // update ali Data
-        new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
         return this.aliAccountDao.saveAliAccount(aliAccount);
     }
 
@@ -65,10 +66,12 @@ public class AliAccountServiceImpl implements AliAccountService {
     public boolean deleteAccount(int aliAccountId) {
         // update ali Data
         AliAccount aliAccount = this.aliAccountDao.getAliAccount(aliAccountId);
-        // 删除ecs
-        new AliEcsDaoImpl().deleteAliEcsByAccessId(aliAccount.getAccessKeyId());
-        // 删除cdn
-        new AliCdnDaoImpl().deleteAliCdnByAccessId(aliAccount.getAccessKeyId());
+        if (aliAccount.getStatus().equals("normal")) {
+            // 删除ecs
+            new AliEcsDaoImpl().deleteAliEcsByAccessId(aliAccount.getAccessKeyId());
+            // 删除cdn
+            new AliCdnDaoImpl().deleteAliCdnByAccessId(aliAccount.getAccessKeyId());
+        }
         return this.aliAccountDao.deleteAliAccount(aliAccountId);
     }
 

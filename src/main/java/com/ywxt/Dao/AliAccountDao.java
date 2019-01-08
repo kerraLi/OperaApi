@@ -7,6 +7,8 @@ import java.util.List;
 public interface AliAccountDao {
     public abstract AliAccount getAliAccount(int id);
 
+    public abstract AliAccount getAliAccount(String accessKeyId);
+
     public abstract List<AliAccount> getAliAccountsNormal();
 
     public abstract List<AliAccount> getAliAccounts();

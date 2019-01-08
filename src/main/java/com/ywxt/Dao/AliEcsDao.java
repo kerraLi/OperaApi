@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface AliEcsDao {
 
+    public abstract int getAliEcsesTotal(HashMap<String, Object> params);
+
     public abstract List<AliEcs> getAliEcsesList(HashMap<String, Object> params);
 
     public abstract List<AliEcs> getAliEcsesList(HashMap<String, Object> params, int pageNumber, int pageSize);

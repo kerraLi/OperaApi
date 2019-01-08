@@ -66,14 +66,14 @@ public class TestCommand {
 
     // 数据库查ecs数据
     private static void getAliEcs() throws Exception {
-        List<AliEcs> list = new AliServiceImpl("instanceId", "i-j6cenf2ak8gsbem4lpps").getEcsList(new HashMap<String, Object>() {{
-            put("instanceId", "i-j6cenf2ak8gsbem4lpps");
-        }}, 1, 10);
-        for (AliEcs ae : list) {
-            System.out.println(ae.getInstanceId());
-            System.out.println(ae.getAlertExpired());
-            System.out.println(ae.toString());
-        }
+//        List<AliEcs> list = new AliServiceImpl("instanceId", "i-j6cenf2ak8gsbem4lpps").getEcsList(new HashMap<String, Object>() {{
+//            put("instanceId", "i-j6cenf2ak8gsbem4lpps");
+//        }}, 1, 10);
+//        for (AliEcs ae : list) {
+//            System.out.println(ae.getInstanceId());
+//            System.out.println(ae.getAlertExpired());
+//            System.out.println(ae.toString());
+//        }
     }
 
     // normal account
@@ -88,11 +88,11 @@ public class TestCommand {
         System.out.println(123);
 
 //        TestCommand.saveAliAccount();
-        TestCommand.getNormalAccount();
+//        TestCommand.getNormalAccount();
 //        TestCommand.getAliEcs();
 //        TestCommand.refreshAli();
 //        System.out.println(TestCommand.checkAccount());
-//        TestCommand.saveAdmin();
+        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
     }
 }
