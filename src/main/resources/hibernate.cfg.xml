@@ -11,9 +11,14 @@
         <property name="hibernate.connection.url">jdbc:mysql://localhost:33060/ywxt?characterEncoding=utf8</property>
         <property name="hibernate.connection.username">homestead</property>
         <property name="hibernate.connection.password">secret</property>
+        <!-- 批量操作时 每100条提交一次 -->
+        <property name="hibernate.jdbc.batch_size">100</property>
+        <!-- 关闭二级缓存（批量操作） -->
+        <property name="hiberante.cache.use_second_level_cache">false</property>
         <!-- 自动更新到数据库配置 -->
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping resource="hbm/User.hbm.xml"/>
         <mapping resource="hbm/AliAccount.hbm.xml"/>
+        <mapping resource="hbm/AliEcs.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

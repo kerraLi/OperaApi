@@ -16,7 +16,7 @@ public class AliAccount {
     @NotBlank
     private String accessKeySecret;
     // status:正常使用normal/账号异常invalid（取数据错误）
-    private String status = "normal";
+    private String status = "invalid";
     private QueryAccountBalanceResponse.Data balanceData;
     private Boolean isAlertBalance = false;
 

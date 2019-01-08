@@ -4,6 +4,7 @@ import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Domain.AliAccount;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
+import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.RedisUtils;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 public class TestCommand {
 
-    private static void saveAliAccount() {
+    private static void saveAliAccount() throws Exception {
         AliAccount aa = new AliAccount();
         aa.setUserName("asd");
         aa.setAccessKeyId("123");
@@ -47,10 +48,23 @@ public class TestCommand {
         System.out.println(user.getUsername());
     }
 
-    public static void main(String[] args) {
+    // 校验ali账户
+    private static boolean checkAccount() throws Exception {
+        return new AliAccountServiceImpl().checkAccount("LTAIDmBAC9rB3SlR", "C2FD6tBp8r8jE7PvtTJsi63IDZ4tFE");
+    }
+
+    // 更新ali数据
+    private static void refreshAli() throws Exception {
+        new AliServiceImpl("LTAIDmBAC9rB3SlR", "C2FD6tBp8r8jE7PvtTJsi63IDZ4tFE").freshSourceData();
+    }
+
+    public static void main(String[] args) throws Exception {
         System.out.println(123);
 
-        TestCommand.saveAdmin();
+        TestCommand.refreshAli();
+
+//        System.out.println(TestCommand.checkAccount());
+//        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
     }
 }

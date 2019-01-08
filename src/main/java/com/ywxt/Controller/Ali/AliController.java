@@ -48,22 +48,22 @@ public class AliController {
     @RequestMapping(value = {"/ecs/list"}, method = RequestMethod.POST)
     public List<AliEcs> ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<AliEcs> diList = new ArrayList<>();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm Z");
-        df.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
-            for (DescribeInstancesResponse.Instance instance : new AliServiceImpl(e.getKey(), e.getValue()).getEcsList()) {
-                AliEcs ae = new AliEcs(instance);
-                ae.setAccessKeyId(e.getKey());
-                Date expiredTime = df.parse(ae.getExpiredTime().replace("Z", " UTC"));
-                ae.setAlertExpired(expiredTime.before(thresholdDate));
-                // System.out.println(expiredTime);
-                // System.out.println(nowDate);
-                diList.add(ae);
-            }
-        }
+//        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm Z");
+//        df.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+//        Date thresholdDate = calendar.getTime();
+//        for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
+//            for (DescribeInstancesResponse.Instance instance : new AliServiceImpl(e.getKey(), e.getValue()).getEcsList()) {
+//                AliEcs ae = new AliEcs(instance);
+//                ae.setAccessKeyId(e.getKey());
+//                Date expiredTime = df.parse(ae.getExpiredTime().replace("Z", " UTC"));
+//                ae.setAlertExpired(expiredTime.before(thresholdDate));
+//                // System.out.println(expiredTime);
+//                // System.out.println(nowDate);
+//                diList.add(ae);
+//            }
+//        }
         return diList;
     }
 

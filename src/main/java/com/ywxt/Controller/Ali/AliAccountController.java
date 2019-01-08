@@ -23,7 +23,7 @@ public class AliAccountController extends CommonController {
 
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
     @ResponseBody
-    public JSONObject save(@ModelAttribute AliAccount aliAccount) {
+    public JSONObject save(@ModelAttribute AliAccount aliAccount) throws Exception{
         new AliAccountServiceImpl().saveAliAccount(aliAccount);
         return this.returnObject(new HashMap<String, Object>() {{
         }});

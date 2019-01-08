@@ -8,6 +8,9 @@ import com.aliyuncs.cdn.model.v20141111.*;
 import com.aliyuncs.ecs.model.v20140526.*;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.ywxt.Dao.Impl.AliEcsDaoImpl;
+import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.AliEcs;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
 
@@ -20,7 +23,6 @@ public class AliServiceImpl implements AliService {
 
     private String accessKeyId;
     private String accessKeySecret;
-    private Integer pageSize = 20;
 
     public AliServiceImpl(String keyId, String keySecret) {
         this.accessKeyId = keyId;
@@ -37,24 +39,61 @@ public class AliServiceImpl implements AliService {
         return response.getData();
     }
 
-    // ecs-查询所有实例的详细信息
-    // ** 包含所有区域及分页信息
-    public List<DescribeInstancesResponse.Instance> getEcsList() throws Exception {
-        List<DescribeInstancesResponse.Instance> isList = new ArrayList<>();
+    // 查询可用区
+    public void getRegion() throws Exception {
+        IClientProfile profile = DefaultProfile.getProfile("", this.accessKeyId, this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+    }
+
+    // 更新ali源数据(按账户更新)
+    public void freshSourceData() throws Exception {
+        // 更新ecs数据
+        new AliEcsDaoImpl().deleteAliEcsByAccessId(this.accessKeyId);
+        List<AliEcs> aeList = new ArrayList<>();
         for (AliRegion e : AliRegion.values()) {
             IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
             IAcsClient client = new DefaultAcsClient(profile);
             int pageNumber = 1;
+            int pageSize = 20;
             while (true) {
                 DescribeInstancesRequest describe = new DescribeInstancesRequest();
-                describe.setPageSize(this.pageSize);
+                describe.setPageSize(pageSize);
                 describe.setPageNumber(pageNumber);
                 DescribeInstancesResponse response = client.getAcsResponse(describe);
-//                if()
-                isList.addAll(response.getInstances());
+                // aeList
+                for (DescribeInstancesResponse.Instance i : response.getInstances()) {
+                    AliEcs ecs = new AliEcs(this.accessKeyId, i);
+                    aeList.add(ecs);
+                }
+                // 最后一页 跳出
+                if (response.getInstances().size() < pageSize) {
+                    break;
+                }
+                pageNumber++;
             }
-
         }
+        new AliEcsDaoImpl().saveAliEcses(aeList);
+        // 更新cdn域名数据
+    }
+
+    // ecs-查询所有实例的详细信息
+    // ** 包含所有区域及分页信息
+    public List<DescribeInstancesResponse.Instance> getEcsList() throws Exception {
+        List<DescribeInstancesResponse.Instance> isList = new ArrayList<>();
+//        for (AliRegion e : AliRegion.values()) {
+////            IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
+////            IAcsClient client = new DefaultAcsClient(profile);
+////            int pageNumber = 1;
+////            while (true) {
+////                DescribeInstancesRequest describe = new DescribeInstancesRequest();
+////                describe.setPageSize(this.pageSize);
+////                describe.setPageNumber(pageNumber);
+////                DescribeInstancesResponse response = client.getAcsResponse(describe);
+//////                if()
+////                isList.addAll(response.getInstances());
+////            }
+////
+////        }
         return isList;
     }
 
