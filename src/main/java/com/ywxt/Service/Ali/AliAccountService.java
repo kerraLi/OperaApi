@@ -8,6 +8,8 @@ public interface AliAccountService {
 
     public abstract List<AliAccount> getList();
 
+    public abstract List<AliAccount> getList(boolean checkMoney) throws Exception;
+
     public abstract int saveAliAccount(AliAccount aliAccount) throws Exception;
 
     public abstract boolean deleteAccount(int aliAccountId);

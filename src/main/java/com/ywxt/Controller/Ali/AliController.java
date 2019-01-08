@@ -47,39 +47,20 @@ public class AliController {
     @ResponseBody
     @RequestMapping(value = {"/ecs/list"}, method = RequestMethod.POST)
     public List<AliEcs> ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List<AliEcs> diList = new ArrayList<>();
-//        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm Z");
-//        df.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
-//        Date thresholdDate = calendar.getTime();
-//        for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
-//            for (DescribeInstancesResponse.Instance instance : new AliServiceImpl(e.getKey(), e.getValue()).getEcsList()) {
-//                AliEcs ae = new AliEcs(instance);
-//                ae.setAccessKeyId(e.getKey());
-//                Date expiredTime = df.parse(ae.getExpiredTime().replace("Z", " UTC"));
-//                ae.setAlertExpired(expiredTime.before(thresholdDate));
-//                // System.out.println(expiredTime);
-//                // System.out.println(nowDate);
-//                diList.add(ae);
-//            }
-//        }
-        return diList;
+        int pageNumber = request.getParameter("pageNumber") == null ? 1 : Integer.parseInt(request.getParameter("pageNumber"));
+        int pageSize = request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize"));
+        return new AliServiceImpl().getEcsList(new HashMap<String, Object>() {{
+        }}, pageNumber, pageSize);
     }
 
     // cdn:cdn域名列表
     @ResponseBody
     @RequestMapping(value = {"/cdn/domain/list"}, method = RequestMethod.POST)
     public List<AliCdn> cdnDomainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List<AliCdn> domainList = new ArrayList<>();
-        for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
-            for (DescribeUserDomainsResponse.PageData pageData : new AliServiceImpl(e.getKey(), e.getValue()).getCdnDomainList()) {
-                AliCdn ac = new AliCdn(pageData);
-                ac.setAccessKeyId(e.getKey());
-                domainList.add(ac);
-            }
-        }
-        return domainList;
+        int pageNumber = request.getParameter("pageNumber") == null ? 1 : Integer.parseInt(request.getParameter("pageNumber"));
+        int pageSize = request.getParameter("pageSize") == null ? 10 : Integer.parseInt(request.getParameter("pageSize"));
+        return new AliServiceImpl().getCdnDomainList(new HashMap<String, Object>() {{
+        }}, pageNumber, pageSize);
     }
 
 

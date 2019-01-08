@@ -2,6 +2,10 @@ package com.ywxt.Command;
 
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
+import com.ywxt.Dao.Impl.AliAccountDaoImpl;
+import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.AliEcs;
+import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.TelegramUtils;
@@ -15,14 +19,12 @@ public class CheckAli {
 
     // 校验余额
     private static void checkAccount() throws Exception {
-        System.out.println("test");
-        for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
-            QueryAccountBalanceResponse.Data data = new AliServiceImpl(e.getKey(), e.getValue()).getAccountBalance();
-            // ali 金额 带千分符(,)
-            if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue() <= Double.parseDouble(Parameter.alertThresholds.get("ALI_ACCOUNT_BALANCE"))) {
+        List<AliAccount> list = new AliAccountServiceImpl().getList(true);
+        for (AliAccount aliAccount : list) {
+            if (aliAccount.getAlertBalance()) {
                 Map<String, String> param = new HashMap<String, String>();
-                param.put("accountName", Parameter.aliAccountNames.get(e.getKey()));
-                param.put("balance", data.getAvailableAmount());
+                param.put("accountName", aliAccount.getUserName());
+                param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
                 TelegramUtils.sendMessage("ALI_ACCOUNT_NO_MONEY", param);
             }
         }
@@ -30,23 +32,27 @@ public class CheckAli {
 
     // 校验ecs服务器过期
     private static void checkEcsExpired() throws Exception {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm Z");
-        df.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (Map.Entry<String, String> e : Parameter.aliAccounts.entrySet()) {
-            for (DescribeInstancesResponse.Instance instance : new AliServiceImpl(e.getKey(), e.getValue()).getEcsList()) {
-                Date expiredTime = df.parse(instance.getExpiredTime().replace("Z", " UTC"));
-                if (expiredTime.before(thresholdDate)) {
-                    DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-                    Map<String, String> param = new HashMap<String, String>();
-                    param.put("accountName", Parameter.aliAccountNames.get(e.getKey()));
-                    param.put("ecsId", instance.getInstanceId());
-                    param.put("ecsName", instance.getInstanceName());
-                    param.put("expiredTime", dfOut.format(expiredTime));
-                    TelegramUtils.sendMessage("ALI_ECS_EXPIRED", param);
-                }
+        List<AliEcs> list = new AliServiceImpl().getEcsList(new HashMap<String, Object>() {{
+        }});
+        for (AliEcs aliEcs : list) {
+            if (aliEcs.getAlertExpired()) {
+                DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("accessKeyId", aliEcs.getAccessKeyId());
+                param.put("ecsId", aliEcs.getInstanceId());
+                param.put("ecsName", aliEcs.getInstanceName());
+                param.put("expiredTime", dfOut.format(aliEcs.getExpiredTime()));
+                TelegramUtils.sendMessage("ALI_ECS_EXPIRED", param);
+            }
+        }
+    }
+
+    // 刷新数据
+    private static void refreshData() throws Exception {
+        List<AliAccount> list = new AliAccountServiceImpl().getList();
+        for (AliAccount aliAccount : list) {
+            if (aliAccount.getStatus().equals("normal")) {
+                new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
             }
         }
     }
@@ -54,7 +60,11 @@ public class CheckAli {
     // run
     public static void main(String[] args) throws Exception {
         try {
+            System.out.println("0");
+            CheckAli.refreshData();
+            System.out.println("1");
             CheckAli.checkAccount();
+            System.out.println("2");
             CheckAli.checkEcsExpired();
         } catch (Exception e) {
             Map<String, String> param = new HashMap<String, String>();

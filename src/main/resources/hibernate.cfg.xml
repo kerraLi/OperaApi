@@ -20,5 +20,6 @@
         <mapping resource="hbm/User.hbm.xml"/>
         <mapping resource="hbm/AliAccount.hbm.xml"/>
         <mapping resource="hbm/AliEcs.hbm.xml"/>
+        <mapping resource="hbm/AliCdn.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

@@ -1,11 +1,15 @@
 package com.ywxt.Domain;
 
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
+import com.ywxt.Utils.Parameter;
 
 import javax.persistence.Entity;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 @Entity
@@ -35,6 +39,9 @@ public class AliEcs {
     // 状态
     private String status;
 
+    public AliEcs() {
+    }
+
     public AliEcs(String accessKeyId, DescribeInstancesResponse.Instance instance) throws Exception {
         this.accessKeyId = accessKeyId;
         this.instanceId = instance.getInstanceId();
@@ -55,15 +62,7 @@ public class AliEcs {
         this.securityGroupIds = String.join("|", instance.getSecurityGroupIds());
         this.serialNumber = instance.getSerialNumber();
         this.status = instance.getStatus();
-//        Field[] fields = instance.getClass().getDeclaredFields();
-//        for (int i = 0; i < fields.length; i++) {
-//            fields[i].setAccessible(true);
-//            Object value = fields[i].get(instance);
-//            if (null != value) {
-//                fields[i].set(this, value);
-//            }
-//            fields[i].setAccessible(false);
-//        }
+
     }
 
     public int getId() {

@@ -2,15 +2,12 @@ package com.ywxt.Dao.Impl;
 
 import com.ywxt.Dao.AliAccountDao;
 import com.ywxt.Domain.AliAccount;
-import com.ywxt.Domain.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 public class AliAccountDaoImpl implements AliAccountDao {
@@ -22,6 +19,27 @@ public class AliAccountDaoImpl implements AliAccountDao {
         Configuration configuration = new Configuration();
         this.sessionFactory = configuration.configure().buildSessionFactory();
     }
+
+    // 根据id查找账号
+    public AliAccount getAliAccount(int id) {
+        Session session = this.sessionFactory.openSession();
+        AliAccount aliAccount = (AliAccount) session.get(AliAccount.class, id);
+        return aliAccount;
+    }
+
+    // 获取正常账号
+    public List<AliAccount> getAliAccountsNormal() {
+        Session session = this.sessionFactory.openSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<AliAccount> criteriaQuery = criteriaBuilder.createQuery(AliAccount.class);
+        Root<AliAccount> root = criteriaQuery.from(AliAccount.class);
+        // 查询条件
+        Predicate predicate = criteriaBuilder.equal(root.get("status"), "normal");
+        criteriaQuery.where(predicate);
+
+        return session.createQuery(criteriaQuery).getResultList();
+    }
+
 
     // 账号列表
     public List<AliAccount> getAliAccounts() {

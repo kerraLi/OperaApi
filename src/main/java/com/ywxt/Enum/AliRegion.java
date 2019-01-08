@@ -19,7 +19,7 @@ public enum AliRegion {
     USW1(14, "us-west-1", "us", "美国西部1", "硅谷"),
     USE1(15, "us-east-1", "us", "美国东部1", "弗吉尼亚"),
     EUC1(16, "eu-central-1", "eu", "欧洲中部1", "法兰克福"),
-    UEW1(17, "eu-west-1", "eu", "英国（伦敦）1", "伦敦"),
+//    UEW1(17, "eu-west-1", "eu", "英国（伦敦）1", "伦敦"),
     MEE1(18, "me-east-1", "me", "中东东部1", "迪拜");
 
     Integer id;

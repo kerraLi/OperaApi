@@ -1,24 +1,30 @@
 package com.ywxt.Command;
 
+import com.ywxt.Dao.Impl.AliAccountDaoImpl;
+import com.ywxt.Dao.Impl.AliEcsDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.AliEcs;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.RedisUtils;
+import org.hibernate.query.Query;
 import redis.clients.jedis.Jedis;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class TestCommand {
 
     private static void saveAliAccount() throws Exception {
         AliAccount aa = new AliAccount();
-        aa.setUserName("asd");
-        aa.setAccessKeyId("123");
+        aa.setUserName("asdbbbbbbbb");
+        aa.setAccessKeyId("123aaaaaaaaa");
         aa.setAccessKeySecret("154");
         aa.setStatus("normal");
         new AliAccountServiceImpl().saveAliAccount(aa);
@@ -58,11 +64,33 @@ public class TestCommand {
         new AliServiceImpl("LTAIDmBAC9rB3SlR", "C2FD6tBp8r8jE7PvtTJsi63IDZ4tFE").freshSourceData();
     }
 
+    // 数据库查ecs数据
+    private static void getAliEcs() throws Exception {
+        List<AliEcs> list = new AliServiceImpl("instanceId", "i-j6cenf2ak8gsbem4lpps").getEcsList(new HashMap<String, Object>() {{
+            put("instanceId", "i-j6cenf2ak8gsbem4lpps");
+        }}, 1, 10);
+        for (AliEcs ae : list) {
+            System.out.println(ae.getInstanceId());
+            System.out.println(ae.getAlertExpired());
+            System.out.println(ae.toString());
+        }
+    }
+
+    // normal account
+    private static void getNormalAccount() {
+        List<AliAccount> list = new AliAccountDaoImpl().getAliAccountsNormal();
+        for (AliAccount ae : list) {
+            System.out.println(ae.getAccessKeyId());
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(123);
 
-        TestCommand.refreshAli();
-
+//        TestCommand.saveAliAccount();
+        TestCommand.getNormalAccount();
+//        TestCommand.getAliEcs();
+//        TestCommand.refreshAli();
 //        System.out.println(TestCommand.checkAccount());
 //        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();

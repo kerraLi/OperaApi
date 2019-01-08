@@ -8,21 +8,28 @@ import com.aliyuncs.cdn.model.v20141111.*;
 import com.aliyuncs.ecs.model.v20140526.*;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.ywxt.Dao.AliCdnDao;
+import com.ywxt.Dao.AliEcsDao;
+import com.ywxt.Dao.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Impl.AliEcsDaoImpl;
 import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.AliCdn;
 import com.ywxt.Domain.AliEcs;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
+import com.ywxt.Utils.Parameter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AliServiceImpl implements AliService {
 
     private String accessKeyId;
     private String accessKeySecret;
+    private AliEcsDao aliEcsDao = new AliEcsDaoImpl();
+    private AliCdnDao aliCdnDao = new AliCdnDaoImpl();
+
+    public AliServiceImpl() {
+    }
 
     public AliServiceImpl(String keyId, String keySecret) {
         this.accessKeyId = keyId;
@@ -40,6 +47,7 @@ public class AliServiceImpl implements AliService {
     }
 
     // 查询可用区
+    // todo
     public void getRegion() throws Exception {
         IClientProfile profile = DefaultProfile.getProfile("", this.accessKeyId, this.accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
@@ -47,67 +55,92 @@ public class AliServiceImpl implements AliService {
 
     // 更新ali源数据(按账户更新)
     public void freshSourceData() throws Exception {
-        // 更新ecs数据
+        // 更新ecs数据 && 更新cdn域名数据
+        this.freshEcsData();
+        this.freshCdnData();
+    }
+
+    // 更新ecs数据
+    public void freshEcsData() throws Exception {
         new AliEcsDaoImpl().deleteAliEcsByAccessId(this.accessKeyId);
         List<AliEcs> aeList = new ArrayList<>();
         for (AliRegion e : AliRegion.values()) {
             IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
             IAcsClient client = new DefaultAcsClient(profile);
-            int pageNumber = 1;
             int pageSize = 20;
+            // ecs
+            int pageNumber = 1;
             while (true) {
-                DescribeInstancesRequest describe = new DescribeInstancesRequest();
-                describe.setPageSize(pageSize);
-                describe.setPageNumber(pageNumber);
-                DescribeInstancesResponse response = client.getAcsResponse(describe);
+                DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest();
+                describeInstancesRequest.setPageSize(pageSize);
+                describeInstancesRequest.setPageNumber(pageNumber);
+                DescribeInstancesResponse describeInstancesResponse = client.getAcsResponse(describeInstancesRequest);
                 // aeList
-                for (DescribeInstancesResponse.Instance i : response.getInstances()) {
+                for (DescribeInstancesResponse.Instance i : describeInstancesResponse.getInstances()) {
                     AliEcs ecs = new AliEcs(this.accessKeyId, i);
                     aeList.add(ecs);
                 }
                 // 最后一页 跳出
-                if (response.getInstances().size() < pageSize) {
+                if (describeInstancesResponse.getInstances().size() < pageSize) {
                     break;
                 }
                 pageNumber++;
             }
         }
-        new AliEcsDaoImpl().saveAliEcses(aeList);
-        // 更新cdn域名数据
+        this.aliEcsDao.saveAliEcses(aeList);
     }
 
-    // ecs-查询所有实例的详细信息
-    // ** 包含所有区域及分页信息
-    public List<DescribeInstancesResponse.Instance> getEcsList() throws Exception {
-        List<DescribeInstancesResponse.Instance> isList = new ArrayList<>();
-//        for (AliRegion e : AliRegion.values()) {
-////            IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
-////            IAcsClient client = new DefaultAcsClient(profile);
-////            int pageNumber = 1;
-////            while (true) {
-////                DescribeInstancesRequest describe = new DescribeInstancesRequest();
-////                describe.setPageSize(this.pageSize);
-////                describe.setPageNumber(pageNumber);
-////                DescribeInstancesResponse response = client.getAcsResponse(describe);
-//////                if()
-////                isList.addAll(response.getInstances());
-////            }
-////
-////        }
-        return isList;
-    }
-
-    // ecs-批量获取当前用户所有实例的状态信息
-    public List<DescribeInstanceStatusResponse.InstanceStatus> getEcsStatusList() throws Exception {
-        List<DescribeInstanceStatusResponse.InstanceStatus> isList = new ArrayList<>();
+    // 更新cdn数据
+    public void freshCdnData() throws Exception {
+        new AliCdnDaoImpl().deleteAliCdnByAccessId(this.accessKeyId);
+        List<AliCdn> acList = new ArrayList<>();
         for (AliRegion e : AliRegion.values()) {
             IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
             IAcsClient client = new DefaultAcsClient(profile);
-            DescribeInstanceStatusRequest describe = new DescribeInstanceStatusRequest();
-            DescribeInstanceStatusResponse response = client.getAcsResponse(describe);
-            isList.addAll(response.getInstanceStatuses());
+            int pageSize = 20;
+            int pageNumber = 1;
+            while (true) {
+                DescribeUserDomainsRequest describeUserDomainsRequest = new DescribeUserDomainsRequest();
+                describeUserDomainsRequest.setPageSize(pageSize);
+                describeUserDomainsRequest.setPageNumber(pageNumber);
+                DescribeUserDomainsResponse describeUserDomainsResponse = client.getAcsResponse(describeUserDomainsRequest);
+                // acList
+                for (DescribeUserDomainsResponse.PageData domain : describeUserDomainsResponse.getDomains()) {
+                    AliCdn cdnDomain = new AliCdn(this.accessKeyId, domain);
+                    acList.add(cdnDomain);
+                }
+                // 最后一页 跳出
+                if (describeUserDomainsResponse.getDomains().size() < pageSize) {
+                    break;
+                }
+                pageNumber++;
+            }
         }
-        return isList;
+        this.aliCdnDao.saveAliCdns(acList);
+    }
+
+    // ecs-查询所有
+    public List<AliEcs> getEcsList(HashMap<String, Object> params) throws Exception {
+        List<AliEcs> list = this.aliEcsDao.getAliEcsesList(params);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+        Date thresholdDate = calendar.getTime();
+        for (AliEcs ae : list) {
+            ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
+        }
+        return list;
+    }
+
+    // ecs-查询所有实例的详细信息&分页
+    public List<AliEcs> getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+        List<AliEcs> list = this.aliEcsDao.getAliEcsesList(params, pageNumber, pageSize);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+        Date thresholdDate = calendar.getTime();
+        for (AliEcs ae : list) {
+            ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
+        }
+        return list;
     }
 
     // ecs-启动
@@ -149,14 +182,9 @@ public class AliServiceImpl implements AliService {
         client.getAcsResponse(request);
     }
 
-    // CDN-域名列表
-    // ** 包含所有分页信息
-    public List<DescribeUserDomainsResponse.PageData> getCdnDomainList() throws Exception {
-        IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
-        DescribeUserDomainsRequest request = new DescribeUserDomainsRequest();
-        DescribeUserDomainsResponse response = client.getAcsResponse(request);
-        return response.getDomains();
+    // CDN-域名列表&分页信息
+    public List<AliCdn> getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+        return this.aliCdnDao.getCdnList(params, pageNumber, pageSize);
     }
 
     // CDN-刷新
