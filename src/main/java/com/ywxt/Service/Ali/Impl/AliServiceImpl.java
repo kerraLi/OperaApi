@@ -136,7 +136,9 @@ public class AliServiceImpl implements AliService {
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (AliEcs ae : list) {
-            ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
+            if (ae.getStatus().equals("Running")) {
+                ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
+            }
         }
         return list;
     }
@@ -198,8 +200,12 @@ public class AliServiceImpl implements AliService {
     }
 
     // CDN-域名列表&分页信息
-    public List<AliCdn> getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        return this.aliCdnDao.getCdnList(params, pageNumber, pageSize);
+    public JSONObject getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+        List<AliCdn> list = this.aliCdnDao.getCdnList(params, pageNumber, pageSize);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", this.aliCdnDao.getCdnTotal(params));
+        jsonObject.put("items", list);
+        return jsonObject;
     }
 
     // CDN-刷新

@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.HashMap;
@@ -21,6 +22,36 @@ public class AliCdnDaoImpl implements AliCdnDao {
     public AliCdnDaoImpl() {
         Configuration configuration = new Configuration();
         this.sessionFactory = configuration.configure().buildSessionFactory();
+    }
+
+    // 获取数量
+    public int getCdnTotal(HashMap<String, Object> params) {
+        Session session = this.sessionFactory.openSession();
+        Criteria criteria = session.createCriteria(AliCdn.class);
+        if (params != null) {
+            for (Map.Entry<String, Object> e : params.entrySet()) {
+                if (e.getKey().equals("orderAsc")) {
+                    criteria.addOrder(Order.asc((String) e.getValue()));
+                } else if (e.getKey().equals("orderDesc")) {
+                    criteria.addOrder(Order.desc((String) e.getValue()));
+                } else {
+                    String[] strings = e.getKey().split("@");
+                    if (strings.length == 1) {
+                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                    } else if (strings[1].equals("lt")) {
+                        criteria.add(Restrictions.lt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("gt")) {
+                        criteria.add(Restrictions.gt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("like")) {
+                        criteria.add(Restrictions.like(strings[0], e.getValue()));
+                    }
+                }
+            }
+        }
+        criteria.addOrder(Order.asc("id"));
+        criteria.setProjection(Projections.rowCount());
+
+        return Integer.parseInt(criteria.uniqueResult().toString());
     }
 
     // 分页查找

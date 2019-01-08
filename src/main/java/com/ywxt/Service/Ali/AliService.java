@@ -38,7 +38,7 @@ public interface AliService {
     public abstract void deleteEcs(String regionId, String instanceId, boolean forceStop) throws Exception;
 
     // CDN：域名列表
-    public abstract List<AliCdn> getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    public abstract JSONObject getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 
     // CDN：刷新CDN
     public abstract Map<String, String> refreshCdnObjectCaches(String objectPath, String objectType) throws Exception;

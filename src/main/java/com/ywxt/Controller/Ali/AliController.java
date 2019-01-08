@@ -55,7 +55,7 @@ public class AliController {
     // cdn:cdn域名列表
     @ResponseBody
     @RequestMapping(value = {"/cdn/domain/list"}, method = RequestMethod.POST)
-    public List<AliCdn> cdnDomainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public JSONObject cdnDomainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         return new AliServiceImpl().getCdnDomainList(new HashMap<String, Object>() {{

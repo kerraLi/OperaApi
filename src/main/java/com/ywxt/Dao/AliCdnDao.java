@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface AliCdnDao {
 
+    public int getCdnTotal(HashMap<String, Object> params);
+
     public abstract List<AliCdn> getCdnList(HashMap<String, Object> params, int pageNumber, int pageSize);
 
     public abstract void saveAliCdns(List<AliCdn> list);

@@ -21,6 +21,9 @@ public class AliCdn {
     private String description;
     private String resourceGroupId;
 
+    public AliCdn() {
+    }
+
     public AliCdn(String accessKeyId, DescribeUserDomainsResponse.PageData pageData) throws Exception {
         this.accessKeyId = accessKeyId;
         this.cdnType = pageData.getCdnType();
