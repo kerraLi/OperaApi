@@ -32,8 +32,24 @@ public class AliController {
     public JSONObject ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
-        return new AliServiceImpl().getEcsListPage(new HashMap<String, Object>() {{
-        }}, pageNumber, pageSize);
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        if (!(request.getParameter("status") == null)) {
+            params.put("status", request.getParameter("status"));
+        }
+        if (!(request.getParameter("ifExpired") == null)) {
+            if (request.getParameter("ifExpired").equals("true")) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+                Date thresholdDate = calendar.getTime();
+                params.put("orderAsc", "expiredTime");
+                params.put("status", "Running");
+                params.put("expiredTime@lt", thresholdDate);
+            }
+        }
+        if (!(request.getParameter("key") == null)) {
+            params.put("everyKey@like", request.getParameter("key"));
+        }
+        return new AliServiceImpl().getEcsListPage(params, pageNumber, pageSize);
     }
 
     // cdn:cdn域名列表

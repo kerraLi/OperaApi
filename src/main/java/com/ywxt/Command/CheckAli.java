@@ -38,7 +38,7 @@ public class CheckAli {
             if (aliEcs.getAlertExpired()) {
                 DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
                 Map<String, String> param = new HashMap<String, String>();
-                param.put("accessKeyId", aliEcs.getAccessKeyId());
+                param.put("accountName", new AliAccountDaoImpl().getAliAccount(aliEcs.getAccessKeyId()).getUserName());
                 param.put("ecsId", aliEcs.getInstanceId());
                 param.put("ecsName", aliEcs.getInstanceName());
                 param.put("expiredTime", dfOut.format(aliEcs.getExpiredTime()));

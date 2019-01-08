@@ -34,7 +34,16 @@ public class AliEcsDaoImpl implements AliEcsDao {
                 } else if (e.getKey().equals("orderDesc")) {
                     criteria.addOrder(Order.desc((String) e.getValue()));
                 } else {
-                    criteria.add(Restrictions.eq(e.getKey(), e.getValue()));
+                    String[] strings = e.getKey().split("@");
+                    if (strings.length == 1) {
+                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                    } else if (strings[1].equals("lt")) {
+                        criteria.add(Restrictions.lt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("gt")) {
+                        criteria.add(Restrictions.gt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("like")) {
+                        criteria.add(Restrictions.like(strings[0], e.getValue()));
+                    }
                 }
             }
         }
@@ -55,7 +64,16 @@ public class AliEcsDaoImpl implements AliEcsDao {
                 } else if (e.getKey().equals("orderDesc")) {
                     criteria.addOrder(Order.desc((String) e.getValue()));
                 } else {
-                    criteria.add(Restrictions.eq(e.getKey(), e.getValue()));
+                    String[] strings = e.getKey().split("@");
+                    if (strings.length == 1) {
+                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                    } else if (strings[1].equals("lt")) {
+                        criteria.add(Restrictions.lt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("gt")) {
+                        criteria.add(Restrictions.gt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("like")) {
+                        criteria.add(Restrictions.like(strings[0], e.getValue()));
+                    }
                 }
             }
         }
@@ -76,7 +94,16 @@ public class AliEcsDaoImpl implements AliEcsDao {
                 } else if (e.getKey().equals("orderDesc")) {
                     criteria.addOrder(Order.desc((String) e.getValue()));
                 } else {
-                    criteria.add(Restrictions.eq(e.getKey(), e.getValue()));
+                    String[] strings = e.getKey().split("@");
+                    if (strings.length == 1) {
+                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                    } else if (strings[1].equals("lt")) {
+                        criteria.add(Restrictions.lt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("gt")) {
+                        criteria.add(Restrictions.gt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("like")) {
+                        criteria.add(Restrictions.like(strings[0], e.getValue()));
+                    }
                 }
             }
         }
