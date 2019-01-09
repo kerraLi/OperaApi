@@ -10,6 +10,7 @@ import org.hibernate.cfg.Configuration;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 
@@ -55,7 +56,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    public User getUserByUsername(String username) {
+    public User getUserByUsername(String username) throws Exception{
         Session session = this.sessionFactory.openSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
@@ -64,10 +65,13 @@ public class UserDaoImpl implements UserDao {
         criteriaQuery.select(from).where(from.get("username").in(username));
         // 查询所有
         //criteriaQuery.from(User.class);
-        //List<User> list = session.createQuery(criteriaQuery).getResultList();
+        List<User> list = session.createQuery(criteriaQuery).getResultList();
         //for (User user : list) {
         //    System.out.println(user.getUsername());
         //}
+        if (list.size() == 0) {
+            throw new Exception("账号名或密码错误");
+        }
         return (User) session.createQuery(criteriaQuery).getResultList().get(0);
     }
 }

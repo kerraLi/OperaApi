@@ -5,6 +5,7 @@ import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
+import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
@@ -12,7 +13,12 @@ import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
+import com.ywxt.Utils.Parameter;
+import net.sf.json.JSONObject;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class TestCommand {
@@ -78,10 +84,18 @@ public class TestCommand {
         account.setAccessKeyId("dLDHSMnAAEN6_E1XDuVUJEhuwSpvrcCA59t");
         account.setAccessKeySecret("E1axtvaUTwMNrQnzFoSFY6");
         new GodaddyAccountServiceImpl().saveAccount(account);
+        System.out.println("跑完了");
     }
 
-    private static void checkGodaddyAccount() throws Exception{
+    private static void checkGodaddyAccount() throws Exception {
 //        new GodaddyAccountServiceImpl().checkAccount("aasd","asd");
+
+//        HashMap<String, Object> params = new HashMap<String, Object>();
+//        JSONObject jsonObject = new GodaddyServiceImpl().getCertificateList(params, 1, 20);
+//        System.out.println(jsonObject.get("total"));
+//        for (Object o : (List) jsonObject.get("items")) {
+//            System.out.println(o.toString());
+//        }
     }
 
     // normal account
@@ -95,7 +109,8 @@ public class TestCommand {
     public static void main(String[] args) throws Exception {
         System.out.println(123);
 
-        TestCommand.setGodaddyAccount();
+        TestCommand.checkGodaddyAccount();
+//        TestCommand.setGodaddyAccount();
 //        TestCommand.checkGodaddyAccount();
 
 //        TestCommand.saveAliAccount();
@@ -105,5 +120,6 @@ public class TestCommand {
 //        System.out.println(TestCommand.checkAccount());
 //        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
+
     }
 }

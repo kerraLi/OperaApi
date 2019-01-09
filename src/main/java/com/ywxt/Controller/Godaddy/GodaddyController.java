@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 @Controller
 @RequestMapping("/go")
@@ -22,12 +20,16 @@ public class GodaddyController extends CommonController {
     // domain 列表
     @ResponseBody
     @RequestMapping(value = {"/domain/list"}, method = RequestMethod.POST)
-    public JSONObject domainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Map<String, Object> domainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         HashMap<String, Object> params = new HashMap<String, Object>();
         if (!(request.getParameter("status") == null)) {
-            params.put("status", request.getParameter("status"));
+            if (request.getParameter("status").equals("OTHERS")) {
+                params.put("status@ne", "ACTIVE");
+            } else {
+                params.put("status", request.getParameter("status"));
+            }
         }
         if (!(request.getParameter("ifExpired") == null)) {
             if (request.getParameter("ifExpired").equals("true")) {
@@ -40,7 +42,9 @@ public class GodaddyController extends CommonController {
             }
         }
         if (!(request.getParameter("key") == null)) {
-            params.put("filter", request.getParameter("key"));
+            if (!request.getParameter("key").isEmpty()) {
+                params.put("filter", request.getParameter("key"));
+            }
         }
         return new GodaddyServiceImpl().getDomainList(params, pageNumber, pageSize);
     }
@@ -48,12 +52,16 @@ public class GodaddyController extends CommonController {
     // certificate 列表
     @ResponseBody
     @RequestMapping(value = {"/certificate/list"}, method = RequestMethod.POST)
-    public JSONObject certificateList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Map<String, Object> certificateList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         HashMap<String, Object> params = new HashMap<String, Object>();
         if (!(request.getParameter("status") == null)) {
-            params.put("status", request.getParameter("status"));
+            if (request.getParameter("status").equals("OTHERS")) {
+                params.put("status@ne", "ISSUED");
+            } else {
+                params.put("status", request.getParameter("status"));
+            }
         }
         if (!(request.getParameter("ifExpired") == null)) {
             if (request.getParameter("ifExpired").equals("true")) {
@@ -66,7 +74,9 @@ public class GodaddyController extends CommonController {
             }
         }
         if (!(request.getParameter("key") == null)) {
-            params.put("filter", request.getParameter("key"));
+            if (!request.getParameter("key").isEmpty()) {
+                params.put("filter", request.getParameter("key"));
+            }
         }
         return new GodaddyServiceImpl().getCertificateList(params, pageNumber, pageSize);
     }

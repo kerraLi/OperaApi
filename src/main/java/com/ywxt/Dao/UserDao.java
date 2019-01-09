@@ -8,6 +8,6 @@ public interface UserDao {
 
     public abstract User getUserById(long id);
 
-    public abstract User getUserByUsername(String username);
+    public abstract User getUserByUsername(String username) throws Exception;
 
 }

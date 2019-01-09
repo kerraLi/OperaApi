@@ -18,11 +18,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.JSONUtils;
-import net.sf.json.util.PropertyFilter;
 import net.sf.json.util.PropertySetStrategy;
 
-import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GodaddyServiceImpl implements GodaddyService {
@@ -59,7 +56,7 @@ public class GodaddyServiceImpl implements GodaddyService {
     // 更新源数据
     public void freshSourceData() throws Exception {
         this.freshDomain();
-//        this.freshCertificate();
+        this.freshCertificate();
     }
 
     // 更新域名数据
@@ -135,7 +132,7 @@ public class GodaddyServiceImpl implements GodaddyService {
     }
 
     // domain-查询所有域名&分页
-    public JSONObject getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+    public Map<String, Object> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         List<GodaddyDomain> list = this.godaddyDomainDao.getDomainList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
@@ -145,10 +142,10 @@ public class GodaddyServiceImpl implements GodaddyService {
                 gd.setAlertExpired(gd.getExpires().before(thresholdDate));
             }
         }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", this.godaddyDomainDao.getDomainTotal(params));
-        jsonObject.put("items", list);
-        return jsonObject;
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("total", this.godaddyCertificateDao.getCertificateTotal(params));
+        result.put("items", list);
+        return result;
     }
 
     // certificates-查询所有证书
@@ -166,7 +163,7 @@ public class GodaddyServiceImpl implements GodaddyService {
     }
 
     // certificates-查询所有证书&分页
-    public JSONObject getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+    public Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         List<GodaddyCertificate> list = this.godaddyCertificateDao.getCertificateList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
@@ -176,10 +173,11 @@ public class GodaddyServiceImpl implements GodaddyService {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
             }
         }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", this.godaddyCertificateDao.getCertificateTotal(params));
-        jsonObject.put("items", list);
-        return jsonObject;
+        // DATE为空转换失败所以用map
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("total", this.godaddyCertificateDao.getCertificateTotal(params));
+        result.put("items", list);
+        return result;
     }
 
 }

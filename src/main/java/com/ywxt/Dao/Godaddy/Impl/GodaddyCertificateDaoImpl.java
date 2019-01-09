@@ -55,6 +55,8 @@ public class GodaddyCertificateDaoImpl implements GodaddyCertificateDao {
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
                         }
+                    } else if (strings[1].equals("ne")) {
+                        criteria.add(Restrictions.ne(strings[0], e.getValue()));
                     } else if (strings[1].equals("lt")) {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {
@@ -105,6 +107,8 @@ public class GodaddyCertificateDaoImpl implements GodaddyCertificateDao {
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
                         }
+                    } else if (strings[1].equals("ne")) {
+                        criteria.add(Restrictions.ne(strings[0], e.getValue()));
                     } else if (strings[1].equals("lt")) {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {
@@ -155,6 +159,8 @@ public class GodaddyCertificateDaoImpl implements GodaddyCertificateDao {
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
                         }
+                    } else if (strings[1].equals("ne")) {
+                        criteria.add(Restrictions.ne(strings[0], e.getValue()));
                     } else if (strings[1].equals("lt")) {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {

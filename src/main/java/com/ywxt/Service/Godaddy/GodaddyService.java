@@ -7,6 +7,7 @@ import net.sf.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface GodaddyService {
 
@@ -18,10 +19,10 @@ public interface GodaddyService {
 
     public abstract List<GodaddyDomain> getDomainList(HashMap<String, Object> params) throws Exception;
 
-    public abstract JSONObject getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    public abstract Map<String, Object> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 
     public abstract List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception;
 
-    public abstract JSONObject getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    public abstract Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 
 }

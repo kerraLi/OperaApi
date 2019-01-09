@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // 获取用户
-    public User getUserByUsername(String username) {
+    public User getUserByUsername(String username) throws Exception{
         return this.userDao.getUserByUsername(username);
     }
 }

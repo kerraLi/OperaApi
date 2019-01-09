@@ -16,7 +16,7 @@
         <!-- 关闭二级缓存（批量操作） -->
         <property name="hiberante.cache.use_second_level_cache">false</property>
         <!-- 自动更新到数据库配置 -->
-        <property name="hibernate.hbm2ddl.auto">create</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping resource="hbm/User.hbm.xml"/>
         <mapping resource="hbm/AliAccount.hbm.xml"/>
         <mapping resource="hbm/AliEcs.hbm.xml"/>

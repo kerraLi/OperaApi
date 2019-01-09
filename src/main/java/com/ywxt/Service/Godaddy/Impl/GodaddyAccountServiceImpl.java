@@ -6,7 +6,9 @@ import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
+import com.ywxt.Handler.AsyncHandler;
 import com.ywxt.Service.Godaddy.GodaddyAccountService;
+import com.ywxt.Utils.AsyncUtils;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 
@@ -29,8 +31,19 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
         // check key
         if (this.checkAccount(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret())) {
             godaddyAccount.setStatus("normal");
-            // update Data
-            new GodaddyServiceImpl(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret()).freshSourceData();
+            // update Data & 异步
+            AsyncHandler handler = new AsyncHandler() {
+                @Override
+                public void handle() {
+                    try {
+                        new GodaddyServiceImpl(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret()).freshSourceData();
+                    } catch (Exception e) {
+                        // 异步处理数据错误
+                        System.out.println(e.getMessage());
+                    }
+                }
+            };
+            AsyncUtils.asyncWork(handler);
         } else {
             godaddyAccount.setStatus("invalid");
         }
@@ -42,10 +55,17 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
         // update Data
         GodaddyAccount godaddyAccount = this.godaddyAccountDao.getAccount(godaddyAccountId);
         if (godaddyAccount.getStatus().equals("normal")) {
-            // 删除ecs
-            new GodaddyDomainDaoImpl().deleteDomainByAccessId(godaddyAccount.getAccessKeyId());
-            // 删除cdn
-            new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(godaddyAccount.getAccessKeyId());
+            // update Data & 异步
+            AsyncHandler handler = new AsyncHandler() {
+                @Override
+                public void handle() {
+                    // 删除ecs
+                    new GodaddyDomainDaoImpl().deleteDomainByAccessId(godaddyAccount.getAccessKeyId());
+                    // 删除cdn
+                    new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(godaddyAccount.getAccessKeyId());
+                }
+            };
+            AsyncUtils.asyncWork(handler);
         }
         return this.godaddyAccountDao.deleteAccount(godaddyAccountId);
     }

@@ -12,7 +12,9 @@ import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
+import com.ywxt.Handler.AsyncHandler;
 import com.ywxt.Service.Ali.AliAccountService;
+import com.ywxt.Utils.AsyncUtils;
 import com.ywxt.Utils.Parameter;
 
 import java.text.DecimalFormat;
@@ -50,8 +52,19 @@ public class AliAccountServiceImpl implements AliAccountService {
         // check ali key
         if (this.checkAccount(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret())) {
             aliAccount.setStatus("normal");
-            // update ali Data
-            new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
+            // update Data & 异步
+            AsyncHandler handler = new AsyncHandler() {
+                @Override
+                public void handle() {
+                    try {
+                        new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
+                    } catch (Exception e) {
+                        // 异步处理数据错误
+                        System.out.println(e.getMessage());
+                    }
+                }
+            };
+            AsyncUtils.asyncWork(handler);
         } else {
             aliAccount.setStatus("invalid");
         }
@@ -63,10 +76,17 @@ public class AliAccountServiceImpl implements AliAccountService {
         // update ali Data
         AliAccount aliAccount = this.aliAccountDao.getAliAccount(aliAccountId);
         if (aliAccount.getStatus().equals("normal")) {
-            // 删除ecs
-            new AliEcsDaoImpl().deleteAliEcsByAccessId(aliAccount.getAccessKeyId());
-            // 删除cdn
-            new AliCdnDaoImpl().deleteAliCdnByAccessId(aliAccount.getAccessKeyId());
+            // update Data & 异步
+            AsyncHandler handler = new AsyncHandler() {
+                @Override
+                public void handle() {
+                    // 删除ecs
+                    new AliEcsDaoImpl().deleteAliEcsByAccessId(aliAccount.getAccessKeyId());
+                    // 删除cdn
+                    new AliCdnDaoImpl().deleteAliCdnByAccessId(aliAccount.getAccessKeyId());
+                }
+            };
+            AsyncUtils.asyncWork(handler);
         }
         return this.aliAccountDao.deleteAliAccount(aliAccountId);
     }
