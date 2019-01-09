@@ -144,7 +144,7 @@ public class AliServiceImpl implements AliService {
     }
 
     // ecs-查询所有实例的详细信息&分页
-    public JSONObject getEcsListPage(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+    public JSONObject getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         List<AliEcs> list = this.aliEcsDao.getAliEcsesList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));

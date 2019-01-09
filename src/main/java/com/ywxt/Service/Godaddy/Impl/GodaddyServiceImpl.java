@@ -1,17 +1,41 @@
 package com.ywxt.Service.Godaddy.Impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
+import com.ywxt.Dao.Godaddy.GodaddyCertificateDao;
+import com.ywxt.Dao.Godaddy.GodaddyDomainDao;
+import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
+import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
+import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
+import com.ywxt.Domain.Godaddy.GodaddyAccount;
+import com.ywxt.Domain.Godaddy.GodaddyCertificate;
+import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
+import net.sf.ezmorph.object.DateMorpher;
+import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GodaddyServiceImpl implements GodaddyService {
 
     private String accessKeyId;
     private String accessKeySecret;
+    private GodaddyAccountDao godaddyAccountDa = new GodaddyAccountDaoImpl();
+    private GodaddyDomainDao godaddyDomainDao = new GodaddyDomainDaoImpl();
+    private GodaddyCertificateDao godaddyCertificateDao = new GodaddyCertificateDaoImpl();
+
+    public GodaddyServiceImpl() {
+
+    }
+
+    public GodaddyServiceImpl(String accessKeyId) {
+        GodaddyAccount godaddyAccount = this.godaddyAccountDa.getAccount(accessKeyId);
+        this.accessKeyId = accessKeyId;
+        this.accessKeySecret = godaddyAccount.getAccessKeySecret();
+    }
 
     public GodaddyServiceImpl(String keyId, String keySecret) {
         this.accessKeyId = keyId;
@@ -26,19 +50,119 @@ public class GodaddyServiceImpl implements GodaddyService {
         return HttpUtils.sendConnGet(Parameter.godaddyUrl + Parameter.godaddyActions.get(action), paramContext, headerParams);
     }
 
+    // 更新源数据
+    public void freshSourceData() throws Exception {
+        this.freshDomain();
+        this.freshCertificate();
+    }
+
+    // 更新域名数据
+    public void freshDomain() throws Exception {
+        this.godaddyDomainDao.deleteDomainByAccessId(this.accessKeyId);
+        List<GodaddyDomain> gdList = new ArrayList<>();
+        int pageSize = 100;
+        // marker:"前一次查询最后一条数据"
+        String markerDomain = "";
+        while (true) {
+            HashMap<String, String> inParam = new HashMap<>();
+            inParam.put("limit", String.valueOf(pageSize));
+            inParam.put("marker", markerDomain);
+            String paramContext = HttpUtils.getParamContext(inParam);
+            JSONArray result = JSONArray.parseArray(this.getData("GET_DOMAIN_LIST", paramContext));
+            for (int i = 0; i < result.size(); i++) {
+                JSONObject object = (JSONObject) result.get(i);
+                object.put("createdAt", object.getString("createdAt").replace("Z", " UTC"));
+                object.put("expires", object.getString("createdAt").replace("Z", " UTC"));
+                object.put("renewDeadline", object.getString("createdAt").replace("Z", " UTC"));
+                JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd'T'HH:mm:ss.SSS Z"}));
+                gdList.add((GodaddyDomain) JSONObject.toBean(object, GodaddyDomain.class));
+                if (i == (result.size() - 1)) {
+                    markerDomain = object.getString("domain");
+                }
+            }
+            // 最后一页 跳出
+            if (result.size() < pageSize) {
+                break;
+            }
+        }
+        this.godaddyDomainDao.saveDomains(gdList);
+    }
+
+    // 更新证书
+    public void freshCertificate() throws Exception {
+        this.godaddyCertificateDao.deleteCertificateByAccessId(this.accessKeyId);
+        String paramContext = "";
+        List<GodaddyCertificate> gcList = new ArrayList<>();
+        JSONArray result = JSONArray.parseArray(this.getData("GET_CERTIFICATE_LIST", paramContext));
+        for (int i = 0; i < result.size(); i++) {
+            JSONObject object = (JSONObject) result.get(i);
+            JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd'T'HH:mm:ss.SSSZ"}));
+            gcList.add((GodaddyCertificate) JSONObject.toBean(object, GodaddyCertificate.class));
+        }
+        this.godaddyCertificateDao.saveCertificates(gcList);
+    }
+
+
     // domain-查询所有域名
-    public JSONArray getDomainList(Integer limit, String markerDomain) throws Exception {
-        String paramContext = HttpUtils.getParamContext(new HashMap<>() {{
-            put("limit", limit.toString());
-            put("marker", markerDomain);
-        }});
-        return JSONArray.parseArray(this.getData("GET_DOMAIN_LIST", paramContext));
+    public List<GodaddyDomain> getDomainList(HashMap<String, Object> params) throws Exception {
+        List<GodaddyDomain> list = this.godaddyDomainDao.getDomainList(params);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
+        Date thresholdDate = calendar.getTime();
+        for (GodaddyDomain gd : list) {
+            if (gd.getStatus().equals("ACTIVE")) {
+                gd.setAlertExpired(gd.getExpires().before(thresholdDate));
+            }
+        }
+        return list;
+    }
+
+    // domain-查询所有域名&分页
+    public JSONObject getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+        List<GodaddyDomain> list = this.godaddyDomainDao.getDomainList(params, pageNumber, pageSize);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
+        Date thresholdDate = calendar.getTime();
+        for (GodaddyDomain gd : list) {
+            if (gd.getStatus().equals("ACTIVE")) {
+                gd.setAlertExpired(gd.getExpires().before(thresholdDate));
+            }
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", this.godaddyDomainDao.getDomainTotal(params));
+        jsonObject.put("items", list);
+        return jsonObject;
     }
 
     // certificates-查询所有证书
-    public JSONArray getCertificateList() throws Exception {
-        String paramContext = "";
-        return JSONArray.parseArray(this.getData("GET_CERTIFICATE_LIST", paramContext));
+    public List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception {
+        List<GodaddyCertificate> list = this.godaddyCertificateDao.getCertificateList(params);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
+        Date thresholdDate = calendar.getTime();
+        for (GodaddyCertificate gc : list) {
+            if (gc.getCertificateStatus().equals("ISSUED")) {
+                gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
+            }
+        }
+        return list;
+    }
+
+    // certificates-查询所有证书&分页
+    public JSONObject getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
+        List<GodaddyCertificate> list = this.godaddyCertificateDao.getCertificateList(params, pageNumber, pageSize);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
+        Date thresholdDate = calendar.getTime();
+        for (GodaddyCertificate gc : list) {
+            if (gc.getCertificateStatus().equals("ISSUED")) {
+                gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
+            }
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", this.godaddyCertificateDao.getCertificateTotal(params));
+        jsonObject.put("items", list);
+        return jsonObject;
     }
 
 }

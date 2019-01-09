@@ -40,7 +40,7 @@ public class AliController {
         if (!(request.getParameter("key") == null)) {
             params.put("filter", request.getParameter("key"));
         }
-        return new AliServiceImpl().getEcsListPage(params, pageNumber, pageSize);
+        return new AliServiceImpl().getEcsList(params, pageNumber, pageSize);
     }
 
     // cdn:cdn域名列表

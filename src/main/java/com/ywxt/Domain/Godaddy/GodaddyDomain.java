@@ -1,6 +1,9 @@
 package com.ywxt.Domain.Godaddy;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.persistence.Entity;
+import java.lang.reflect.Field;
 import java.util.Date;
 
 @Entity
