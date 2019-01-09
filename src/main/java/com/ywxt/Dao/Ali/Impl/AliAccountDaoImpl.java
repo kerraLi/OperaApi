@@ -1,6 +1,6 @@
-package com.ywxt.Dao.Impl;
+package com.ywxt.Dao.Ali.Impl;
 
-import com.ywxt.Dao.AliAccountDao;
+import com.ywxt.Dao.Ali.AliAccountDao;
 import com.ywxt.Domain.AliAccount;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

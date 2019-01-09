@@ -7,20 +7,16 @@ import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.ywxt.Dao.AliAccountDao;
-import com.ywxt.Dao.Impl.AliAccountDaoImpl;
-import com.ywxt.Dao.Impl.AliCdnDaoImpl;
-import com.ywxt.Dao.Impl.AliEcsDaoImpl;
+import com.ywxt.Dao.Ali.AliAccountDao;
+import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
+import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
+import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
 import com.ywxt.Domain.AliAccount;
-import com.ywxt.Domain.AliEcs;
 import com.ywxt.Service.Ali.AliAccountService;
 import com.ywxt.Utils.Parameter;
-import com.ywxt.Utils.TelegramUtils;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AliAccountServiceImpl implements AliAccountService {
 

@@ -1,5 +1,6 @@
-package com.ywxt.Controller;
+package com.ywxt.Controller.Godaddy;
 
+import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.GodaddyAccount;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
@@ -13,19 +14,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/go")
-public class GodaddyController {
-
-    // 账号列表
-    @ResponseBody
-    @RequestMapping(value = {"/account/list"}, method = RequestMethod.POST)
-    public List<GodaddyAccount> accountList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List<GodaddyAccount> gaList = new ArrayList<>();
-        for (Map.Entry<String, String> e : Parameter.godaddyAccounts.entrySet()) {
-            GodaddyAccount aa = new GodaddyAccount(e.getKey(), e.getValue());
-            gaList.add(aa);
-        }
-        return gaList;
-    }
+public class GodaddyController extends CommonController {
 
     @ResponseBody
     @RequestMapping(value = {"/domain/list"}, method = RequestMethod.POST)

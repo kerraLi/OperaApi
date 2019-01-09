@@ -1,9 +1,10 @@
-package com.ywxt.Dao.Impl;
+package com.ywxt.Dao.Ali.Impl;
 
-import com.ywxt.Dao.AliEcsDao;
+import com.ywxt.Dao.Ali.AliEcsDao;
 import com.ywxt.Domain.AliEcs;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 
 import org.hibernate.criterion.Projections;
@@ -36,7 +37,30 @@ public class AliEcsDaoImpl implements AliEcsDao {
                 } else {
                     String[] strings = e.getKey().split("@");
                     if (strings.length == 1) {
-                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        if (strings[0].equals("filter")) {
+                            String filter = "%" + e.getValue() + "%";
+                            // 多个or条件
+                            Disjunction dis = Restrictions.disjunction();
+                            dis.add(Restrictions.like("id", filter));
+                            dis.add(Restrictions.like("accessKeyId", filter));
+                            dis.add(Restrictions.like("instanceId", filter));
+                            dis.add(Restrictions.like("instanceName", filter));
+                            dis.add(Restrictions.like("instanceType", filter));
+                            dis.add(Restrictions.like("instanceNetworkType", filter));
+                            dis.add(Restrictions.like("hostName", filter));
+                            dis.add(Restrictions.like("imageId", filter));
+                            dis.add(Restrictions.like("regionId", filter));
+                            dis.add(Restrictions.like("zoneId", filter));
+                            dis.add(Restrictions.like("creationTime", filter));
+                            dis.add(Restrictions.like("expiredTime", filter));
+                            dis.add(Restrictions.like("innerIps", filter));
+                            dis.add(Restrictions.like("publicIps", filter));
+                            dis.add(Restrictions.like("securityGroupIds", filter));
+                            dis.add(Restrictions.like("serialNumber", filter));
+                            criteria.add(dis);
+                        } else {
+                            criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        }
                     } else if (strings[1].equals("lt")) {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {
@@ -66,7 +90,30 @@ public class AliEcsDaoImpl implements AliEcsDao {
                 } else {
                     String[] strings = e.getKey().split("@");
                     if (strings.length == 1) {
-                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        if (strings[0].equals("filter")) {
+                            String filter = "%" + e.getValue() + "%";
+                            // 多个or条件
+                            Disjunction dis = Restrictions.disjunction();
+                            dis.add(Restrictions.like("id", filter));
+                            dis.add(Restrictions.like("accessKeyId", filter));
+                            dis.add(Restrictions.like("instanceId", filter));
+                            dis.add(Restrictions.like("instanceName", filter));
+                            dis.add(Restrictions.like("instanceType", filter));
+                            dis.add(Restrictions.like("instanceNetworkType", filter));
+                            dis.add(Restrictions.like("hostName", filter));
+                            dis.add(Restrictions.like("imageId", filter));
+                            dis.add(Restrictions.like("regionId", filter));
+                            dis.add(Restrictions.like("zoneId", filter));
+                            dis.add(Restrictions.like("creationTime", filter));
+                            dis.add(Restrictions.like("expiredTime", filter));
+                            dis.add(Restrictions.like("innerIps", filter));
+                            dis.add(Restrictions.like("publicIps", filter));
+                            dis.add(Restrictions.like("securityGroupIds", filter));
+                            dis.add(Restrictions.like("serialNumber", filter));
+                            criteria.add(dis);
+                        } else {
+                            criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        }
                     } else if (strings[1].equals("lt")) {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {
@@ -96,7 +143,30 @@ public class AliEcsDaoImpl implements AliEcsDao {
                 } else {
                     String[] strings = e.getKey().split("@");
                     if (strings.length == 1) {
-                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        if (strings[0].equals("filter")) {
+                            String filter = "%" + e.getValue() + "%";
+                            // 多个or条件
+                            Disjunction dis = Restrictions.disjunction();
+                            dis.add(Restrictions.like("id", filter));
+                            dis.add(Restrictions.like("accessKeyId", filter));
+                            dis.add(Restrictions.like("instanceId", filter));
+                            dis.add(Restrictions.like("instanceName", filter));
+                            dis.add(Restrictions.like("instanceType", filter));
+                            dis.add(Restrictions.like("instanceNetworkType", filter));
+                            dis.add(Restrictions.like("hostName", filter));
+                            dis.add(Restrictions.like("imageId", filter));
+                            dis.add(Restrictions.like("regionId", filter));
+                            dis.add(Restrictions.like("zoneId", filter));
+                            dis.add(Restrictions.like("creationTime", filter));
+                            dis.add(Restrictions.like("expiredTime", filter));
+                            dis.add(Restrictions.like("innerIps", filter));
+                            dis.add(Restrictions.like("publicIps", filter));
+                            dis.add(Restrictions.like("securityGroupIds", filter));
+                            dis.add(Restrictions.like("serialNumber", filter));
+                            criteria.add(dis);
+                        } else {
+                            criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        }
                     } else if (strings[1].equals("lt")) {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {

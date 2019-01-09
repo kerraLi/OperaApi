@@ -1,12 +1,13 @@
-package com.ywxt.Dao.Impl;
+package com.ywxt.Dao.Ali.Impl;
 
-import com.ywxt.Dao.AliCdnDao;
+import com.ywxt.Dao.Ali.AliCdnDao;
 import com.ywxt.Domain.AliCdn;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -37,7 +38,22 @@ public class AliCdnDaoImpl implements AliCdnDao {
                 } else {
                     String[] strings = e.getKey().split("@");
                     if (strings.length == 1) {
-                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        if (strings[0].equals("filter")) {
+                            String filter = "%" + e.getValue() + "%";
+                            // 多个or条件
+                            Disjunction dis = Restrictions.disjunction();
+                            dis.add(Restrictions.like("id", filter));
+                            dis.add(Restrictions.like("accessKeyId", filter));
+                            dis.add(Restrictions.like("cdnType", filter));
+                            dis.add(Restrictions.like("domainName", filter));
+                            dis.add(Restrictions.like("gmtModified", filter));
+                            dis.add(Restrictions.like("gmtCreated", filter));
+                            dis.add(Restrictions.like("description", filter));
+                            dis.add(Restrictions.like("resourceGroupId", filter));
+                            criteria.add(dis);
+                        } else {
+                            criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        }
                     } else if (strings[1].equals("lt")) {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {
@@ -65,7 +81,31 @@ public class AliCdnDaoImpl implements AliCdnDao {
                 } else if (e.getKey().equals("orderDesc")) {
                     criteria.addOrder(Order.desc((String) e.getValue()));
                 } else {
-                    criteria.add(Restrictions.eq(e.getKey(), e.getValue()));
+                    String[] strings = e.getKey().split("@");
+                    if (strings.length == 1) {
+                        if (strings[0].equals("filter")) {
+                            String filter = "%" + e.getValue() + "%";
+                            // 多个or条件
+                            Disjunction dis = Restrictions.disjunction();
+                            dis.add(Restrictions.like("id", filter));
+                            dis.add(Restrictions.like("accessKeyId", filter));
+                            dis.add(Restrictions.like("cdnType", filter));
+                            dis.add(Restrictions.like("domainName", filter));
+                            dis.add(Restrictions.like("gmtModified", filter));
+                            dis.add(Restrictions.like("gmtCreated", filter));
+                            dis.add(Restrictions.like("description", filter));
+                            dis.add(Restrictions.like("resourceGroupId", filter));
+                            criteria.add(dis);
+                        } else {
+                            criteria.add(Restrictions.eq(strings[0], e.getValue()));
+                        }
+                    } else if (strings[1].equals("lt")) {
+                        criteria.add(Restrictions.lt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("gt")) {
+                        criteria.add(Restrictions.gt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("like")) {
+                        criteria.add(Restrictions.like(strings[0], e.getValue()));
+                    }
                 }
             }
         }

@@ -1,23 +1,15 @@
 package com.ywxt.Command;
 
-import com.ywxt.Dao.Impl.AliAccountDaoImpl;
-import com.ywxt.Dao.Impl.AliEcsDaoImpl;
+import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Domain.AliAccount;
-import com.ywxt.Domain.AliEcs;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
-import com.ywxt.Utils.RedisUtils;
-import org.hibernate.query.Query;
-import redis.clients.jedis.Jedis;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class TestCommand {
 

@@ -1,4 +1,4 @@
-package com.ywxt.Dao;
+package com.ywxt.Dao.Ali;
 
 import com.ywxt.Domain.AliEcs;
 import org.hibernate.Session;

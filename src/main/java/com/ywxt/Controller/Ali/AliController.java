@@ -47,7 +47,7 @@ public class AliController {
             }
         }
         if (!(request.getParameter("key") == null)) {
-            params.put("everyKey@like", request.getParameter("key"));
+            params.put("filter", request.getParameter("key"));
         }
         return new AliServiceImpl().getEcsListPage(params, pageNumber, pageSize);
     }
@@ -58,8 +58,11 @@ public class AliController {
     public JSONObject cdnDomainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
-        return new AliServiceImpl().getCdnDomainList(new HashMap<String, Object>() {{
-        }}, pageNumber, pageSize);
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        if (!(request.getParameter("key") == null)) {
+            params.put("filter", request.getParameter("key"));
+        }
+        return new AliServiceImpl().getCdnDomainList(params, pageNumber, pageSize);
     }
 
 
