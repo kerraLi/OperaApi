@@ -3,7 +3,7 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <!-- Generated 2016-7-8 1:31:59 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.ywxt.Domain.Godaddy.GodaddyCertificate" table="ali_ecs">
+    <class name="com.ywxt.Domain.Godaddy.GodaddyCertificate" table="godaddy_certificate">
         <!-- id主键设置 -->
         <id name="id" type="java.lang.Integer">
             <column name="id" not-null="true"/>
@@ -20,7 +20,7 @@
         <property name="locale" type="java.lang.String" length="10"/>
         <property name="commonName" type="java.lang.String" length="30"/>
         <property name="serialNumber" type="java.lang.String" length="30"/>
-        <property name="productGuid" type="java.lang.String" length="30"/>
+        <property name="productGuid" type="java.lang.String" length="100"/>
         <property name="certificateStatus" type="java.lang.String" length="20"/>
     </class>
 </hibernate-mapping>

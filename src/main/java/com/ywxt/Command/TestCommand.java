@@ -1,11 +1,15 @@
 package com.ywxt.Command;
 
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
+import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
+import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 
@@ -68,6 +72,18 @@ public class TestCommand {
 //        }
     }
 
+    private static void setGodaddyAccount() throws Exception {
+        GodaddyAccount account = new GodaddyAccount();
+        account.setUserName("yingmu007");
+        account.setAccessKeyId("dLDHSMnAAEN6_E1XDuVUJEhuwSpvrcCA59t");
+        account.setAccessKeySecret("E1axtvaUTwMNrQnzFoSFY6");
+        new GodaddyAccountServiceImpl().saveAccount(account);
+    }
+
+    private static void checkGodaddyAccount() throws Exception{
+//        new GodaddyAccountServiceImpl().checkAccount("aasd","asd");
+    }
+
     // normal account
     private static void getNormalAccount() {
         List<AliAccount> list = new AliAccountDaoImpl().getAliAccountsNormal();
@@ -79,12 +95,15 @@ public class TestCommand {
     public static void main(String[] args) throws Exception {
         System.out.println(123);
 
+        TestCommand.setGodaddyAccount();
+//        TestCommand.checkGodaddyAccount();
+
 //        TestCommand.saveAliAccount();
 //        TestCommand.getNormalAccount();
 //        TestCommand.getAliEcs();
 //        TestCommand.refreshAli();
 //        System.out.println(TestCommand.checkAccount());
-        TestCommand.saveAdmin();
+//        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
     }
 }

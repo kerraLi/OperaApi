@@ -56,11 +56,8 @@ public class CheckAli {
     // run
     public static void main(String[] args) throws Exception {
         try {
-            System.out.println("0");
             CheckAli.refreshData();
-            System.out.println("1");
             CheckAli.checkAccount();
-            System.out.println("2");
             CheckAli.checkEcsExpired();
         } catch (Exception e) {
             Map<String, String> param = new HashMap<String, String>();

@@ -1,6 +1,5 @@
 package com.ywxt.Service.Godaddy.Impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
 import com.ywxt.Dao.Godaddy.GodaddyCertificateDao;
 import com.ywxt.Dao.Godaddy.GodaddyDomainDao;
@@ -10,13 +9,20 @@ import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
+import com.ywxt.Handler.PropertyStrategyHandler;
 import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import net.sf.ezmorph.object.DateMorpher;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import net.sf.json.util.JSONUtils;
+import net.sf.json.util.PropertyFilter;
+import net.sf.json.util.PropertySetStrategy;
 
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GodaddyServiceImpl implements GodaddyService {
@@ -53,7 +59,7 @@ public class GodaddyServiceImpl implements GodaddyService {
     // 更新源数据
     public void freshSourceData() throws Exception {
         this.freshDomain();
-        this.freshCertificate();
+//        this.freshCertificate();
     }
 
     // 更新域名数据
@@ -68,13 +74,16 @@ public class GodaddyServiceImpl implements GodaddyService {
             inParam.put("limit", String.valueOf(pageSize));
             inParam.put("marker", markerDomain);
             String paramContext = HttpUtils.getParamContext(inParam);
-            JSONArray result = JSONArray.parseArray(this.getData("GET_DOMAIN_LIST", paramContext));
+            JSONArray result = JSONArray.fromObject(this.getData("GET_DOMAIN_LIST", paramContext));
             for (int i = 0; i < result.size(); i++) {
                 JSONObject object = (JSONObject) result.get(i);
+                object.put("accessKeyId", this.accessKeyId);
                 object.put("createdAt", object.getString("createdAt").replace("Z", " UTC"));
-                object.put("expires", object.getString("createdAt").replace("Z", " UTC"));
-                object.put("renewDeadline", object.getString("createdAt").replace("Z", " UTC"));
-                JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd'T'HH:mm:ss.SSS Z"}));
+                object.put("expires", object.getString("expires").replace("Z", " UTC"));
+                if (object.has("renewDeadline")) {
+                    object.put("renewDeadline", object.getString("renewDeadline").replace("Z", " UTC"));
+                }
+                JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd"}));
                 gdList.add((GodaddyDomain) JSONObject.toBean(object, GodaddyDomain.class));
                 if (i == (result.size() - 1)) {
                     markerDomain = object.getString("domain");
@@ -93,11 +102,19 @@ public class GodaddyServiceImpl implements GodaddyService {
         this.godaddyCertificateDao.deleteCertificateByAccessId(this.accessKeyId);
         String paramContext = "";
         List<GodaddyCertificate> gcList = new ArrayList<>();
-        JSONArray result = JSONArray.parseArray(this.getData("GET_CERTIFICATE_LIST", paramContext));
+        JSONArray result = JSONArray.fromObject(this.getData("GET_CERTIFICATE_LIST", paramContext));
         for (int i = 0; i < result.size(); i++) {
             JSONObject object = (JSONObject) result.get(i);
-            JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd'T'HH:mm:ss.SSSZ"}));
-            gcList.add((GodaddyCertificate) JSONObject.toBean(object, GodaddyCertificate.class));
+            object.put("accessKeyId", this.accessKeyId);
+            // 过滤字段
+            JsonConfig config = new JsonConfig();
+            // 设置属性包装器
+            config.setPropertySetStrategy(new PropertyStrategyHandler(PropertySetStrategy.DEFAULT));
+            // 设置要转换成的JavaBean
+            config.setRootClass(GodaddyCertificate.class);
+            // 日期转换
+            JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd HH:mm:ss"}));
+            gcList.add((GodaddyCertificate) JSONObject.toBean(object, config));
         }
         this.godaddyCertificateDao.saveCertificates(gcList);
     }

@@ -3,7 +3,6 @@ package com.ywxt.Domain.Godaddy;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.persistence.Entity;
-import java.lang.reflect.Field;
 import java.util.Date;
 
 @Entity
@@ -13,6 +12,7 @@ public class GodaddyDomain {
     private String accessKeyId;
     private String domain;
     private String domainId;
+    private String nameServers;
     private Date createdAt;
     private Date expires;
     private Date renewDeadline;
@@ -23,7 +23,7 @@ public class GodaddyDomain {
     private boolean holdRegistrar;
     private boolean locked;
     private boolean privacy;
-    // ACTIVE/
+    // ACTIVE/CANCELLED_REDEEMABLE
     private String status;
     // 是否报警
     private boolean isAlertExpired = false;
@@ -62,14 +62,6 @@ public class GodaddyDomain {
 
     public void setDomainId(String domainId) {
         this.domainId = domainId;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCretedAt(Date cretedAt) {
-        this.createdAt = cretedAt;
     }
 
     public Date getExpires() {
@@ -158,5 +150,21 @@ public class GodaddyDomain {
 
     public void setAlertExpired(boolean alertExpired) {
         isAlertExpired = alertExpired;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getNameServers() {
+        return nameServers;
+    }
+
+    public void setNameServers(String nameServers) {
+        this.nameServers = nameServers;
     }
 }

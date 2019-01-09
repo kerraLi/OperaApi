@@ -14,7 +14,7 @@
         <property name="nickname" type="java.lang.String" length="20" not-null="false"/>
         <property name="introduction" type="java.lang.String" length="20" not-null="false"/>
         <property name="avatar" type="java.lang.String" length="200" not-null="false"/>
-        <array name="roles" table="user_roles">
+        <array name="roles" table="user_role">
             <!-- 映射属性集合表的外键列  -->
             <key column="user_id" not-null="true"/>
             <!-- 映射集合属性的集合索引列 -->

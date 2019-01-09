@@ -1,11 +1,19 @@
 package com.ywxt.Service.Godaddy.Impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
+import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
+import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Service.Godaddy.GodaddyAccountService;
+import com.ywxt.Utils.HttpUtils;
+import com.ywxt.Utils.Parameter;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GodaddyAccountServiceImpl implements GodaddyAccountService {
 
@@ -18,11 +26,11 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
 
     // 新增/修改
     public int saveAccount(GodaddyAccount godaddyAccount) throws Exception {
-        // check ali key
+        // check key
         if (this.checkAccount(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret())) {
             godaddyAccount.setStatus("normal");
-            // todo update ali Data
-            // new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
+            // update Data
+            new GodaddyServiceImpl(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret()).freshSourceData();
         } else {
             godaddyAccount.setStatus("invalid");
         }
@@ -31,20 +39,32 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
 
     // 删除账号
     public boolean deleteAccount(int godaddyAccountId) {
-        // update ali Data
-        GodaddyAccount aliAccount = this.godaddyAccountDao.getAccount(godaddyAccountId);
-        if (aliAccount.getStatus().equals("normal")) {
-            // todo 删除ecs
-            // new AliEcsDaoImpl().deleteAliEcsByAccessId(aliAccount.getAccessKeyId());
-            // todo 删除cdn
-            // new AliCdnDaoImpl().deleteAliCdnByAccessId(aliAccount.getAccessKeyId());
+        // update Data
+        GodaddyAccount godaddyAccount = this.godaddyAccountDao.getAccount(godaddyAccountId);
+        if (godaddyAccount.getStatus().equals("normal")) {
+            // 删除ecs
+            new GodaddyDomainDaoImpl().deleteDomainByAccessId(godaddyAccount.getAccessKeyId());
+            // 删除cdn
+            new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(godaddyAccount.getAccessKeyId());
         }
         return this.godaddyAccountDao.deleteAccount(godaddyAccountId);
     }
 
     // 校验密钥
     public boolean checkAccount(String accessKeyId, String accessKeySecret) throws Exception {
-        // todo
+        try {
+            HashMap<String, String> inParam = new HashMap<>();
+            inParam.put("limit", "1");
+            String paramContext = HttpUtils.getParamContext(inParam);
+            Map<String, String> headerParams = new HashMap<String, String>();
+            headerParams.put("Authorization", "sso-key " + accessKeyId + ":" + accessKeySecret);
+            headerParams.put("Content-type", "application/json");
+            JSONArray array = JSONArray.parseArray(HttpUtils.sendConnGet(Parameter.godaddyUrl + Parameter.godaddyActions.get("GET_DOMAIN_LIST"), paramContext, headerParams));
+        } catch (IOException e) {
+            if (e.getMessage().equals("Unauthorized")) {
+                return false;
+            }
+        }
         return true;
     }
 

@@ -20,7 +20,7 @@ public class GodaddyCertificate {
     private String commonName;
     private String serialNumber;
     private String productGuid;
-    // 状态
+    // 状态ISSUED
     private String certificateStatus;
     // 是否报警
     private boolean isAlertExpired = false;

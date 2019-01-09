@@ -17,7 +17,7 @@ public class GodaddyAccount {
     private String status = "invalid";
 
 
-    private GodaddyAccount() {
+    public GodaddyAccount() {
 
     }
 
