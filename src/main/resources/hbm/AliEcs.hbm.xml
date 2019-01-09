@@ -9,12 +9,12 @@
             <column name="id" not-null="true"/>
             <generator class="identity"/>
         </id>
-        <property name="accessKeyId" type="java.lang.String" length="40" not-null="false"/>
-        <property name="instanceId" type="java.lang.String" length="50" not-null="false"/>
+        <property name="accessKeyId" type="java.lang.String" length="40" not-null="true"/>
+        <property name="instanceId" type="java.lang.String" length="50" not-null="true"/>
         <property name="instanceName" type="java.lang.String" length="50" not-null="true"/>
         <property name="instanceType" type="java.lang.String" length="20" not-null="true"/>
         <property name="instanceNetworkType" type="java.lang.String" length="20"/>
-        <!--<property name="instanceChargeType" type="java.lang.String" length="20"/>-->
+        <property name="instanceChargeType" type="java.lang.String" length="20"/>
         <property name="hostName" type="java.lang.String" length="50"/>
         <property name="imageId" type="java.lang.String" length="100"/>
         <property name="regionId" type="java.lang.String" length="30" not-null="true"/>

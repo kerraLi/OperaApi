@@ -1,15 +1,11 @@
 package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
-import com.ywxt.Utils.Parameter;
 
 import javax.persistence.Entity;
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.TimeZone;
 
 @Entity
@@ -21,7 +17,6 @@ public class AliEcs {
     private String instanceName;
     private String instanceType;
     private String instanceNetworkType;
-    // ?
     private String instanceChargeType;
     private String hostName;
     private String imageId;
@@ -122,11 +117,11 @@ public class AliEcs {
         this.instanceNetworkType = instanceNetworkType;
     }
 
-    public String getInstaceChargeType() {
+    public String getInstanceChargeType() {
         return instanceChargeType;
     }
 
-    public void setInstaceChargeType(String instaceChargeType) {
+    public void setInstanceChargeType(String instaceChargeType) {
         this.instanceChargeType = instaceChargeType;
     }
 

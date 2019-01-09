@@ -1,12 +1,14 @@
-package com.ywxt.Dao.Ali.Impl;
+package com.ywxt.Dao.Godaddy.Impl;
 
-import com.ywxt.Dao.Ali.AliEcsDao;
-import com.ywxt.Domain.Ali.AliEcs;
-import org.hibernate.*;
+import com.ywxt.Dao.Godaddy.GodaddyDomainDao;
+import com.ywxt.Domain.Godaddy.GodaddyDomain;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
-
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -14,20 +16,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AliEcsDaoImpl implements AliEcsDao {
+public class GodaddyDomainDaoImpl implements GodaddyDomainDao {
 
     private SessionFactory sessionFactory;
-    private String domain = "AliEcs";
+    private String domain = "GodaddyDomain";
 
-    public AliEcsDaoImpl() {
+    public GodaddyDomainDaoImpl() {
         Configuration configuration = new Configuration();
         this.sessionFactory = configuration.configure().buildSessionFactory();
     }
 
     // 获取数量
-    public int getAliEcsesTotal(HashMap<String, Object> params) {
+    public int getDomainTotal(HashMap<String, Object> params) {
         Session session = this.sessionFactory.openSession();
-        Criteria criteria = session.createCriteria(AliEcs.class);
+        Criteria criteria = session.createCriteria(GodaddyDomain.class);
         if (params != null) {
             for (Map.Entry<String, Object> e : params.entrySet()) {
                 if (e.getKey().equals("orderAsc")) {
@@ -43,21 +45,12 @@ public class AliEcsDaoImpl implements AliEcsDao {
                             Disjunction dis = Restrictions.disjunction();
                             dis.add(Restrictions.like("id", filter));
                             dis.add(Restrictions.like("accessKeyId", filter));
-                            dis.add(Restrictions.like("instanceId", filter));
-                            dis.add(Restrictions.like("instanceName", filter));
-                            dis.add(Restrictions.like("instanceType", filter));
-                            dis.add(Restrictions.like("instanceNetworkType", filter));
-                            dis.add(Restrictions.like("instanceChargeType", filter));
-                            dis.add(Restrictions.like("hostName", filter));
-                            dis.add(Restrictions.like("imageId", filter));
-                            dis.add(Restrictions.like("regionId", filter));
-                            dis.add(Restrictions.like("zoneId", filter));
-                            dis.add(Restrictions.like("creationTime", filter));
-                            dis.add(Restrictions.like("expiredTime", filter));
-                            dis.add(Restrictions.like("innerIps", filter));
-                            dis.add(Restrictions.like("publicIps", filter));
-                            dis.add(Restrictions.like("securityGroupIds", filter));
-                            dis.add(Restrictions.like("serialNumber", filter));
+                            dis.add(Restrictions.like("domain", filter));
+                            dis.add(Restrictions.like("domainId", filter));
+                            dis.add(Restrictions.like("createdAt", filter));
+                            dis.add(Restrictions.like("expires", filter));
+                            dis.add(Restrictions.like("renewDeadline", filter));
+                            dis.add(Restrictions.like("status", filter));
                             criteria.add(dis);
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
@@ -79,9 +72,9 @@ public class AliEcsDaoImpl implements AliEcsDao {
     }
 
     // 查找所有
-    public List<AliEcs> getAliEcsesList(HashMap<String, Object> params) {
+    public List<GodaddyDomain> getDomainList(HashMap<String, Object> params) {
         Session session = this.sessionFactory.openSession();
-        Criteria criteria = session.createCriteria(AliEcs.class);
+        Criteria criteria = session.createCriteria(GodaddyDomain.class);
         if (params != null) {
             for (Map.Entry<String, Object> e : params.entrySet()) {
                 if (e.getKey().equals("orderAsc")) {
@@ -97,21 +90,12 @@ public class AliEcsDaoImpl implements AliEcsDao {
                             Disjunction dis = Restrictions.disjunction();
                             dis.add(Restrictions.like("id", filter));
                             dis.add(Restrictions.like("accessKeyId", filter));
-                            dis.add(Restrictions.like("instanceId", filter));
-                            dis.add(Restrictions.like("instanceName", filter));
-                            dis.add(Restrictions.like("instanceType", filter));
-                            dis.add(Restrictions.like("instanceNetworkType", filter));
-                            dis.add(Restrictions.like("instanceChargeType", filter));
-                            dis.add(Restrictions.like("hostName", filter));
-                            dis.add(Restrictions.like("imageId", filter));
-                            dis.add(Restrictions.like("regionId", filter));
-                            dis.add(Restrictions.like("zoneId", filter));
-                            dis.add(Restrictions.like("creationTime", filter));
-                            dis.add(Restrictions.like("expiredTime", filter));
-                            dis.add(Restrictions.like("innerIps", filter));
-                            dis.add(Restrictions.like("publicIps", filter));
-                            dis.add(Restrictions.like("securityGroupIds", filter));
-                            dis.add(Restrictions.like("serialNumber", filter));
+                            dis.add(Restrictions.like("domain", filter));
+                            dis.add(Restrictions.like("domainId", filter));
+                            dis.add(Restrictions.like("createdAt", filter));
+                            dis.add(Restrictions.like("expires", filter));
+                            dis.add(Restrictions.like("renewDeadline", filter));
+                            dis.add(Restrictions.like("status", filter));
                             criteria.add(dis);
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
@@ -127,15 +111,15 @@ public class AliEcsDaoImpl implements AliEcsDao {
             }
         }
         criteria.addOrder(Order.asc("id"));
-        List<AliEcs> list = criteria.list();
+        List<GodaddyDomain> list = criteria.list();
         session.close();
         return list;
     }
 
     // 分页查找
-    public List<AliEcs> getAliEcsesList(HashMap<String, Object> params, int pageNumber, int pageSize) {
+    public List<GodaddyDomain> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) {
         Session session = this.sessionFactory.openSession();
-        Criteria criteria = session.createCriteria(AliEcs.class);
+        Criteria criteria = session.createCriteria(GodaddyDomain.class);
         if (params != null) {
             for (Map.Entry<String, Object> e : params.entrySet()) {
                 if (e.getKey().equals("orderAsc")) {
@@ -151,21 +135,12 @@ public class AliEcsDaoImpl implements AliEcsDao {
                             Disjunction dis = Restrictions.disjunction();
                             dis.add(Restrictions.like("id", filter));
                             dis.add(Restrictions.like("accessKeyId", filter));
-                            dis.add(Restrictions.like("instanceId", filter));
-                            dis.add(Restrictions.like("instanceName", filter));
-                            dis.add(Restrictions.like("instanceType", filter));
-                            dis.add(Restrictions.like("instanceNetworkType", filter));
-                            dis.add(Restrictions.like("instanceChargeType", filter));
-                            dis.add(Restrictions.like("hostName", filter));
-                            dis.add(Restrictions.like("imageId", filter));
-                            dis.add(Restrictions.like("regionId", filter));
-                            dis.add(Restrictions.like("zoneId", filter));
-                            dis.add(Restrictions.like("creationTime", filter));
-                            dis.add(Restrictions.like("expiredTime", filter));
-                            dis.add(Restrictions.like("innerIps", filter));
-                            dis.add(Restrictions.like("publicIps", filter));
-                            dis.add(Restrictions.like("securityGroupIds", filter));
-                            dis.add(Restrictions.like("serialNumber", filter));
+                            dis.add(Restrictions.like("domain", filter));
+                            dis.add(Restrictions.like("domainId", filter));
+                            dis.add(Restrictions.like("createdAt", filter));
+                            dis.add(Restrictions.like("expires", filter));
+                            dis.add(Restrictions.like("renewDeadline", filter));
+                            dis.add(Restrictions.like("status", filter));
                             criteria.add(dis);
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
@@ -183,30 +158,30 @@ public class AliEcsDaoImpl implements AliEcsDao {
         criteria.addOrder(Order.asc("id"));
         criteria.setFirstResult((pageNumber - 1) * pageSize);
         criteria.setMaxResults(pageSize);
-        List<AliEcs> list = criteria.list();
+        List<GodaddyDomain> list = criteria.list();
         session.close();
         return list;
     }
 
     // 批量保存
-    public void saveAliEcses(List<AliEcs> list) {
+    public void saveDomains(List<GodaddyDomain> list) {
         Session session = this.sessionFactory.openSession();
-        for (AliEcs aliEcs : list) {
-            session.save(aliEcs);
+        for (GodaddyDomain godaddyDomain : list) {
+            session.save(godaddyDomain);
         }
         session.close();
     }
 
     // 保存更新
-    public int saveAliEcs(AliEcs aliEcs) {
+    public int saveDomain(GodaddyDomain godaddyDomain) {
         Session session = this.sessionFactory.openSession();
-        int id = (int) session.save(aliEcs);
+        int id = (int) session.save(godaddyDomain);
         session.close();
         return id;
     }
 
     // 删除
-    public void deleteAliEcsByAccessId(String accessId) {
+    public void deleteDomainByAccessId(String accessId) {
         Session session = this.sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
 
