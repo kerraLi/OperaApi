@@ -66,7 +66,7 @@ public class CheckGodaddy {
     public static void main(String[] args) throws Exception {
         try {
             CheckGodaddy.refreshDate();
-            CheckGodaddy.checkDomain();
+//            CheckGodaddy.checkDomain();
             CheckGodaddy.checkCertifate();
         } catch (Exception e) {
             Map<String, String> param = new HashMap<String, String>();

@@ -25,7 +25,8 @@ public class TelegramUtils {
         }};
         String context = actions.get(action);
         for (Map.Entry<String, String> e : parameters.entrySet()) {
-            context = context.replace("{" + e.getKey() + "}", e.getValue());
+            String value = (e.getValue() == null) ? "" : e.getValue();
+            context = context.replace("{" + e.getKey() + "}", value);
         }
         String param = "chat_id=" + Parameter.telegramChatId + "&text=" + URLEncoder.encode(context, StandardCharsets.UTF_8);
         HttpUtils.sendConnGet(Parameter.telegramBotUrl + Parameter.telegramBotActions.get("SEND_MESSAGE"), param, new HashMap<String, String>());
