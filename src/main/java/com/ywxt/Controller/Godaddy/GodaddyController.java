@@ -34,7 +34,7 @@ public class GodaddyController extends CommonController {
         if (!(request.getParameter("ifExpired") == null)) {
             if (request.getParameter("ifExpired").equals("true")) {
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
                 Date thresholdDate = calendar.getTime();
                 params.put("orderAsc", "expires");
                 params.put("status", "ACTIVE");
@@ -58,15 +58,15 @@ public class GodaddyController extends CommonController {
         HashMap<String, Object> params = new HashMap<String, Object>();
         if (!(request.getParameter("status") == null)) {
             if (request.getParameter("status").equals("OTHERS")) {
-                params.put("status@ne", "ISSUED");
+                params.put("certificateStatus@ne", "ISSUED");
             } else {
-                params.put("status", request.getParameter("status"));
+                params.put("certificateStatus", request.getParameter("status"));
             }
         }
         if (!(request.getParameter("ifExpired") == null)) {
             if (request.getParameter("ifExpired").equals("true")) {
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
                 Date thresholdDate = calendar.getTime();
                 params.put("orderAsc", "validEnd");
                 params.put("certificateStatus", "ISSUED");

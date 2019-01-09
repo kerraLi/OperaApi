@@ -39,14 +39,6 @@ public class Parameter {
         put("GET_DOMAIN_LIST", "/v1/domains");
         put("GET_CERTIFICATE_LIST", "/v1/certificates");
     }};
-    public static Map<String, String> godaddyAccounts = new HashMap<String, String>() {{
-        // production
-        put("dLDHSMnAAEN6_E1XDuVUJEhuwSpvrcCA59t", "E1axtvaUTwMNrQnzFoSFY6");
-    }};
-    public static Map<String, String> godaddyAccountNames = new HashMap<String, String>() {{
-        // production
-        put("dLDHSMnAAEN6_E1XDuVUJEhuwSpvrcCA59t", "yingmu007 production");
-    }};
 
     // 报警阈值参数
     public static Map<String, String> alertThresholds = new HashMap<String, String>() {{

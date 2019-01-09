@@ -7,7 +7,6 @@ import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.ywxt.Dao.Ali.AliAccountDao;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
@@ -22,16 +21,15 @@ import java.util.List;
 
 public class AliAccountServiceImpl implements AliAccountService {
 
-    private AliAccountDao aliAccountDao = new AliAccountDaoImpl();
 
     // 列表
     public List<AliAccount> getList() {
-        return this.aliAccountDao.getAliAccounts();
+        return new AliAccountDaoImpl().getAliAccounts();
     }
 
     // 列表&校验金额
     public List<AliAccount> getList(boolean checkMoney) throws Exception {
-        List<AliAccount> list = this.aliAccountDao.getAliAccounts();
+        List<AliAccount> list = new AliAccountDaoImpl().getAliAccounts();
         if (checkMoney) {
             for (AliAccount aa : list) {
                 if (aa.getStatus().equals("normal")) {
@@ -68,13 +66,13 @@ public class AliAccountServiceImpl implements AliAccountService {
         } else {
             aliAccount.setStatus("invalid");
         }
-        return this.aliAccountDao.saveAliAccount(aliAccount);
+        return new AliAccountDaoImpl().saveAliAccount(aliAccount);
     }
 
     // 删除账号
     public boolean deleteAccount(int aliAccountId) {
         // update ali Data
-        AliAccount aliAccount = this.aliAccountDao.getAliAccount(aliAccountId);
+        AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(aliAccountId);
         if (aliAccount.getStatus().equals("normal")) {
             // update Data & 异步
             AsyncHandler handler = new AsyncHandler() {
@@ -88,7 +86,7 @@ public class AliAccountServiceImpl implements AliAccountService {
             };
             AsyncUtils.asyncWork(handler);
         }
-        return this.aliAccountDao.deleteAliAccount(aliAccountId);
+        return new AliAccountDaoImpl().deleteAliAccount(aliAccountId);
     }
 
     // 校验密钥

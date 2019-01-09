@@ -11,7 +11,6 @@ import com.ywxt.Utils.RedisUtils;
 
 public class UserServiceImpl implements UserService {
 
-    private UserDao userDao = new UserDaoImpl();
 
     // 登陆
     public String login(String clientUsername, String clientPassword) throws Exception {
@@ -43,11 +42,11 @@ public class UserServiceImpl implements UserService {
 
     // 获取用户
     public User getUserById(long id) {
-        return this.userDao.getUserById(id);
+        return new UserDaoImpl().getUserById(id);
     }
 
     // 获取用户
-    public User getUserByUsername(String username) throws Exception{
-        return this.userDao.getUserByUsername(username);
+    public User getUserByUsername(String username) throws Exception {
+        return new UserDaoImpl().getUserByUsername(username);
     }
 }

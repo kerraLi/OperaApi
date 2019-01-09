@@ -1,54 +1,52 @@
 package com.ywxt.Dao.Ali.Impl;
 
 import com.ywxt.Dao.Ali.AliAccountDao;
+import com.ywxt.Dao.CommonDao;
 import com.ywxt.Domain.Ali.AliAccount;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 
 import javax.persistence.criteria.*;
 import java.util.List;
 
-public class AliAccountDaoImpl implements AliAccountDao {
+public class AliAccountDaoImpl extends CommonDao implements AliAccountDao {
 
-
-    private SessionFactory sessionFactory;
-
-    public AliAccountDaoImpl() {
-        Configuration configuration = new Configuration();
-        this.sessionFactory = configuration.configure().buildSessionFactory();
-    }
+    protected String domain = "AliAccount";
 
     // 根据id查找账号
     public AliAccount getAliAccount(int id) {
-        Session session = this.sessionFactory.openSession();
         AliAccount aliAccount = (AliAccount) session.get(AliAccount.class, id);
+        this.closeSession();
         return aliAccount;
     }
 
     // 根据accessKeyId查找账号
-    public AliAccount getAliAccount(String accessKeyId) {
-        Session session = this.sessionFactory.openSession();
+    public AliAccount getAliAccount(String accessKeyId) throws Exception {
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<AliAccount> criteriaQuery = criteriaBuilder.createQuery(AliAccount.class);
         Root<AliAccount> from = criteriaQuery.from(AliAccount.class);
         // 设置查询属性
         criteriaQuery.select(from).where(from.get("accessKeyId").in(accessKeyId));
-        return (AliAccount) session.createQuery(criteriaQuery).getResultList().get(0);
+        List<AliAccount> list = session.createQuery(criteriaQuery).getResultList();
+        if (list.size() == 0) {
+            throw new Exception("无该账号");
+        }
+        AliAccount aliAccount = (AliAccount) list.get(0);
+        this.closeSession();
+        return aliAccount;
     }
 
     // 获取正常账号
     public List<AliAccount> getAliAccountsNormal() {
-        Session session = this.sessionFactory.openSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<AliAccount> criteriaQuery = criteriaBuilder.createQuery(AliAccount.class);
         Root<AliAccount> root = criteriaQuery.from(AliAccount.class);
         // 查询条件
         Predicate predicate = criteriaBuilder.equal(root.get("status"), "normal");
         criteriaQuery.where(predicate);
-
-        return session.createQuery(criteriaQuery).getResultList();
+        List<AliAccount> list = session.createQuery(criteriaQuery).getResultList();
+        this.closeSession();
+        return list;
     }
 
 
@@ -58,42 +56,45 @@ public class AliAccountDaoImpl implements AliAccountDao {
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<AliAccount> criteriaQuery = criteriaBuilder.createQuery(AliAccount.class);
         criteriaQuery.from(AliAccount.class);
-        return session.createQuery(criteriaQuery).getResultList();
+        List<AliAccount> list = session.createQuery(criteriaQuery).getResultList();
+        this.closeSession();
+        return list;
     }
 
     // 保存更新
     public int saveAliAccount(AliAccount aliAccount) {
-        Transaction transaction = null;
-        // try-with-resource 自动关闭资源
-        try (Session session = this.sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            int id = (int) session.save(aliAccount);
-            transaction.commit();
-            return id;
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
+        int id;
+        if (aliAccount.getId() != 0) {
+            id = aliAccount.getId();
+            try {
+                session.beginTransaction();
+                session.update(aliAccount);
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            } finally {
+                this.closeSession();
             }
-            throw e;
+        } else {
+            id = (int) session.save(aliAccount);
+            this.closeSession();
         }
+        return id;
     }
 
     // 删除
     public boolean deleteAliAccount(int aliAccountId) {
-        Transaction transaction = null;
-        // try-with-resource 自动关闭资源
-        try (Session session = this.sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            AliAccount aliAccount = (AliAccount) session.get(AliAccount.class, aliAccountId);
+        AliAccount aliAccount = (AliAccount) session.get(AliAccount.class, aliAccountId);
+        try {
+            session.beginTransaction();
             session.delete(aliAccount);
-            transaction.commit();
-            return true;
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw e;
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            this.closeSession();
         }
+        return true;
     }
 
 }

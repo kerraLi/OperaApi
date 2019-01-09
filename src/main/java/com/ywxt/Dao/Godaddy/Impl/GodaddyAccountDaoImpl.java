@@ -1,11 +1,8 @@
 package com.ywxt.Dao.Godaddy.Impl;
 
+import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,87 +10,89 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-public class GodaddyAccountDaoImpl implements GodaddyAccountDao {
+public class GodaddyAccountDaoImpl extends CommonDao implements GodaddyAccountDao {
 
-    private SessionFactory sessionFactory;
-
-    public GodaddyAccountDaoImpl() {
-        Configuration configuration = new Configuration();
-        this.sessionFactory = configuration.configure().buildSessionFactory();
-    }
+    protected String domain = "GodaddyAccount";
 
     // 根据id查找账号
     public GodaddyAccount getAccount(int id) {
-        Session session = this.sessionFactory.openSession();
         GodaddyAccount godaddyAccount = (GodaddyAccount) session.get(GodaddyAccount.class, id);
+        this.closeSession();
         return godaddyAccount;
     }
 
     // 根据accessKeyId查找账号
-    public GodaddyAccount getAccount(String accessKeyId) {
-        Session session = this.sessionFactory.openSession();
+    public GodaddyAccount getAccount(String accessKeyId) throws Exception {
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<GodaddyAccount> criteriaQuery = criteriaBuilder.createQuery(GodaddyAccount.class);
         Root<GodaddyAccount> from = criteriaQuery.from(GodaddyAccount.class);
         // 设置查询属性
         criteriaQuery.select(from).where(from.get("accessKeyId").in(accessKeyId));
-        return (GodaddyAccount) session.createQuery(criteriaQuery).getResultList().get(0);
+        List<GodaddyAccount> list = session.createQuery(criteriaQuery).getResultList();
+        if (list.size() == 0) {
+            throw new Exception("无该账号");
+        }
+        GodaddyAccount godaddyAccount = (GodaddyAccount) list.get(0);
+        this.closeSession();
+        return godaddyAccount;
     }
 
     // 获取正常账号
     public List<GodaddyAccount> getAccountsNormal() {
-        Session session = this.sessionFactory.openSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<GodaddyAccount> criteriaQuery = criteriaBuilder.createQuery(GodaddyAccount.class);
         Root<GodaddyAccount> root = criteriaQuery.from(GodaddyAccount.class);
         // 查询条件
         Predicate predicate = criteriaBuilder.equal(root.get("status"), "normal");
         criteriaQuery.where(predicate);
-
-        return session.createQuery(criteriaQuery).getResultList();
+        List<GodaddyAccount> list = session.createQuery(criteriaQuery).getResultList();
+        this.closeSession();
+        return list;
     }
 
     // 账号列表
     public List<GodaddyAccount> getAccounts() {
-        Session session = this.sessionFactory.openSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<GodaddyAccount> criteriaQuery = criteriaBuilder.createQuery(GodaddyAccount.class);
         criteriaQuery.from(GodaddyAccount.class);
-        return session.createQuery(criteriaQuery).getResultList();
+        List<GodaddyAccount> list = session.createQuery(criteriaQuery).getResultList();
+        this.closeSession();
+        return list;
     }
 
     // 保存更新
     public int saveAccount(GodaddyAccount account) {
-        Transaction transaction = null;
-        // try-with-resource 自动关闭资源
-        try (Session session = this.sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            int id = (int) session.save(account);
-            transaction.commit();
-            return id;
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
+        int id;
+        if (account.getId() != 0) {
+            id = account.getId();
+            try {
+                session.beginTransaction();
+                session.update(account);
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+            } finally {
+                this.closeSession();
             }
-            throw e;
+        } else {
+            id = (int) session.save(account);
+            this.closeSession();
         }
+        return id;
     }
 
     // 删除
     public boolean deleteAccount(int accountId) {
-        Transaction transaction = null;
-        // try-with-resource 自动关闭资源
-        try (Session session = this.sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            GodaddyAccount godaddyAccount = (GodaddyAccount) session.get(GodaddyAccount.class, accountId);
+        GodaddyAccount godaddyAccount = (GodaddyAccount) session.get(GodaddyAccount.class, accountId);
+        try {
+            session.beginTransaction();
             session.delete(godaddyAccount);
-            transaction.commit();
-            return true;
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw e;
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            this.closeSession();
         }
+        return true;
     }
 }

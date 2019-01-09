@@ -9,9 +9,7 @@ import com.aliyuncs.ecs.model.v20140526.*;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Dao.Ali.AliAccountDao;
 import com.ywxt.Dao.Ali.AliCdnDao;
-import com.ywxt.Dao.Ali.AliEcsDao;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
@@ -28,15 +26,12 @@ public class AliServiceImpl implements AliService {
 
     private String accessKeyId;
     private String accessKeySecret;
-    private AliAccountDao aliAccountDao = new AliAccountDaoImpl();
-    private AliEcsDao aliEcsDao = new AliEcsDaoImpl();
-    private AliCdnDao aliCdnDao = new AliCdnDaoImpl();
 
     public AliServiceImpl() {
     }
 
-    public AliServiceImpl(String accessKeyId) {
-        AliAccount aliAccount = this.aliAccountDao.getAliAccount(accessKeyId);
+    public AliServiceImpl(String accessKeyId) throws Exception {
+        AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(accessKeyId);
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = aliAccount.getAccessKeySecret();
     }
@@ -97,7 +92,7 @@ public class AliServiceImpl implements AliService {
                 pageNumber++;
             }
         }
-        this.aliEcsDao.saveAliEcses(aeList);
+        new AliEcsDaoImpl().saveAliEcses(aeList);
     }
 
     // 更新cdn数据
@@ -126,12 +121,12 @@ public class AliServiceImpl implements AliService {
                 pageNumber++;
             }
         }
-        this.aliCdnDao.saveAliCdns(acList);
+        new AliCdnDaoImpl().saveAliCdns(acList);
     }
 
     // ecs-查询所有
     public List<AliEcs> getEcsList(HashMap<String, Object> params) throws Exception {
-        List<AliEcs> list = this.aliEcsDao.getAliEcsesList(params);
+        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(params);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -145,7 +140,7 @@ public class AliServiceImpl implements AliService {
 
     // ecs-查询所有实例的详细信息&分页
     public JSONObject getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<AliEcs> list = this.aliEcsDao.getAliEcsesList(params, pageNumber, pageSize);
+        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -155,7 +150,7 @@ public class AliServiceImpl implements AliService {
             }
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", this.aliEcsDao.getAliEcsesTotal(params));
+        jsonObject.put("total", new AliEcsDaoImpl().getAliEcsesTotal(params));
         jsonObject.put("items", list);
         return jsonObject;
     }
@@ -201,9 +196,9 @@ public class AliServiceImpl implements AliService {
 
     // CDN-域名列表&分页信息
     public JSONObject getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<AliCdn> list = this.aliCdnDao.getCdnList(params, pageNumber, pageSize);
+        List<AliCdn> list = new AliCdnDaoImpl().getCdnList(params, pageNumber, pageSize);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", this.aliCdnDao.getCdnTotal(params));
+        jsonObject.put("total", new AliCdnDaoImpl().getCdnTotal(params));
         jsonObject.put("items", list);
         return jsonObject;
     }

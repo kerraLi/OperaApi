@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface GodaddyCertificateDao {
-    public abstract int getCertificateTotal(HashMap<String, Object> params);
+    public abstract int getCertificateTotal(HashMap<String, Object> params) throws Exception;
 
-    public abstract List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params);
+    public abstract List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception;
 
-    public abstract List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize);
+    public abstract List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 
     public abstract void saveCertificates(List<GodaddyCertificate> list);
 

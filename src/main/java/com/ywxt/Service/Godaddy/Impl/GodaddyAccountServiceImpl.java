@@ -19,11 +19,9 @@ import java.util.Map;
 
 public class GodaddyAccountServiceImpl implements GodaddyAccountService {
 
-    private GodaddyAccountDao godaddyAccountDao = new GodaddyAccountDaoImpl();
-
     // 列表
     public List<GodaddyAccount> getList() {
-        return this.godaddyAccountDao.getAccounts();
+        return new GodaddyAccountDaoImpl().getAccounts();
     }
 
     // 新增/修改
@@ -47,13 +45,13 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
         } else {
             godaddyAccount.setStatus("invalid");
         }
-        return this.godaddyAccountDao.saveAccount(godaddyAccount);
+        return new GodaddyAccountDaoImpl().saveAccount(godaddyAccount);
     }
 
     // 删除账号
     public boolean deleteAccount(int godaddyAccountId) {
         // update Data
-        GodaddyAccount godaddyAccount = this.godaddyAccountDao.getAccount(godaddyAccountId);
+        GodaddyAccount godaddyAccount = new GodaddyAccountDaoImpl().getAccount(godaddyAccountId);
         if (godaddyAccount.getStatus().equals("normal")) {
             // update Data & 异步
             AsyncHandler handler = new AsyncHandler() {
@@ -67,7 +65,7 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
             };
             AsyncUtils.asyncWork(handler);
         }
-        return this.godaddyAccountDao.deleteAccount(godaddyAccountId);
+        return new GodaddyAccountDaoImpl().deleteAccount(godaddyAccountId);
     }
 
     // 校验密钥

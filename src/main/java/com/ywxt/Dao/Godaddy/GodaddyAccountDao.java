@@ -7,7 +7,7 @@ import java.util.List;
 public interface GodaddyAccountDao {
     public abstract GodaddyAccount getAccount(int id);
 
-    public abstract GodaddyAccount getAccount(String accessKeyId);
+    public abstract GodaddyAccount getAccount(String accessKeyId) throws Exception;
 
     public abstract List<GodaddyAccount> getAccountsNormal();
 

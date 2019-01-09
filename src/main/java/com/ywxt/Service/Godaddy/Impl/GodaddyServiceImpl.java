@@ -26,16 +26,13 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     private String accessKeyId;
     private String accessKeySecret;
-    private GodaddyAccountDao godaddyAccountDa = new GodaddyAccountDaoImpl();
-    private GodaddyDomainDao godaddyDomainDao = new GodaddyDomainDaoImpl();
-    private GodaddyCertificateDao godaddyCertificateDao = new GodaddyCertificateDaoImpl();
 
     public GodaddyServiceImpl() {
 
     }
 
-    public GodaddyServiceImpl(String accessKeyId) {
-        GodaddyAccount godaddyAccount = this.godaddyAccountDa.getAccount(accessKeyId);
+    public GodaddyServiceImpl(String accessKeyId) throws Exception {
+        GodaddyAccount godaddyAccount = new GodaddyAccountDaoImpl().getAccount(accessKeyId);
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = godaddyAccount.getAccessKeySecret();
     }
@@ -61,7 +58,7 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     // 更新域名数据
     public void freshDomain() throws Exception {
-        this.godaddyDomainDao.deleteDomainByAccessId(this.accessKeyId);
+        new GodaddyDomainDaoImpl().deleteDomainByAccessId(this.accessKeyId);
         List<GodaddyDomain> gdList = new ArrayList<>();
         int pageSize = 100;
         // marker:"前一次查询最后一条数据"
@@ -91,12 +88,12 @@ public class GodaddyServiceImpl implements GodaddyService {
                 break;
             }
         }
-        this.godaddyDomainDao.saveDomains(gdList);
+        new GodaddyDomainDaoImpl().saveDomains(gdList);
     }
 
     // 更新证书
     public void freshCertificate() throws Exception {
-        this.godaddyCertificateDao.deleteCertificateByAccessId(this.accessKeyId);
+        new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(this.accessKeyId);
         String paramContext = "";
         List<GodaddyCertificate> gcList = new ArrayList<>();
         JSONArray result = JSONArray.fromObject(this.getData("GET_CERTIFICATE_LIST", paramContext));
@@ -113,13 +110,13 @@ public class GodaddyServiceImpl implements GodaddyService {
             JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd HH:mm:ss"}));
             gcList.add((GodaddyCertificate) JSONObject.toBean(object, config));
         }
-        this.godaddyCertificateDao.saveCertificates(gcList);
+        new GodaddyCertificateDaoImpl().saveCertificates(gcList);
     }
 
 
     // domain-查询所有域名
     public List<GodaddyDomain> getDomainList(HashMap<String, Object> params) throws Exception {
-        List<GodaddyDomain> list = this.godaddyDomainDao.getDomainList(params);
+        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(params);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -133,7 +130,7 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     // domain-查询所有域名&分页
     public Map<String, Object> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<GodaddyDomain> list = this.godaddyDomainDao.getDomainList(params, pageNumber, pageSize);
+        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -143,14 +140,14 @@ public class GodaddyServiceImpl implements GodaddyService {
             }
         }
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", this.godaddyCertificateDao.getCertificateTotal(params));
+        result.put("total", new GodaddyDomainDaoImpl().getDomainTotal(params));
         result.put("items", list);
         return result;
     }
 
     // certificates-查询所有证书
     public List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception {
-        List<GodaddyCertificate> list = this.godaddyCertificateDao.getCertificateList(params);
+        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -164,7 +161,7 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     // certificates-查询所有证书&分页
     public Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<GodaddyCertificate> list = this.godaddyCertificateDao.getCertificateList(params, pageNumber, pageSize);
+        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -175,7 +172,7 @@ public class GodaddyServiceImpl implements GodaddyService {
         }
         // DATE为空转换失败所以用map
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", this.godaddyCertificateDao.getCertificateTotal(params));
+        result.put("total", new GodaddyCertificateDaoImpl().getCertificateTotal(params));
         result.put("items", list);
         return result;
     }
