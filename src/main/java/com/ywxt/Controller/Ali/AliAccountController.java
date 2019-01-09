@@ -2,7 +2,7 @@ package com.ywxt.Controller.Ali;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Controller.CommonController;
-import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

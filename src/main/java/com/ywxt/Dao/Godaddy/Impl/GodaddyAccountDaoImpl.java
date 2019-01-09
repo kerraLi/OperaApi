@@ -1,7 +1,7 @@
 package com.ywxt.Dao.Godaddy.Impl;
 
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
-import com.ywxt.Domain.GodaddyAccount;
+import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

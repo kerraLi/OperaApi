@@ -3,12 +3,8 @@ package com.ywxt.Service.Ali;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
-import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;
-import com.aliyuncs.ecs.model.v20140526.DescribeInstanceStatusResponse;
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
-import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
-import com.ywxt.Domain.AliCdn;
-import com.ywxt.Domain.AliEcs;
+import com.ywxt.Domain.Ali.AliEcs;
 
 import java.util.HashMap;
 import java.util.List;

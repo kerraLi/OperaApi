@@ -2,7 +2,7 @@ package com.ywxt.Controller.Godaddy;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Controller.CommonController;
-import com.ywxt.Domain.GodaddyAccount;
+import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

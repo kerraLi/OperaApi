@@ -1,4 +1,4 @@
-package com.ywxt.Domain;
+package com.ywxt.Domain.Ali;
 
 
 import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;

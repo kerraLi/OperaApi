@@ -1,6 +1,6 @@
 package com.ywxt.Dao.Godaddy;
 
-import com.ywxt.Domain.GodaddyAccount;
+import com.ywxt.Domain.Godaddy.GodaddyAccount;
 
 import java.util.List;
 

@@ -11,7 +11,7 @@ import com.ywxt.Dao.Ali.AliAccountDao;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
-import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Service.Ali.AliAccountService;
 import com.ywxt.Utils.Parameter;
 

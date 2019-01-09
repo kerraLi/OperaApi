@@ -1,7 +1,7 @@
 package com.ywxt.Dao.Ali.Impl;
 
 import com.ywxt.Dao.Ali.AliEcsDao;
-import com.ywxt.Domain.AliEcs;
+import com.ywxt.Domain.Ali.AliEcs;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Disjunction;

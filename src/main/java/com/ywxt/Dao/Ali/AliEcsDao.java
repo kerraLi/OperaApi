@@ -1,10 +1,6 @@
 package com.ywxt.Dao.Ali;
 
-import com.ywxt.Domain.AliEcs;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
+import com.ywxt.Domain.Ali.AliEcs;
 
 import java.util.HashMap;
 import java.util.List;

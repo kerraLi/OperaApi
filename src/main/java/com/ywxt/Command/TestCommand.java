@@ -2,7 +2,7 @@ package com.ywxt.Command;
 
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
-import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;

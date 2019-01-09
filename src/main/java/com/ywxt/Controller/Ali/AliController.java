@@ -1,13 +1,7 @@
 package com.ywxt.Controller.Ali;
 
 import com.alibaba.fastjson.JSONObject;
-import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
-import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;
-import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
-import com.ywxt.Domain.AliAccount;
-import com.ywxt.Domain.AliCdn;
-import com.ywxt.Domain.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
@@ -17,9 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller

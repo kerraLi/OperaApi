@@ -1,10 +1,12 @@
-package com.ywxt.Domain;
+package com.ywxt.Domain.Ali;
+
+import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-public class GodaddyAccount {
+public class AliAccount {
 
     private int id;
     @NotBlank
@@ -15,23 +17,23 @@ public class GodaddyAccount {
     private String accessKeySecret;
     // status:正常使用normal/账号异常invalid（取数据错误）
     private String status = "invalid";
+    private QueryAccountBalanceResponse.Data balanceData;
+    private Boolean isAlertBalance = false;
 
-
-    private GodaddyAccount() {
-
+    public AliAccount() {
     }
 
-    public GodaddyAccount(String keyId, String keySecret) {
+    public AliAccount(String keyId, String keySecret) {
         this.accessKeyId = keyId;
         this.accessKeySecret = keySecret;
     }
 
-    public String getUserName() {
-        return userName;
+    public QueryAccountBalanceResponse.Data getBalanceData() {
+        return balanceData;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setBalanceData(QueryAccountBalanceResponse.Data balanceData) {
+        this.balanceData = balanceData;
     }
 
     public String getAccessKeyId() {
@@ -48,6 +50,22 @@ public class GodaddyAccount {
 
     public void setAccessKeySecret(String accessKeySecret) {
         this.accessKeySecret = accessKeySecret;
+    }
+
+    public Boolean getAlertBalance() {
+        return isAlertBalance;
+    }
+
+    public void setAlertBalance(Boolean alertBalance) {
+        isAlertBalance = alertBalance;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public int getId() {

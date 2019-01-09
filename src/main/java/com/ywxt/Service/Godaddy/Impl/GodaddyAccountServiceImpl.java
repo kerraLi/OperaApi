@@ -2,7 +2,7 @@ package com.ywxt.Service.Godaddy.Impl;
 
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
-import com.ywxt.Domain.GodaddyAccount;
+import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Service.Godaddy.GodaddyAccountService;
 
 import java.util.List;

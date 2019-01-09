@@ -1,6 +1,6 @@
 package com.ywxt.Dao.Ali;
 
-import com.ywxt.Domain.AliCdn;
+import com.ywxt.Domain.Ali.AliCdn;
 
 import java.util.HashMap;
 import java.util.List;

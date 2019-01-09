@@ -1,6 +1,6 @@
 package com.ywxt.Service.Ali;
 
-import com.ywxt.Domain.AliAccount;
+import com.ywxt.Domain.Ali.AliAccount;
 
 import java.util.List;
 
