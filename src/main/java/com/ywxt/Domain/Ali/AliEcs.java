@@ -13,6 +13,9 @@ import java.util.TimeZone;
 @Entity
 public class AliEcs {
     private int id;
+    // 账号
+    @NotFilterCloumn
+    private String userName;
     private String accessKeyId;
     // 标记是否即将过期
     private Boolean isAlertExpired = false;
@@ -225,5 +228,13 @@ public class AliEcs {
 
     public void setAlertMarked(Boolean alertMarked) {
         isAlertMarked = alertMarked;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

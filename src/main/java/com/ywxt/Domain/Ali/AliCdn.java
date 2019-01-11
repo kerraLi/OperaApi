@@ -15,6 +15,8 @@ import java.util.TimeZone;
 public class AliCdn {
 
     private int id;
+    @NotFilterCloumn
+    private String userName;
     private String accessKeyId;
     private String cdnType;
     @MarkCloumn
@@ -111,5 +113,13 @@ public class AliCdn {
 
     public void setAlertMarked(Boolean alertMarked) {
         isAlertMarked = alertMarked;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

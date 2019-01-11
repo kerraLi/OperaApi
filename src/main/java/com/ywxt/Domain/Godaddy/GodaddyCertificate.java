@@ -10,6 +10,8 @@ import java.util.Date;
 public class GodaddyCertificate {
 
     private int id;
+    @NotFilterCloumn
+    private String userName;
     private String accessKeyId;
     @MarkCloumn
     private String certificateId;
@@ -161,5 +163,13 @@ public class GodaddyCertificate {
 
     public void setAlertMarked(boolean alertMarked) {
         isAlertMarked = alertMarked;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

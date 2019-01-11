@@ -10,6 +10,8 @@ import java.util.Date;
 public class GodaddyDomain {
 
     private int id;
+    @NotFilterCloumn
+    private String userName;
     private String accessKeyId;
     private String domain;
     @MarkCloumn
@@ -178,5 +180,13 @@ public class GodaddyDomain {
 
     public void setAlertMarked(boolean alertMarked) {
         isAlertMarked = alertMarked;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

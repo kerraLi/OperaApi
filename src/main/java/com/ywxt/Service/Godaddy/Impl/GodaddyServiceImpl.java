@@ -1,11 +1,13 @@
 package com.ywxt.Service.Godaddy.Impl;
 
+import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
 import com.ywxt.Dao.Godaddy.GodaddyCertificateDao;
 import com.ywxt.Dao.Godaddy.GodaddyDomainDao;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
+import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
@@ -27,6 +29,8 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     private String accessKeyId;
     private String accessKeySecret;
+    private HashMap<String, String> userNameMap;
+
 
     public GodaddyServiceImpl() {
 
@@ -137,6 +141,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (Arrays.binarySearch(markeValues, gd.getDomainId()) >= 0) {
                 gd.setAlertMarked(true);
             }
+            gd.setUserName(this.getUserName(gd.getAccessKeyId()));
         }
         return list;
     }
@@ -158,6 +163,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (Arrays.binarySearch(markeValues, gd.getDomainId()) >= 0) {
                 gd.setAlertMarked(true);
             }
+            gd.setUserName(this.getUserName(gd.getAccessKeyId()));
         }
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("total", new GodaddyDomainDaoImpl().getDomainTotal(filterParams));
@@ -187,6 +193,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (Arrays.binarySearch(markeValues, gc.getCertificateId()) >= 0) {
                 gc.setAlertMarked(true);
             }
+            gc.setUserName(this.getUserName(gc.getAccessKeyId()));
         }
         return list;
     }
@@ -208,6 +215,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (Arrays.binarySearch(markeValues, gc.getCertificateId()) >= 0) {
                 gc.setAlertMarked(true);
             }
+            gc.setUserName(this.getUserName(gc.getAccessKeyId()));
         }
         // DATE为空转换失败所以用map
         Map<String, Object> result = new HashMap<String, Object>();
@@ -232,6 +240,17 @@ public class GodaddyServiceImpl implements GodaddyService {
         }
         params.remove("ifMarked");
         return params;
+    }
+
+    // 获取userName
+    private String getUserName(String accessKeyId) throws Exception {
+        if (this.userNameMap.get(accessKeyId) == null) {
+            GodaddyAccount godaddyAccount = new GodaddyAccountDaoImpl().getAccount(accessKeyId);
+            this.userNameMap.put(accessKeyId, godaddyAccount.getUserName());
+            return godaddyAccount.getUserName();
+        } else {
+            return this.userNameMap.get(accessKeyId);
+        }
     }
 
 }

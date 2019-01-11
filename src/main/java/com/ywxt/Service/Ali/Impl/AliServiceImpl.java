@@ -9,7 +9,6 @@ import com.aliyuncs.ecs.model.v20140526.*;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Dao.Ali.AliCdnDao;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
@@ -27,6 +26,7 @@ public class AliServiceImpl implements AliService {
 
     private String accessKeyId;
     private String accessKeySecret;
+    private HashMap<String, String> userNameMap = new HashMap<>();
 
     public AliServiceImpl() {
     }
@@ -147,6 +147,7 @@ public class AliServiceImpl implements AliService {
             if (Arrays.binarySearch(markeValues, ae.getInstanceId()) >= 0) {
                 ae.setAlertMarked(true);
             }
+            ae.setUserName(this.getUserName(ae.getAccessKeyId()));
         }
         return list;
     }
@@ -170,6 +171,7 @@ public class AliServiceImpl implements AliService {
             if (Arrays.binarySearch(markeValues, ae.getInstanceId()) >= 0) {
                 ae.setAlertMarked(true);
             }
+            ae.setUserName(this.getUserName(ae.getAccessKeyId()));
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("total", new AliEcsDaoImpl().getAliEcsesTotal(filterParams));
@@ -232,6 +234,7 @@ public class AliServiceImpl implements AliService {
             if (Arrays.binarySearch(markeValues, ac.getDomainName()) >= 0) {
                 ac.setAlertMarked(true);
             }
+            ac.setUserName(this.getUserName(ac.getAccessKeyId()));
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("total", new AliCdnDaoImpl().getCdnTotal(filterParams));
@@ -281,6 +284,17 @@ public class AliServiceImpl implements AliService {
         }
         params.remove("ifMarked");
         return params;
+    }
+
+    // 获取userName
+    private String getUserName(String accessKeyId) throws Exception {
+        if (this.userNameMap.get(accessKeyId) == null) {
+            AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(accessKeyId);
+            this.userNameMap.put(accessKeyId, aliAccount.getUserName());
+            return aliAccount.getUserName();
+        } else {
+            return this.userNameMap.get(accessKeyId);
+        }
     }
 
 }
