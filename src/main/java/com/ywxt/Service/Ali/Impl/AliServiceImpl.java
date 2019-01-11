@@ -18,6 +18,7 @@ import com.ywxt.Domain.Ali.AliCdn;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
+import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Utils.Parameter;
 
 import java.util.*;
@@ -124,15 +125,27 @@ public class AliServiceImpl implements AliService {
         new AliCdnDaoImpl().saveAliCdns(acList);
     }
 
+    // ecs-获取单个
+    public AliEcs getEcs(int id) {
+        return new AliEcsDaoImpl().getEcs(id);
+    }
+
     // ecs-查询所有
     public List<AliEcs> getEcsList(HashMap<String, Object> params) throws Exception {
-        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(params);
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliEcs.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliEcs.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(filterParams);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (AliEcs ae : list) {
             if (ae.getStatus().equals("Running")) {
                 ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
+            }
+            if (Arrays.binarySearch(markeValues, ae.getInstanceId()) >= 0) {
+                ae.setAlertMarked(true);
             }
         }
         return list;
@@ -140,7 +153,11 @@ public class AliServiceImpl implements AliService {
 
     // ecs-查询所有实例的详细信息&分页
     public JSONObject getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(params, pageNumber, pageSize);
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliEcs.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliEcs.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(filterParams, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -148,9 +165,14 @@ public class AliServiceImpl implements AliService {
             if (ae.getStatus().equals("Running")) {
                 ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
             }
+            // 二分查找前对数组排序
+            Arrays.sort(markeValues);
+            if (Arrays.binarySearch(markeValues, ae.getInstanceId()) >= 0) {
+                ae.setAlertMarked(true);
+            }
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", new AliEcsDaoImpl().getAliEcsesTotal(params));
+        jsonObject.put("total", new AliEcsDaoImpl().getAliEcsesTotal(filterParams));
         jsonObject.put("items", list);
         return jsonObject;
     }
@@ -194,11 +216,25 @@ public class AliServiceImpl implements AliService {
         client.getAcsResponse(request);
     }
 
+    // CDN-获取单个
+    public AliCdn getCdn(int id) {
+        return new AliCdnDaoImpl().getCdn(id);
+    }
+
     // CDN-域名列表&分页信息
     public JSONObject getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<AliCdn> list = new AliCdnDaoImpl().getCdnList(params, pageNumber, pageSize);
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliCdn.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliCdn.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<AliCdn> list = new AliCdnDaoImpl().getCdnList(filterParams, pageNumber, pageSize);
+        for (AliCdn ac : list) {
+            if (Arrays.binarySearch(markeValues, ac.getDomainName()) >= 0) {
+                ac.setAlertMarked(true);
+            }
+        }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", new AliCdnDaoImpl().getCdnTotal(params));
+        jsonObject.put("total", new AliCdnDaoImpl().getCdnTotal(filterParams));
         jsonObject.put("items", list);
         return jsonObject;
     }
@@ -227,6 +263,24 @@ public class AliServiceImpl implements AliService {
         request.setTaskId(taskId);
         DescribeRefreshTasksResponse response = client.getAcsResponse(request);
         return response.getTasks();
+    }
+
+    // 过滤弃用param
+    private HashMap<String, Object> filterParamMarked(HashMap<String, Object> params, String coulmn, String[] markeValues) {
+        boolean ifMarked = (params.get("ifMarked") != null) && (params.get("ifMarked").equals("true"));
+        if (ifMarked) {
+            if (markeValues.length > 0) {
+                params.put(coulmn + "@in", markeValues);
+            } else {
+                params.put(coulmn + "@eq", "");
+            }
+        } else {
+            if (markeValues.length > 0) {
+                params.put(coulmn + "@notIn", markeValues);
+            }
+        }
+        params.remove("ifMarked");
+        return params;
     }
 
 }

@@ -18,15 +18,31 @@ public class UserDaoImpl extends CommonDao implements UserDao {
     protected String domain = "User";
 
     public Long saveUser(User user) {
-        Long id = (Long) session.save(user);
-        this.closeSession();
-        return id;
+        try {
+            session.beginTransaction();
+            Long id = (Long) session.save(user);
+            session.getTransaction().commit();
+            return id;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
     }
 
     public User getUserById(long id) {
-        User u = (User) session.get(User.class, id);
-        this.closeSession();
-        return u;
+        try {
+            session.beginTransaction();
+            User u = (User) session.get(User.class, id);
+            session.getTransaction().commit();
+            return u;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
     }
 
     public User getUserByUsername(String username) throws Exception {

@@ -1,5 +1,7 @@
 package com.ywxt.Domain.Godaddy;
 
+import com.ywxt.Annotation.MarkCloumn;
+
 import javax.persistence.Entity;
 import java.util.Date;
 
@@ -8,6 +10,7 @@ public class GodaddyCertificate {
 
     private int id;
     private String accessKeyId;
+    @MarkCloumn
     private String certificateId;
     private Date createdAt;
     private Date validStart;
@@ -24,6 +27,8 @@ public class GodaddyCertificate {
     private String certificateStatus;
     // 是否报警
     private boolean isAlertExpired = false;
+    // 数据是否弃用
+    private boolean isAlertMarked = false;
 
 
     public GodaddyCertificate() {
@@ -147,5 +152,13 @@ public class GodaddyCertificate {
 
     public void setAlertExpired(boolean alertExpired) {
         isAlertExpired = alertExpired;
+    }
+
+    public boolean isAlertMarked() {
+        return isAlertMarked;
+    }
+
+    public void setAlertMarked(boolean alertMarked) {
+        isAlertMarked = alertMarked;
     }
 }

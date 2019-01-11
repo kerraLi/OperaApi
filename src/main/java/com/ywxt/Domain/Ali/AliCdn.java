@@ -2,6 +2,7 @@ package com.ywxt.Domain.Ali;
 
 
 import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;
+import com.ywxt.Annotation.MarkCloumn;
 
 import javax.persistence.Entity;
 import java.text.DateFormat;
@@ -15,11 +16,13 @@ public class AliCdn {
     private int id;
     private String accessKeyId;
     private String cdnType;
+    @MarkCloumn
     private String domainName;
     private Date gmtModified;
     private Date gmtCreated;
     private String description;
     private String resourceGroupId;
+    private Boolean isAlertMarked = false;
 
     public AliCdn() {
     }
@@ -99,5 +102,13 @@ public class AliCdn {
 
     public void setResourceGroupId(String resourceGroupId) {
         this.resourceGroupId = resourceGroupId;
+    }
+
+    public Boolean getAlertMarked() {
+        return isAlertMarked;
+    }
+
+    public void setAlertMarked(Boolean alertMarked) {
+        isAlertMarked = alertMarked;
     }
 }

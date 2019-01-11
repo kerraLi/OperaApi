@@ -41,6 +41,12 @@ public class CommonDao {
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
                         }
+                    } else if (strings[1].equals("in")) {
+                        criteria.add(Restrictions.in(strings[0], (String[]) e.getValue()));
+                    } else if (strings[1].equals("notIn")) {
+                        criteria.add(Restrictions.not(Restrictions.in(strings[0], (String[]) e.getValue())));
+                    } else if (strings[1].equals("eq")) {
+                        criteria.add(Restrictions.eq(strings[0], e.getValue()));
                     } else if (strings[1].equals("ne")) {
                         criteria.add(Restrictions.ne(strings[0], e.getValue()));
                     } else if (strings[1].equals("lt")) {

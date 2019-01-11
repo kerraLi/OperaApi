@@ -13,6 +13,20 @@ public class GodaddyDomainDaoImpl extends CommonDao implements GodaddyDomainDao 
 
     protected String domain = "GodaddyDomain";
 
+    public GodaddyDomain getDomain(int id) {
+        try {
+            session.beginTransaction();
+            GodaddyDomain godaddyDomain = (GodaddyDomain) session.get(GodaddyDomain.class, id);
+            session.getTransaction().commit();
+            return godaddyDomain;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
+    }
+
     // 获取数量
     public int getDomainTotal(HashMap<String, Object> params) throws Exception {
         Criteria criteria = this.getCriteria(GodaddyDomain.class, params);

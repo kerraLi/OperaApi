@@ -13,6 +13,20 @@ public class AliCdnDaoImpl extends CommonDao implements AliCdnDao {
 
     protected String domain = "AliCdn";
 
+    public AliCdn getCdn(int id) {
+        try {
+            session.beginTransaction();
+            AliCdn aliCdn = (AliCdn) session.get(AliCdn.class, id);
+            session.getTransaction().commit();
+            return aliCdn;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
+    }
+
     // 获取数量
     public int getCdnTotal(HashMap<String, Object> params) throws Exception {
         Criteria criteria = getCriteria(AliCdn.class, params);

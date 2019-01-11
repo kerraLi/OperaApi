@@ -14,6 +14,20 @@ public class AliEcsDaoImpl extends CommonDao implements AliEcsDao {
 
     private String domain = "AliEcs";
 
+    public AliEcs getEcs(int id) {
+        try {
+            session.beginTransaction();
+            AliEcs aliEcs = (AliEcs) session.get(AliEcs.class, id);
+            session.getTransaction().commit();
+            return aliEcs;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
+    }
+
     // 获取数量
     public int getAliEcsesTotal(HashMap<String, Object> params) throws Exception {
         Criteria criteria = this.getCriteria(AliEcs.class, params);

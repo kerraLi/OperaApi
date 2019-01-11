@@ -16,10 +16,10 @@
         <property name="avatar" type="java.lang.String" length="200" not-null="false"/>
         <array name="roles" table="user_role">
             <!-- 映射属性集合表的外键列  -->
-            <key column="user_id" not-null="true"/>
+            <key column="userId" not-null="true"/>
             <!-- 映射集合属性的集合索引列 -->
-            <list-index column="list_index"/>
-            <element type="java.lang.String" column="role_name"/>
+            <list-index column="listIndex"/>
+            <element type="java.lang.String" column="roleName"/>
         </array>
     </class>
 </hibernate-mapping>

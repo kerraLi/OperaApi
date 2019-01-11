@@ -5,12 +5,12 @@
 <hibernate-mapping>
     <class name="com.ywxt.Domain.ParameterIgnore" table="parameter_ignore">
         <!-- id主键设置 -->
-        <id name="id" type="java.lang.Long">
+        <id name="id" type="integer">
             <column name="id" not-null="true"/>
             <generator class="identity"/>
         </id>
         <property name="domain" type="java.lang.String" length="30" not-null="true"/>
-        <property name="column" type="java.lang.String" length="30" not-null="true"/>
-        <property name="ignore" type="java.lang.String" length="50" not-null="true"/>
+        <property name="markKey" type="java.lang.String" length="30" not-null="true"/>
+        <property name="markValue" type="java.lang.String" length="50" not-null="true"/>
     </class>
 </hibernate-mapping>

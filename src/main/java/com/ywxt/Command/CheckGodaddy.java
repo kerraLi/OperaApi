@@ -20,7 +20,7 @@ public class CheckGodaddy {
         List<GodaddyDomain> list = new GodaddyServiceImpl().getDomainList(new HashMap<String, Object>() {{
         }});
         for (GodaddyDomain domain : list) {
-            if (domain.isAlertExpired()) {
+            if (domain.isAlertExpired() && !domain.isAlertMarked()) {
                 DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("accountName", new GodaddyAccountDaoImpl().getAccount(domain.getAccessKeyId()).getUserName());
@@ -39,7 +39,7 @@ public class CheckGodaddy {
         List<GodaddyCertificate> list = new GodaddyServiceImpl().getCertificateList(new HashMap<String, Object>() {{
         }});
         for (GodaddyCertificate certificate : list) {
-            if (certificate.isAlertExpired()) {
+            if (certificate.isAlertExpired() && !certificate.isAlertMarked()) {
                 DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("accountName", new GodaddyAccountDaoImpl().getAccount(certificate.getAccessKeyId()).getUserName());

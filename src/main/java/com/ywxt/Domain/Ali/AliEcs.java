@@ -1,6 +1,7 @@
 package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
+import com.ywxt.Annotation.MarkCloumn;
 
 import javax.persistence.Entity;
 import java.text.DateFormat;
@@ -12,7 +13,11 @@ import java.util.TimeZone;
 public class AliEcs {
     private int id;
     private String accessKeyId;
+    // 标记是否即将过期
     private Boolean isAlertExpired = false;
+    // 标记数据是否弃用
+    private Boolean isAlertMarked = false;
+    @MarkCloumn
     private String instanceId;
     private String instanceName;
     private String instanceType;
@@ -211,5 +216,13 @@ public class AliEcs {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Boolean getAlertMarked() {
+        return isAlertMarked;
+    }
+
+    public void setAlertMarked(Boolean alertMarked) {
+        isAlertMarked = alertMarked;
     }
 }

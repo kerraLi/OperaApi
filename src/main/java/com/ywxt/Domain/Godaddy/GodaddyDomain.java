@@ -1,6 +1,7 @@
 package com.ywxt.Domain.Godaddy;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.MarkCloumn;
 
 import javax.persistence.Entity;
 import java.util.Date;
@@ -11,6 +12,7 @@ public class GodaddyDomain {
     private int id;
     private String accessKeyId;
     private String domain;
+    @MarkCloumn
     private String domainId;
     private String nameServers;
     private Date createdAt;
@@ -27,6 +29,8 @@ public class GodaddyDomain {
     private String status;
     // 是否报警
     private boolean isAlertExpired = false;
+    // 是否弃用
+    private boolean isAlertMarked = false;
 
 
     public GodaddyDomain() {
@@ -166,5 +170,13 @@ public class GodaddyDomain {
 
     public void setNameServers(String nameServers) {
         this.nameServers = nameServers;
+    }
+
+    public boolean isAlertMarked() {
+        return isAlertMarked;
+    }
+
+    public void setAlertMarked(boolean alertMarked) {
+        isAlertMarked = alertMarked;
     }
 }

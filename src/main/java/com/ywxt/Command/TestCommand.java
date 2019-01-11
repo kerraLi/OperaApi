@@ -4,6 +4,7 @@ import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
+import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.User;
@@ -11,6 +12,7 @@ import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
+import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
@@ -106,10 +108,20 @@ public class TestCommand {
         }
     }
 
+    private static void setIgnore() throws Exception{
+        AliEcs aliEcs = new AliEcs();
+        aliEcs.setInstanceId("aaaaaaaaaa");
+//        new ParameterIgnoreServiceImpl().saveMarked(aliEcs);
+//        boolean a = new ParameterIgnoreServiceImpl().checkIfMarked(aliEcs);
+        new ParameterIgnoreServiceImpl().deleteMarked(aliEcs);
+//        System.out.println(a);
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(123);
 
-        TestCommand.checkGodaddyAccount();
+//        TestCommand.setIgnore();
+//        TestCommand.checkGodaddyAccount();
 //        TestCommand.setGodaddyAccount();
 //        TestCommand.checkGodaddyAccount();
 
@@ -118,7 +130,7 @@ public class TestCommand {
 //        TestCommand.getAliEcs();
 //        TestCommand.refreshAli();
 //        System.out.println(TestCommand.checkAccount());
-//        TestCommand.saveAdmin();
+        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
 
     }

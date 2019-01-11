@@ -24,5 +24,6 @@
         <mapping resource="hbm/GodaddyAccount.hbm.xml"/>
         <mapping resource="hbm/GodaddyDomain.hbm.xml"/>
         <mapping resource="hbm/GodaddyCertifacate.hbm.xml"/>
+        <mapping resource="hbm/ParameterIgnore.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

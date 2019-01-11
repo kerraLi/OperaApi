@@ -9,9 +9,9 @@ public class ParameterIgnore {
     // 忽略主体类型
     private String domain;
     // 忽略参照字段
-    private String column;
+    private String markKey;
     // 具体数据
-    private String ignore;
+    private String markValue;
 
     public int getId() {
         return id;
@@ -29,19 +29,19 @@ public class ParameterIgnore {
         this.domain = domain;
     }
 
-    public String getColumn() {
-        return column;
+    public String getMarkKey() {
+        return markKey;
     }
 
-    public void setColumn(String column) {
-        this.column = column;
+    public void setMarkKey(String markKey) {
+        this.markKey = markKey;
     }
 
-    public String getIgnore() {
-        return ignore;
+    public String getMarkValue() {
+        return markValue;
     }
 
-    public void setIgnore(String ignore) {
-        this.ignore = ignore;
+    public void setMarkValue(String markValue) {
+        this.markValue = markValue;
     }
 }

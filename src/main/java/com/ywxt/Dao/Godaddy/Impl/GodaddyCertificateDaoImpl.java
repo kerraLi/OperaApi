@@ -13,6 +13,19 @@ public class GodaddyCertificateDaoImpl extends CommonDao implements GodaddyCerti
 
     private String domain = "GodaddyCertificate";
 
+    public GodaddyCertificate getCertificate(int id) {
+        try {
+            session.beginTransaction();
+            GodaddyCertificate godaddyCertificate = (GodaddyCertificate) session.get(GodaddyCertificate.class, id);
+            session.getTransaction().commit();
+            return godaddyCertificate;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
+    }
     // 获取数量
     public int getCertificateTotal(HashMap<String, Object> params) throws Exception {
         Criteria criteria = this.getCriteria(GodaddyCertificate.class, params);

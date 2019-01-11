@@ -11,6 +11,7 @@ import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Handler.PropertyStrategyHandler;
 import com.ywxt.Service.Godaddy.GodaddyService;
+import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import net.sf.ezmorph.object.DateMorpher;
@@ -114,15 +115,27 @@ public class GodaddyServiceImpl implements GodaddyService {
     }
 
 
+    // domain
+    public GodaddyDomain getDomain(int id) {
+        return new GodaddyDomainDaoImpl().getDomain(id);
+    }
+
     // domain-查询所有域名
     public List<GodaddyDomain> getDomainList(HashMap<String, Object> params) throws Exception {
-        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(params);
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (GodaddyDomain gd : list) {
             if (gd.getStatus().equals("ACTIVE")) {
                 gd.setAlertExpired(gd.getExpires().before(thresholdDate));
+            }
+            if (Arrays.binarySearch(markeValues, gd.getDomainId()) >= 0) {
+                gd.setAlertMarked(true);
             }
         }
         return list;
@@ -130,7 +143,11 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     // domain-查询所有域名&分页
     public Map<String, Object> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(params, pageNumber, pageSize);
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -138,22 +155,37 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (gd.getStatus().equals("ACTIVE")) {
                 gd.setAlertExpired(gd.getExpires().before(thresholdDate));
             }
+            if (Arrays.binarySearch(markeValues, gd.getDomainId()) >= 0) {
+                gd.setAlertMarked(true);
+            }
         }
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", new GodaddyDomainDaoImpl().getDomainTotal(params));
+        result.put("total", new GodaddyDomainDaoImpl().getDomainTotal(filterParams));
         result.put("items", list);
         return result;
     }
 
+    // domain
+    public GodaddyCertificate getCertificate(int id) {
+        return new GodaddyCertificateDaoImpl().getCertificate(id);
+    }
+
     // certificates-查询所有证书
     public List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception {
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params);
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (GodaddyCertificate gc : list) {
             if (gc.getCertificateStatus().equals("ISSUED")) {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
+            }
+            if (Arrays.binarySearch(markeValues, gc.getCertificateId()) >= 0) {
+                gc.setAlertMarked(true);
             }
         }
         return list;
@@ -161,7 +193,11 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     // certificates-查询所有证书&分页
     public Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params, pageNumber, pageSize);
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -169,12 +205,33 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (gc.getCertificateStatus().equals("ISSUED")) {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
             }
+            if (Arrays.binarySearch(markeValues, gc.getCertificateId()) >= 0) {
+                gc.setAlertMarked(true);
+            }
         }
         // DATE为空转换失败所以用map
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", new GodaddyCertificateDaoImpl().getCertificateTotal(params));
+        result.put("total", new GodaddyCertificateDaoImpl().getCertificateTotal(filterParams));
         result.put("items", list);
         return result;
+    }
+
+    // 过滤弃用param
+    private HashMap<String, Object> filterParamMarked(HashMap<String, Object> params, String coulmn, String[] markeValues) {
+        boolean ifMarked = (params.get("ifMarked") != null) && (params.get("ifMarked").equals("true"));
+        if (ifMarked) {
+            if (markeValues.length > 0) {
+                params.put(coulmn + "@in", markeValues);
+            } else {
+                params.put(coulmn + "@eq", "");
+            }
+        } else {
+            if (markeValues.length > 0) {
+                params.put(coulmn + "@notIn", markeValues);
+            }
+        }
+        params.remove("ifMarked");
+        return params;
     }
 
 }
