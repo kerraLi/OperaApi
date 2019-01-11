@@ -2,6 +2,7 @@ package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
 import com.ywxt.Annotation.MarkCloumn;
+import com.ywxt.Annotation.NotFilterCloumn;
 
 import javax.persistence.Entity;
 import java.text.DateFormat;

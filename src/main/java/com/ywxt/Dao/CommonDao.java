@@ -1,7 +1,6 @@
 package com.ywxt.Dao;
 
-import com.ywxt.Domain.Ali.AliCdn;
-import com.ywxt.Domain.Godaddy.GodaddyAccount;
+import com.ywxt.Annotation.NotFilterCloumn;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,6 +9,7 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +37,16 @@ public class CommonDao {
                     String[] strings = e.getKey().split("@");
                     if (strings.length == 1) {
                         if (strings[0].equals("filter")) {
-                            // todo 检索
+                            String filter = "%" + (String) e.getValue() + "%";
+                            Field[] fields = c.getDeclaredFields();
+                            // 多个or条件 使用Disjunction
+                            Disjunction dis = Restrictions.disjunction();
+                            for (Field f : fields) {
+                                if (f.getType() == String.class && !f.isAnnotationPresent(NotFilterCloumn.class)) {
+                                    dis.add(Restrictions.like(f.getName(), filter));
+                                }
+                            }
+                            criteria.add(dis);
                         } else {
                             criteria.add(Restrictions.eq(strings[0], e.getValue()));
                         }
