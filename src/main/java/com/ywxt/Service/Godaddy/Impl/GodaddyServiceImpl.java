@@ -29,7 +29,7 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     private String accessKeyId;
     private String accessKeySecret;
-    private HashMap<String, String> userNameMap;
+    private HashMap<String, String> userNameMap = new HashMap<>();
 
 
     public GodaddyServiceImpl() {
