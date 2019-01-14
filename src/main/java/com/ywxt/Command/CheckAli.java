@@ -5,6 +5,7 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Utils.TelegramUtils;
 
 import java.text.DateFormat;
@@ -16,12 +17,14 @@ public class CheckAli {
     // 校验余额
     private static void checkAccount() throws Exception {
         List<AliAccount> list = new AliAccountServiceImpl().getList(true);
+        String action = "ALI_ACCOUNT_NO_MONEY";
         for (AliAccount aliAccount : list) {
             if (aliAccount.getAlertBalance()) {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("accountName", aliAccount.getUserName());
                 param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
-                TelegramUtils.sendMessage("ALI_ACCOUNT_NO_MONEY", param);
+                setMessage(action, aliAccount.getUserName(), param);
+                TelegramUtils.sendMessage(action, param);
             }
         }
     }
@@ -30,6 +33,7 @@ public class CheckAli {
     private static void checkEcsExpired() throws Exception {
         List<AliEcs> list = new AliServiceImpl().getEcsList(new HashMap<String, Object>() {{
         }});
+        String action = "ALI_ECS_EXPIRED";
         for (AliEcs aliEcs : list) {
             if (aliEcs.getAlertExpired() && !aliEcs.getAlertMarked()) {
                 DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
@@ -38,7 +42,8 @@ public class CheckAli {
                 param.put("ecsId", aliEcs.getInstanceId());
                 param.put("ecsName", aliEcs.getInstanceName());
                 param.put("expiredTime", dfOut.format(aliEcs.getExpiredTime()));
-                TelegramUtils.sendMessage("ALI_ECS_EXPIRED", param);
+                setMessage(action, aliEcs.getInstanceId(), param);
+                TelegramUtils.sendMessage(action, param);
             }
         }
     }
@@ -51,6 +56,11 @@ public class CheckAli {
                 new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
             }
         }
+    }
+
+    // 设置消息
+    private static void setMessage(String action, String themeId, Map<String, String> parameters) {
+        new MessageServiceImpl().create(action, themeId, parameters);
     }
 
     // run

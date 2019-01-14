@@ -16,6 +16,7 @@ public class GodaddyDomain {
     private String domain;
     @MarkCloumn
     private String domainId;
+    @NotFilterCloumn
     private String nameServers;
     private Date createdAt;
     private Date expires;

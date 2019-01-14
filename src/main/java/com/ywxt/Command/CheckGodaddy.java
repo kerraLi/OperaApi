@@ -6,6 +6,7 @@ import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
+import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Utils.TelegramUtils;
 
 import java.text.DateFormat;
@@ -19,6 +20,7 @@ public class CheckGodaddy {
     private static void checkDomain() throws Exception {
         List<GodaddyDomain> list = new GodaddyServiceImpl().getDomainList(new HashMap<String, Object>() {{
         }});
+        String action = "GODADDY_DOMAIN_EXPIRED";
         for (GodaddyDomain domain : list) {
             if (domain.isAlertExpired() && !domain.isAlertMarked()) {
                 DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
@@ -28,7 +30,8 @@ public class CheckGodaddy {
                 param.put("domain", domain.getDomain());
                 param.put("expiredTime", dfOut.format(domain.getExpires()));
                 param.put("expirationProtected", String.valueOf(domain.isExpirationProtected()));
-                TelegramUtils.sendMessage("GODADDY_DOMAIN_EXPIRED", param);
+                setMessage(action, domain.getDomain(), param);
+                TelegramUtils.sendMessage("", param);
             }
         }
     }
@@ -38,6 +41,7 @@ public class CheckGodaddy {
 
         List<GodaddyCertificate> list = new GodaddyServiceImpl().getCertificateList(new HashMap<String, Object>() {{
         }});
+        String action = "GODADDY_CERTIFICATE_EXPIRED";
         for (GodaddyCertificate certificate : list) {
             if (certificate.isAlertExpired() && !certificate.isAlertMarked()) {
                 DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
@@ -47,6 +51,7 @@ public class CheckGodaddy {
                 param.put("domain", certificate.getCommonName());
                 param.put("expiredTime", dfOut.format(certificate.getValidEnd()));
                 param.put("subjectAlternativeNames", certificate.getSubjectAlternativeNames());
+                setMessage(action, certificate.getCommonName(), param);
                 TelegramUtils.sendMessage("GODADDY_CERTIFICATE_EXPIRED", param);
             }
         }
@@ -62,11 +67,16 @@ public class CheckGodaddy {
         }
     }
 
+    // 设置消息
+    private static void setMessage(String action, String themeId, Map<String, String> parameters) {
+        new MessageServiceImpl().create(action, themeId, parameters);
+    }
+
     //    private static  void check
     public static void main(String[] args) throws Exception {
         try {
             CheckGodaddy.refreshDate();
-//            CheckGodaddy.checkDomain();
+            CheckGodaddy.checkDomain();
             CheckGodaddy.checkCertifate();
         } catch (Exception e) {
             Map<String, String> param = new HashMap<String, String>();

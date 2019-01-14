@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.PassToken;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Impl.UserServiceImpl;
+import com.ywxt.Service.WSMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +45,14 @@ public class UserController extends CommonController {
     public JSONObject logout(HttpServletRequest request) {
         String authToken = request.getHeader("Authorization");
         new UserServiceImpl().logout(authToken);
-        return this.returnObject(new HashMap<String, Object>() {{}});
+        return this.returnObject(new HashMap<String, Object>() {{
+        }});
+    }
+
+    @PassToken
+    @RequestMapping(value = {"/test"}, method = RequestMethod.GET)
+    @ResponseBody
+    public void test() {
+        new WSMessageService().sendToAllTerminal(1L, "测试发送");
     }
 }
