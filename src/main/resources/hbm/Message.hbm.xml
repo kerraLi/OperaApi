@@ -14,7 +14,9 @@
         <property name="title" type="java.lang.String" length="20" not-null="true"/>
         <property name="theme" type="java.lang.String" length="20" not-null="true"/>
         <property name="themeId" type="java.lang.String" length="100" not-null="true"/>
-        <property name="message" type="java.lang.String" length="200" not-null="true"/>
+        <property name="message" type="java.lang.String" length="500" not-null="true"/>
         <property name="status" type="java.lang.String" length="20" not-null="true"/>
+        <property name="imageUrl" type="java.lang.String" length="500" not-null="true"/>
+        <property name="evalMatches" type="java.lang.String" length="500" not-null="true"/>
     </class>
 </hibernate-mapping>

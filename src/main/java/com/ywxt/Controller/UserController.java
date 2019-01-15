@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.PassToken;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Impl.UserServiceImpl;
-import com.ywxt.Service.WSMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
-import java.util.Map;
 
 
 @Validated
@@ -50,16 +47,4 @@ public class UserController extends CommonController {
         }});
     }
 
-    @PassToken
-    @RequestMapping(value = {"/test"}, method = RequestMethod.GET)
-    @ResponseBody
-    public void test() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("timestamp", System.currentTimeMillis());
-        jsonObject.put("title", "续费");
-        jsonObject.put("status", "success");
-        jsonObject.put("id", "104");
-        jsonObject.put("message", "消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息");
-        new WSMessageService().sendToAllTerminal(1L, jsonObject.toJSONString());
-    }
 }

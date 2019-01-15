@@ -27,6 +27,25 @@ public class MessageDaoImpl extends CommonDao implements MessageDao {
         }
     }
 
+    // 批量保存状态
+    public void saveAliEcses(List<Integer> ids, String status) throws Exception {
+        try {
+            session.beginTransaction();
+            String hql = "update Message set status = :status, modifyTime = current_time() where id in (:ids) and status != :status2";
+            int updatedEntities = session.createQuery(hql)
+                    .setParameter("status", status)
+                    .setParameterList("ids", ids)
+                    .setParameter("status2", status)
+                    .executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
+    }
+
     public Message getById(int id) {
         try {
             session.beginTransaction();

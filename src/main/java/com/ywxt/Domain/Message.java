@@ -1,5 +1,7 @@
 package com.ywxt.Domain;
 
+import com.ywxt.Annotation.NotFilterCloumn;
+
 import java.util.Date;
 
 public class Message {
@@ -12,6 +14,10 @@ public class Message {
     private String themeId;
     private String message;
     private String status;
+    @NotFilterCloumn
+    private String imageUrl;
+    @NotFilterCloumn
+    private String evalMatches;
 
     public int getId() {
         return id;
@@ -75,5 +81,25 @@ public class Message {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean hasImageUrl() {
+        return !(this.imageUrl == null);
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getEvalMatches() {
+        return evalMatches;
+    }
+
+    public void setEvalMatches(String evalMatches) {
+        this.evalMatches = evalMatches;
     }
 }

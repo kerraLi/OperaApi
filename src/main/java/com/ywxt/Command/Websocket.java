@@ -61,12 +61,6 @@ public class Websocket {
         logger.debug("当前在线用户数为：{},所有终端个数为：{}", userSocket.size(), onlineCount);
     }
 
-    /**
-     * @param @param message 收到的消息
-     * @param @param session 该连接的session属性
-     * @Title: onMessage
-     * @Description: 收到消息后的操作
-     */
     @OnMessage
     public void onMessage(String message, Session session) {
         System.out.println("收到消息" + userId);
@@ -74,26 +68,32 @@ public class Websocket {
         if (session == null) logger.debug("session null");
     }
 
-    /**
-     * @param @param session 该连接的session
-     * @param @param error 发生的错误
-     * @Title: onError
-     * @Description: 连接发生错误时候的操作
-     */
     @OnError
     public void onError(Session session, Throwable error) {
         logger.debug("用户id为：{}的连接发送错误", this.userId);
         error.printStackTrace();
     }
 
-    /**
-     * @param @param  userId 用户id
-     * @param @param  message 发送的消息
-     * @param @return 发送成功返回true，反则返回false
-     * @Title: sendMessageToUser
-     * @Description: 发送消息给用户下的所有终端
-     */
-    public Boolean sendMessageToUser(Long userId, String message) {
+
+    // 发送给所有用户
+    public void sendMessageToAllUser(String message) {
+        for (Map.Entry<Long, Set<Websocket>> entry : userSocket.entrySet()) {
+            for (Websocket WS : entry.getValue()) {
+                System.out.println(WS.session.getId());
+                logger.debug("sessionId为:{}", WS.session.getId());
+                try {
+                    WS.session.getBasicRemote().sendText(message);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                    logger.debug(" 给用户id为：{}发送消息失败", userId);
+                }
+            }
+        }
+    }
+
+    // 发送给指定用户
+    public void sendMessageToUser(Long userId, String message) {
         if (userSocket.containsKey(userId)) {
             logger.debug(" 给用户id为：{}的所有终端发送消息：{}", userId, message);
             for (Websocket WS : userSocket.get(userId)) {
@@ -103,12 +103,9 @@ public class Websocket {
                 } catch (IOException e) {
                     e.printStackTrace();
                     logger.debug(" 给用户id为：{}发送消息失败", userId);
-                    return false;
                 }
             }
-            return true;
         }
         logger.debug("发送错误：当前连接不包含id为：{}的用户", userId);
-        return false;
     }
 }

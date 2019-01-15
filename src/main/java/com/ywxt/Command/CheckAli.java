@@ -59,8 +59,8 @@ public class CheckAli {
     }
 
     // 设置消息
-    private static void setMessage(String action, String themeId, Map<String, String> parameters) {
-        new MessageServiceImpl().create(action, themeId, parameters);
+    private static void setMessage(String action, String themeId, Map<String, String> parameters) throws Exception {
+        new MessageServiceImpl().create(action, themeId, parameters, new HashMap<String, String>());
     }
 
     // run

@@ -1,5 +1,6 @@
 package com.ywxt.Command;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
@@ -16,7 +17,6 @@ import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
-import net.sf.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -119,7 +119,13 @@ public class TestCommand {
 
     public static void main(String[] args) throws Exception {
         System.out.println(123);
-
+        System.out.println("发送消息");
+        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
+        jsonObject.put("timestamp", System.currentTimeMillis());
+        jsonObject.put("id", 1);
+        jsonObject.put("themeId", "2");
+        jsonObject.put("message", "message");
+        new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
 //        TestCommand.setIgnore();
 //        TestCommand.checkGodaddyAccount();
 //        TestCommand.setGodaddyAccount();
@@ -130,7 +136,7 @@ public class TestCommand {
 //        TestCommand.getAliEcs();
 //        TestCommand.refreshAli();
 //        System.out.println(TestCommand.checkAccount());
-        TestCommand.saveAdmin();
+//        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
 
     }
