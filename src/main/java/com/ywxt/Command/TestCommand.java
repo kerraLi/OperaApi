@@ -13,15 +13,13 @@ import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
+import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class TestCommand {
 
@@ -108,7 +106,7 @@ public class TestCommand {
         }
     }
 
-    private static void setIgnore() throws Exception{
+    private static void setIgnore() throws Exception {
         AliEcs aliEcs = new AliEcs();
         aliEcs.setInstanceId("aaaaaaaaaa");
 //        new ParameterIgnoreServiceImpl().saveMarked(aliEcs);
@@ -120,12 +118,18 @@ public class TestCommand {
     public static void main(String[] args) throws Exception {
         System.out.println(123);
         System.out.println("发送消息");
-        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
-        jsonObject.put("timestamp", System.currentTimeMillis());
-        jsonObject.put("id", 1);
-        jsonObject.put("themeId", "2");
-        jsonObject.put("message", "message");
-        new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
+//        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("timestamp", System.currentTimeMillis());
+//        jsonObject.put("id", 1);
+//        jsonObject.put("themeId", "2");
+//        jsonObject.put("message", "message");
+//        new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("accountName", "account");
+        param.put("ecsId", "ecsId");
+        param.put("ecsName", "ecsTime");
+        param.put("expiredTime", "时间");
+        new MessageServiceImpl().create("ALI_ECS_EXPIRED", "aaaaaaaa", new HashMap<String, String>(), new HashMap<String, String>());
 //        TestCommand.setIgnore();
 //        TestCommand.checkGodaddyAccount();
 //        TestCommand.setGodaddyAccount();
