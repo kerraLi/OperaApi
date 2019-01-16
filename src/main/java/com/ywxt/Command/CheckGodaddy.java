@@ -37,8 +37,7 @@ public class CheckGodaddy {
     }
 
     // 校验证书有效期
-    private static void checkCertifate() throws Exception {
-
+    private static void checkCertificate() throws Exception {
         List<GodaddyCertificate> list = new GodaddyServiceImpl().getCertificateList(new HashMap<String, Object>() {{
         }});
         String action = "GODADDY_CERTIFICATE_EXPIRED";
@@ -58,7 +57,7 @@ public class CheckGodaddy {
     }
 
     // 刷新数据
-    private static void refreshDate() throws Exception {
+    private static void refreshData() throws Exception {
         List<GodaddyAccount> list = new GodaddyAccountServiceImpl().getList();
         for (GodaddyAccount godaddyAccount : list) {
             if (godaddyAccount.getStatus().equals("normal")) {
@@ -72,12 +71,40 @@ public class CheckGodaddy {
         new MessageServiceImpl().create(action, themeId, parameters, new HashMap<String, String>());
     }
 
+    // export
+    public static void exportCheck(String action) {
+        try {
+            switch (action) {
+                case "refresh":
+                    CheckGodaddy.refreshData();
+                    break;
+                case "domain":
+                    CheckGodaddy.checkDomain();
+                    break;
+                case "certificate":
+                    CheckGodaddy.checkCertificate();
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            try {
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("message", e.getMessage());
+                param.put("class", e.getClass().toString());
+                TelegramUtils.sendMessage("ERROR", param);
+            } catch (Exception e2) {
+                System.out.println(e2.getMessage());
+            }
+        }
+    }
+
     //    private static  void check
     public static void main(String[] args) throws Exception {
         try {
-            CheckGodaddy.refreshDate();
+            CheckGodaddy.refreshData();
             CheckGodaddy.checkDomain();
-            CheckGodaddy.checkCertifate();
+            CheckGodaddy.checkCertificate();
         } catch (Exception e) {
             Map<String, String> param = new HashMap<String, String>();
             param.put("message", e.getMessage());

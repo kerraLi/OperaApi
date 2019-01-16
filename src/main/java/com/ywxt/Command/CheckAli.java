@@ -16,17 +16,18 @@ public class CheckAli {
 
     // 校验余额
     private static void checkAccount() throws Exception {
-        List<AliAccount> list = new AliAccountServiceImpl().getList(true);
-        String action = "ALI_ACCOUNT_NO_MONEY";
-        for (AliAccount aliAccount : list) {
-            if (aliAccount.getAlertBalance()) {
-                Map<String, String> param = new HashMap<String, String>();
-                param.put("accountName", aliAccount.getUserName());
-                param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
-                setMessage(action, aliAccount.getUserName(), param);
-                TelegramUtils.sendMessage(action, param);
-            }
-        }
+        System.out.println("account");
+//        List<AliAccount> list = new AliAccountServiceImpl().getList(true);
+//        String action = "ALI_ACCOUNT_NO_MONEY";
+//        for (AliAccount aliAccount : list) {
+//            if (aliAccount.getAlertBalance()) {
+//                Map<String, String> param = new HashMap<String, String>();
+//                param.put("accountName", aliAccount.getUserName());
+//                param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
+//                setMessage(action, aliAccount.getUserName(), param);
+//                TelegramUtils.sendMessage(action, param);
+//            }
+//        }
     }
 
     // 校验ecs服务器过期
@@ -63,8 +64,36 @@ public class CheckAli {
         new MessageServiceImpl().create(action, themeId, parameters, new HashMap<String, String>());
     }
 
+    // export
+    public static void exportCheck(String action) {
+        try {
+            switch (action) {
+                case "refresh":
+                    CheckAli.refreshData();
+                    break;
+                case "account":
+                    CheckAli.checkAccount();
+                    break;
+                case "ecsExpired":
+                    CheckAli.checkEcsExpired();
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            try {
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("message", e.getMessage());
+                param.put("class", e.getClass().toString());
+                TelegramUtils.sendMessage("ERROR", param);
+            } catch (Exception e2) {
+                System.out.println(e2.getMessage());
+            }
+        }
+    }
+
     // run
-    public static void main(String[] args) throws Exception {
+     public static void main(String[] args) throws Exception {
         try {
             CheckAli.refreshData();
             CheckAli.checkAccount();
