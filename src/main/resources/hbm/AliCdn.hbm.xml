@@ -11,10 +11,13 @@
         </id>
         <property name="accessKeyId" type="java.lang.String" length="40" not-null="false"/>
         <property name="cdnType" type="java.lang.String" length="30" not-null="false"/>
+        <property name="sourceType" type="java.lang.String" length="30"/>
         <property name="domainName" type="java.lang.String" length="100"/>
+        <property name="cname" type="java.lang.String" length="100"/>
         <property name="gmtModified" type="java.util.Date" not-null="true"/>
         <property name="gmtCreated" type="java.util.Date" not-null="true"/>
         <property name="description" type="java.lang.String" length="100"/>
         <property name="resourceGroupId" type="java.lang.String" length="30"/>
+        <property name="domainStatus" type="java.lang.String" length="20"/>
     </class>
 </hibernate-mapping>

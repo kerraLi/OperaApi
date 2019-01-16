@@ -33,7 +33,6 @@ public class Websocket {
         this.session = session;
         this.userId = userId;
         onlineCount++;
-        System.out.println("连接用户" + userId);
         //根据该用户当前是否已经在别的终端登录进行添加操作
         if (userSocket.containsKey(this.userId)) {
             logger.debug("当前用户id:{}已有其他终端登录", this.userId);
@@ -50,7 +49,6 @@ public class Websocket {
 
     @OnClose
     public void onClose() {
-        System.out.println("关闭用户" + userId);
         //移除当前用户终端登录的websocket信息,如果该用户的所有终端都下线了，则删除该用户的记录
         if (userSocket.get(this.userId).size() == 0) {
             userSocket.remove(this.userId);
@@ -63,7 +61,6 @@ public class Websocket {
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        System.out.println("收到消息" + userId);
         logger.debug("收到来自用户id为：{}的消息：{}", this.userId, message);
         if (session == null) logger.debug("session null");
     }
@@ -79,12 +76,10 @@ public class Websocket {
     public void sendMessageToAllUser(String message) {
         for (Map.Entry<Long, Set<Websocket>> entry : userSocket.entrySet()) {
             for (Websocket WS : entry.getValue()) {
-                System.out.println(WS.session.getId());
                 logger.debug("sessionId为:{}", WS.session.getId());
                 try {
                     WS.session.getBasicRemote().sendText(message);
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
                     e.printStackTrace();
                     logger.debug(" 给用户id为：{}发送消息失败", userId);
                 }

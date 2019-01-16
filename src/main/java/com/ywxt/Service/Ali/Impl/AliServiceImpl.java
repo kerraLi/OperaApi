@@ -18,6 +18,7 @@ import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.Parameter;
 
 import java.util.*;
@@ -100,27 +101,26 @@ public class AliServiceImpl implements AliService {
     public void freshCdnData() throws Exception {
         new AliCdnDaoImpl().deleteAliCdnByAccessId(this.accessKeyId);
         List<AliCdn> acList = new ArrayList<>();
-        for (AliRegion e : AliRegion.values()) {
-            IClientProfile profile = DefaultProfile.getProfile(e.getRegion(), this.accessKeyId, this.accessKeySecret);
-            IAcsClient client = new DefaultAcsClient(profile);
-            int pageSize = 20;
-            int pageNumber = 1;
-            while (true) {
-                DescribeUserDomainsRequest describeUserDomainsRequest = new DescribeUserDomainsRequest();
-                describeUserDomainsRequest.setPageSize(pageSize);
-                describeUserDomainsRequest.setPageNumber(pageNumber);
-                DescribeUserDomainsResponse describeUserDomainsResponse = client.getAcsResponse(describeUserDomainsRequest);
-                // acList
-                for (DescribeUserDomainsResponse.PageData domain : describeUserDomainsResponse.getDomains()) {
-                    AliCdn cdnDomain = new AliCdn(this.accessKeyId, domain);
-                    acList.add(cdnDomain);
-                }
-                // 最后一页 跳出
-                if (describeUserDomainsResponse.getDomains().size() < pageSize) {
-                    break;
-                }
-                pageNumber++;
+        // cdn不分地区：只查一个地区
+        IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+        int pageSize = 20;
+        int pageNumber = 1;
+        while (true) {
+            DescribeUserDomainsRequest describeUserDomainsRequest = new DescribeUserDomainsRequest();
+            describeUserDomainsRequest.setPageSize(pageSize);
+            describeUserDomainsRequest.setPageNumber(pageNumber);
+            DescribeUserDomainsResponse describeUserDomainsResponse = client.getAcsResponse(describeUserDomainsRequest);
+            // acList
+            for (DescribeUserDomainsResponse.PageData domain : describeUserDomainsResponse.getDomains()) {
+                AliCdn cdnDomain = new AliCdn(this.accessKeyId, domain);
+                acList.add(cdnDomain);
             }
+            // 最后一页 跳出
+            if (describeUserDomainsResponse.getDomains().size() < pageSize) {
+                break;
+            }
+            pageNumber++;
         }
         new AliCdnDaoImpl().saveAliCdns(acList);
     }
@@ -144,7 +144,7 @@ public class AliServiceImpl implements AliService {
             if (ae.getStatus().equals("Running")) {
                 ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
             }
-            if (Arrays.binarySearch(markeValues, ae.getInstanceId()) >= 0) {
+            if (ArrayUtils.hasString(markeValues, ae.getInstanceId())) {
                 ae.setAlertMarked(true);
             }
             ae.setUserName(this.getUserName(ae.getAccessKeyId()));
@@ -166,9 +166,7 @@ public class AliServiceImpl implements AliService {
             if (ae.getStatus().equals("Running")) {
                 ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
             }
-            // 二分查找前对数组排序
-            Arrays.sort(markeValues);
-            if (Arrays.binarySearch(markeValues, ae.getInstanceId()) >= 0) {
+            if (ArrayUtils.hasString(markeValues, ae.getInstanceId())) {
                 ae.setAlertMarked(true);
             }
             ae.setUserName(this.getUserName(ae.getAccessKeyId()));
@@ -231,7 +229,7 @@ public class AliServiceImpl implements AliService {
         HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
         List<AliCdn> list = new AliCdnDaoImpl().getCdnList(filterParams, pageNumber, pageSize);
         for (AliCdn ac : list) {
-            if (Arrays.binarySearch(markeValues, ac.getDomainName()) >= 0) {
+            if (ArrayUtils.hasString(markeValues, ac.getDomainName())) {
                 ac.setAlertMarked(true);
             }
             ac.setUserName(this.getUserName(ac.getAccessKeyId()));

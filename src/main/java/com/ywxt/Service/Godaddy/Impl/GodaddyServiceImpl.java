@@ -14,6 +14,7 @@ import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Handler.PropertyStrategyHandler;
 import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import net.sf.ezmorph.object.DateMorpher;
@@ -138,7 +139,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (gd.getStatus().equals("ACTIVE")) {
                 gd.setAlertExpired(gd.getExpires().before(thresholdDate));
             }
-            if (Arrays.binarySearch(markeValues, gd.getDomainId()) >= 0) {
+            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
                 gd.setAlertMarked(true);
             }
             gd.setUserName(this.getUserName(gd.getAccessKeyId()));
@@ -160,7 +161,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (gd.getStatus().equals("ACTIVE")) {
                 gd.setAlertExpired(gd.getExpires().before(thresholdDate));
             }
-            if (Arrays.binarySearch(markeValues, gd.getDomainId()) >= 0) {
+            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
                 gd.setAlertMarked(true);
             }
             gd.setUserName(this.getUserName(gd.getAccessKeyId()));
@@ -190,7 +191,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (gc.getCertificateStatus().equals("ISSUED")) {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
             }
-            if (Arrays.binarySearch(markeValues, gc.getCertificateId()) >= 0) {
+            if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
                 gc.setAlertMarked(true);
             }
             gc.setUserName(this.getUserName(gc.getAccessKeyId()));
@@ -212,7 +213,7 @@ public class GodaddyServiceImpl implements GodaddyService {
             if (gc.getCertificateStatus().equals("ISSUED")) {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
             }
-            if (Arrays.binarySearch(markeValues, gc.getCertificateId()) >= 0) {
+            if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
                 gc.setAlertMarked(true);
             }
             gc.setUserName(this.getUserName(gc.getAccessKeyId()));

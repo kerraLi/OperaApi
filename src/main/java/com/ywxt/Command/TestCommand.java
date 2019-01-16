@@ -71,10 +71,10 @@ public class TestCommand {
 
     // 数据库查ecs数据
     private static void getAliEcs() throws Exception {
-//        List<AliEcs> list = new AliServiceImpl("instanceId", "i-j6cenf2ak8gsbem4lpps").getEcsList(new HashMap<String, Object>() {{
+//        List<AliEcsController> list = new AliServiceImpl("instanceId", "i-j6cenf2ak8gsbem4lpps").getEcsList(new HashMap<String, Object>() {{
 //            put("instanceId", "i-j6cenf2ak8gsbem4lpps");
 //        }}, 1, 10);
-//        for (AliEcs ae : list) {
+//        for (AliEcsController ae : list) {
 //            System.out.println(ae.getInstanceId());
 //            System.out.println(ae.getAlertExpired());
 //            System.out.println(ae.toString());

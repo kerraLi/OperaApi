@@ -19,12 +19,15 @@ public class AliCdn {
     private String userName;
     private String accessKeyId;
     private String cdnType;
+    private String sourceType;
     @MarkCloumn
     private String domainName;
+    private String cname;
     private Date gmtModified;
     private Date gmtCreated;
     private String description;
     private String resourceGroupId;
+    private String domainStatus;
     private Boolean isAlertMarked = false;
 
     public AliCdn() {
@@ -40,6 +43,9 @@ public class AliCdn {
         this.gmtCreated = df.parse(pageData.getGmtCreated().replace("Z", " UTC"));
         this.description = pageData.getDescription();
         this.resourceGroupId = pageData.getResourceGroupId();
+        this.sourceType = pageData.getSourceType();
+        this.cname = pageData.getCname();
+        this.domainStatus = pageData.getDomainStatus();
     }
 
     public String getAccessKeyId() {
@@ -121,5 +127,29 @@ public class AliCdn {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    public String getCname() {
+        return cname;
+    }
+
+    public void setCname(String cname) {
+        this.cname = cname;
+    }
+
+    public String getDomainStatus() {
+        return domainStatus;
+    }
+
+    public void setDomainStatus(String domainStatus) {
+        this.domainStatus = domainStatus;
     }
 }

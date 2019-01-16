@@ -26,10 +26,10 @@ public class MessageController extends CommonController {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         HashMap<String, Object> params = new HashMap<String, Object>();
-        if (!(request.getParameter("status") == null)) {
+        if (!(request.getParameter("status") == null) && !request.getParameter("status").isEmpty()) {
             params.put("status", request.getParameter("status"));
         }
-        if (!(request.getParameter("key") == null)) {
+        if (!(request.getParameter("key") == null) && !(request.getParameter("key").isEmpty())) {
             params.put("filter", request.getParameter("key"));
         }
         return new MessageServiceImpl().getList(params, pageNumber, pageSize);
