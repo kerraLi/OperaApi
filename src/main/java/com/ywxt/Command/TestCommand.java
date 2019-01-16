@@ -18,7 +18,10 @@ import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class TestCommand {
@@ -124,12 +127,21 @@ public class TestCommand {
 //        jsonObject.put("themeId", "2");
 //        jsonObject.put("message", "message");
 //        new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
+        // 发送消息
         Map<String, String> param = new HashMap<String, String>();
         param.put("accountName", "account");
         param.put("ecsId", "ecsId");
         param.put("ecsName", "ecsTime");
         param.put("expiredTime", "时间");
         new MessageServiceImpl().create("ALI_ECS_EXPIRED", "aaaaaaaa", new HashMap<String, String>(), new HashMap<String, String>());
+//        try {
+//            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        } catch (NullPointerException e) {
+//            System.out.println(11111111);
+//            System.out.println(e.getClass());
+//        }
+
+
 //        TestCommand.setIgnore();
 //        TestCommand.checkGodaddyAccount();
 //        TestCommand.setGodaddyAccount();

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +47,20 @@ public class UserController extends CommonController {
         new UserServiceImpl().logout(authToken);
         return this.returnObject(new HashMap<String, Object>() {{
         }});
+    }
+
+    @RequestMapping(value = {"/test"}, method = RequestMethod.GET)
+    @ResponseBody
+    @PassToken
+    public void test() {
+        System.out.println(22222222);
+        try {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        } catch (NullPointerException e) {
+            System.out.println(11111111);
+            System.out.println(e.getClass());
+        }
+        System.out.println(333333);
     }
 
 }

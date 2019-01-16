@@ -3,6 +3,7 @@ package com.ywxt.Controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.PassToken;
+import com.ywxt.Command.Websocket;
 import com.ywxt.Service.Impl.MessageServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +58,8 @@ public class MessageController extends CommonController {
     // webhook接收
     @PassToken
     @RequestMapping(value = {"/webhook"}, method = RequestMethod.POST)
-    public void getWebhookMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @ResponseBody
+    public String getWebhookMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         StringBuilder buffer = new StringBuilder();
         BufferedReader reader = request.getReader();
         String line;
@@ -83,13 +85,16 @@ public class MessageController extends CommonController {
         out.print("success");
         out.flush();
         out.close();
+        return "success";
     }
 
     // 发送websocket消息
     @PassToken
     @RequestMapping(value = {"/websocket"}, method = RequestMethod.POST)
-    public void sendWebsocketMessage(String message) {
-        System.out.println(message);
+    @ResponseBody
+    public String sendWebsocketMessage(String message) {
+        new Websocket().sendMessageToAllUser(message);
+        return "success";
     }
 
 }

@@ -6,8 +6,12 @@ import com.ywxt.Dao.Impl.MessageDaoImpl;
 import com.ywxt.Domain.Message;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
+import org.apache.tomcat.jni.Global;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class MessageServiceImpl {
@@ -82,27 +86,24 @@ public class MessageServiceImpl {
 
     // 发送ws消息
     private void sendWebsocket(JSONObject jsonObject) throws Exception {
-        if (this.isWebEnvironment()) {
+        if (this.isHttpEnvironment()) {
             new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
         } else {
             String params = HttpUtils.getParamContext(new HashMap<String, String>() {{
-                put("json", jsonObject.toString());
+                put("message", jsonObject.toString());
             }});
-            HttpUtils.sendConnPost("http://localhost:9000/api/message/websocket", params);
+            HttpUtils.sendConnPost(Parameter.urlWebsocket, params);
         }
     }
 
     // 判断当前环境
-    private boolean isWebEnvironment() {
-        String[] WEB_ENVIRONMENT_CLASSES = {"javax.servlet.Servlet",
-                "org.springframework.web.context.ConfigurableWebApplicationContext"};
-        for (String className : WEB_ENVIRONMENT_CLASSES) {
-            if (!ClassUtils.isPresent(className, null)) {
-                System.out.println("非web环境");
-                return false;
-            }
+    private boolean isHttpEnvironment() {
+        try {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        } catch (NullPointerException e) {
+            // 非http请求
+            return false;
         }
-        System.out.println("web环境");
         return true;
     }
 }
