@@ -28,7 +28,7 @@ public class GodaddyCertificateDaoImpl extends CommonDao implements GodaddyCerti
         }
     }
 
-    // group by 查找个数
+    // group by 查找个数&account
     public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
         // 数据库限制 group时无法使用order
         params.put("NO_ORDER", true);
@@ -36,12 +36,29 @@ public class GodaddyCertificateDaoImpl extends CommonDao implements GodaddyCerti
         ProjectionList projectionList = Projections.projectionList();
         // group by theme
         projectionList.add(Projections.groupProperty("certificateStatus"));
+        projectionList.add(Projections.groupProperty("accessKeyId"));
         projectionList.add(Projections.count("id"));
         criteria.setProjection(projectionList);
         List<Object[]> results = criteria.list();
         this.closeSession();
         return results;
     }
+
+    // group by 查找个数&account
+    public List<Object[]> getCertificateTotalByAccount(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(GodaddyCertificate.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("accessKeyId"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
+    }
+
 
     // 获取数量
     public int getCertificateTotal(HashMap<String, Object> params) throws Exception {

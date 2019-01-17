@@ -28,7 +28,7 @@ public class AliCdnDaoImpl extends CommonDao implements AliCdnDao {
         }
     }
 
-    // group by 查找个数
+    // group by 查找个数&account
     public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
         // 数据库限制 group时无法使用order
         params.put("NO_ORDER", true);
@@ -36,6 +36,22 @@ public class AliCdnDaoImpl extends CommonDao implements AliCdnDao {
         ProjectionList projectionList = Projections.projectionList();
         // group by theme
         projectionList.add(Projections.groupProperty("domainStatus"));
+        projectionList.add(Projections.groupProperty("accessKeyId"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
+    }
+
+    // group by 查找个数&account
+    public List<Object[]> getCdnTotalByAccount(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(AliCdn.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("accessKeyId"));
         projectionList.add(Projections.count("id"));
         criteria.setProjection(projectionList);
         List<Object[]> results = criteria.list();

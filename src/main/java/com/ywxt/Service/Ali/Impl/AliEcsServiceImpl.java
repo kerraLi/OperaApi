@@ -39,17 +39,14 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
 
     // 获取dash数据
     public HashMap<String, Object> getDashData() throws Exception {
+        HashMap<String, Object> resultParams = new HashMap<String, Object>();
         // normal invalid
         HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("accessKeyId", this.accessKeyId);
-        List<Object[]> list = new AliEcsDaoImpl().getCountGroup(params);
-        Long normal = 0L;
-        Long invalid = 0L;
-        for (Object[] os : list) {
+        for (Object[] os : new AliEcsDaoImpl().getCountGroup(params)) {
             if (os[0].equals("Running")) {
-                normal = (Long) os[1];
+                resultParams.put(os[1] + "-normal", os[2]);
             } else {
-                invalid += (Long) os[1];
+                resultParams.put(os[1] + "-invalid", os[2]);
             }
         }
         // expired
@@ -57,22 +54,27 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         params = new HashMap<String, Object>();
-        params.put("orderAsc", "expiredTime");
         params.put("status", "Running");
         params.put("expiredTime@lt", thresholdDate);
-        params.put("accessKeyId", this.accessKeyId);
-        int expired = this.getEcsTotal(params);
+        for (Object[] os : this.getEcsTotalByAccount(params)) {
+            resultParams.put(os[0] + "-expired", os[1]);
+        }
         // deprecated
         params = new HashMap<String, Object>();
         params.put("ifMarked", "true");
-        params.put("accessKeyId", this.accessKeyId);
-        int deprecated = this.getEcsTotal(params);
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("normal", normal);
-        result.put("invalid", invalid);
-        result.put("expired", expired);
-        result.put("deprecated", deprecated);
-        return result;
+        for (Object[] os : this.getEcsTotalByAccount(params)) {
+            resultParams.put(os[0] + "-deprecated", os[1]);
+        }
+        return resultParams;
+    }
+
+    // ecs-获取个数按account分组
+    public List<Object[]> getEcsTotalByAccount(HashMap<String, Object> params) throws Exception {
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliEcs.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliEcs.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        return new AliEcsDaoImpl().getAliEcsesTotalByAccount(filterParams);
     }
 
     // ecs-获取个数

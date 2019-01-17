@@ -35,39 +35,41 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
 
     // 获取dash数据
     public HashMap<String, Object> getDashData() throws Exception {
+        HashMap<String, Object> resultParams = new HashMap<String, Object>();
         // normal invalid
         HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("accessKeyId", this.accessKeyId);
-        List<Object[]> list = new GodaddyDomainDaoImpl().getCountGroup(params);
-        Long normal = 0L;
-        Long invalid = 0L;
-        for (Object[] os : list) {
+        for (Object[] os : new GodaddyDomainDaoImpl().getCountGroup(params)) {
             if (os[0].equals("ACTIVE")) {
-                normal = (Long) os[1];
+                resultParams.put(os[1] + "-normal", os[2]);
             } else {
-                invalid += (Long) os[1];
+                resultParams.put(os[1] + "-invalid", os[2]);
             }
         }
         // expired
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
-        params.put("orderAsc", "expires");
         params.put("status", "ACTIVE");
         params.put("expires@lt", thresholdDate);
-        params.put("accessKeyId", this.accessKeyId);
-        int expired = this.getDomainTotal(params);
+        for (Object[] os : this.getDomainTotalByAccount(params)) {
+            resultParams.put(os[0] + "-expired", os[1]);
+        }
         // deprecated
         params = new HashMap<String, Object>();
         params.put("ifMarked", "true");
-        params.put("accessKeyId", this.accessKeyId);
-        int deprecated = this.getDomainTotal(params);
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("normal", normal);
-        result.put("invalid", invalid);
-        result.put("expired", expired);
-        result.put("deprecated", deprecated);
-        return result;
+        for (Object[] os : this.getDomainTotalByAccount(params)) {
+            resultParams.put(os[0] + "-deprecated", os[1]);
+        }
+        return resultParams;
+    }
+
+    // domain-获取个数按account分组
+    public List<Object[]> getDomainTotalByAccount(HashMap<String, Object> params) throws Exception {
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        return new GodaddyDomainDaoImpl().getDomainTotalByAccount(filterParams);
     }
 
     // domain-获取个数

@@ -51,33 +51,8 @@ public class DashboardController {
     public JSONObject account() throws Exception {
         String[] xData = {"Ali-ECS", "Ali-CDN域名", "GO-域名", "GO-证书"};
         JSONObject jsonObject = new JSONObject();
-        List<AliAccount> aaList = new AliAccountServiceImpl().getList();
-        List<JSONObject> aliData = new ArrayList<>();
-        for (AliAccount aliAccount : aaList) {
-            HashMap ecsMap = new AliEcsServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).getDashData();
-            aliData.add(new JSONObject() {{
-                put("type", "ALI");
-                put("username", aliAccount.getUserName());
-                put("theme", "ECS");
-                put("normal", ecsMap.get("normal"));
-                put("invalid", ecsMap.get("invalid"));
-                put("expired", ecsMap.get("expired"));
-                put("deprecated", ecsMap.get("deprecated"));
-            }});
-            HashMap cdnMap = new AliCdnServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).getDashData();
-            aliData.add(new JSONObject() {{
-                put("type", "ALI");
-                put("username", aliAccount.getUserName());
-                put("theme", "CDN");
-                put("normal", cdnMap.get("normal"));
-                put("invalid", cdnMap.get("invalid"));
-                put("expired", cdnMap.get("expired"));
-                put("deprecated", cdnMap.get("deprecated"));
-            }});
-        }
-
-//        List<Godaddy>
-
+        HashMap ecsMap = new AliEcsServiceImpl().getDashData();
+        new AliCdnServiceImpl().getDashData();
         new GodaddyDomainServiceImpl().getDashData();
         new GodaddyCertificateServiceImpl().getDashData();
         return jsonObject;

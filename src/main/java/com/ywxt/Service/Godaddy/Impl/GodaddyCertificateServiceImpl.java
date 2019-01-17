@@ -35,42 +35,44 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
 
     // 获取dash数据
     public HashMap<String, Object> getDashData() throws Exception {
+        HashMap<String, Object> resultParams = new HashMap<String, Object>();
         // normal invalid
         HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("accessKeyId", this.accessKeyId);
-        List<Object[]> list = new GodaddyCertificateDaoImpl().getCountGroup(params);
-        Long normal = 0L;
-        Long invalid = 0L;
-        for (Object[] os : list) {
+        for (Object[] os : new GodaddyCertificateDaoImpl().getCountGroup(params)) {
             if (os[0].equals("ISSUED")) {
-                normal = (Long) os[1];
+                resultParams.put(os[1] + "-normal", os[2]);
             } else {
-                invalid += (Long) os[1];
+                resultParams.put(os[1] + "-invalid", os[2]);
             }
         }
         // expired
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
-        params.put("orderAsc", "validEnd");
         params.put("certificateStatus", "ISSUED");
         params.put("validEnd@lt", thresholdDate);
-        params.put("accessKeyId", this.accessKeyId);
-        int expired = this.getCertificateTotal(params);
+        for (Object[] os : this.getCertificateTotalByAccount(params)) {
+            resultParams.put(os[0] + "-expired", os[1]);
+        }
         // deprecated
         params = new HashMap<String, Object>();
         params.put("ifMarked", "true");
-        params.put("accessKeyId", this.accessKeyId);
-        int deprecated = this.getCertificateTotal(params);
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("normal", normal);
-        result.put("invalid", invalid);
-        result.put("expired", expired);
-        result.put("deprecated", deprecated);
-        return result;
+        for (Object[] os : this.getCertificateTotalByAccount(params)) {
+            resultParams.put(os[0] + "-deprecated", os[1]);
+        }
+        return resultParams;
     }
 
-    // ecs-获取个数
+    // certificates-获取个数按account分组
+    public List<Object[]> getCertificateTotalByAccount(HashMap<String, Object> params) throws Exception {
+        // 是否弃用标记
+        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
+        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
+        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        return new GodaddyCertificateDaoImpl().getCertificateTotalByAccount(filterParams);
+    }
+
+    // certificates-获取个数
     public int getCertificateTotal(HashMap<String, Object> params) throws Exception {
         // 是否弃用标记
         String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
