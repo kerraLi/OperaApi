@@ -2,7 +2,7 @@ package com.ywxt.Controller.Godaddy;
 
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
-import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyCertificateServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
@@ -51,7 +51,7 @@ public class GodaddyCertificateController extends CommonController {
         if (!(request.getParameter("ifMarked") == null) && !(request.getParameter("ifMarked").isEmpty())) {
             params.put("ifMarked", request.getParameter("ifMarked"));
         }
-        return new GodaddyServiceImpl().getCertificateList(params, pageNumber, pageSize);
+        return new GodaddyCertificateServiceImpl().getCertificateList(params, pageNumber, pageSize);
     }
 
     // certificate 批量保存标记
@@ -61,12 +61,12 @@ public class GodaddyCertificateController extends CommonController {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
             for (Integer i : list) {
-                GodaddyCertificate godaddyCertificate = new GodaddyServiceImpl().getCertificate(i);
+                GodaddyCertificate godaddyCertificate = new GodaddyCertificateServiceImpl().getCertificate(i);
                 new ParameterIgnoreServiceImpl().saveMarked(godaddyCertificate);
             }
         } else if (status.equals("unmark")) {
             for (Integer i : list) {
-                GodaddyCertificate godaddyCertificate = new GodaddyServiceImpl().getCertificate(i);
+                GodaddyCertificate godaddyCertificate = new GodaddyCertificateServiceImpl().getCertificate(i);
                 new ParameterIgnoreServiceImpl().deleteMarked(godaddyCertificate);
             }
         }
@@ -78,7 +78,7 @@ public class GodaddyCertificateController extends CommonController {
     @ResponseBody
     @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
     public com.alibaba.fastjson.JSONObject certificateParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
-        GodaddyCertificate godaddyCertificate = new GodaddyServiceImpl().getCertificate(id);
+        GodaddyCertificate godaddyCertificate = new GodaddyCertificateServiceImpl().getCertificate(id);
         if (status.equals("mark")) {
             new ParameterIgnoreServiceImpl().saveMarked(godaddyCertificate);
         } else if (status.equals("unmark")) {

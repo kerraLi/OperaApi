@@ -17,10 +17,15 @@ import com.ywxt.Utils.AsyncUtils;
 import com.ywxt.Utils.Parameter;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 
 public class AliAccountServiceImpl implements AliAccountService {
 
+    // 获取总数
+    public int getTotal(HashMap<String, Object> params) throws Exception {
+        return new AliAccountDaoImpl().getListTotal(params);
+    }
 
     // 列表
     public List<AliAccount> getList() {

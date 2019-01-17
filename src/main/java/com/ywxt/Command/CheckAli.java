@@ -4,6 +4,7 @@ import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
+import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Utils.TelegramUtils;
@@ -16,23 +17,22 @@ public class CheckAli {
 
     // 校验余额
     private static void checkAccount() throws Exception {
-        System.out.println("account");
-//        List<AliAccount> list = new AliAccountServiceImpl().getList(true);
-//        String action = "ALI_ACCOUNT_NO_MONEY";
-//        for (AliAccount aliAccount : list) {
-//            if (aliAccount.getAlertBalance()) {
-//                Map<String, String> param = new HashMap<String, String>();
-//                param.put("accountName", aliAccount.getUserName());
-//                param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
-//                setMessage(action, aliAccount.getUserName(), param);
-//                TelegramUtils.sendMessage(action, param);
-//            }
-//        }
+        List<AliAccount> list = new AliAccountServiceImpl().getList(true);
+        String action = "ALI_ACCOUNT_NO_MONEY";
+        for (AliAccount aliAccount : list) {
+            if (aliAccount.getAlertBalance()) {
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("accountName", aliAccount.getUserName());
+                param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
+                setMessage(action, aliAccount.getUserName(), param);
+                TelegramUtils.sendMessage(action, param);
+            }
+        }
     }
 
     // 校验ecs服务器过期
     private static void checkEcsExpired() throws Exception {
-        List<AliEcs> list = new AliServiceImpl().getEcsList(new HashMap<String, Object>() {{
+        List<AliEcs> list = new AliEcsServiceImpl().getEcsList(new HashMap<String, Object>() {{
         }});
         String action = "ALI_ECS_EXPIRED";
         for (AliEcs aliEcs : list) {
@@ -93,7 +93,7 @@ public class CheckAli {
     }
 
     // run
-     public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         try {
             CheckAli.refreshData();
             CheckAli.checkAccount();

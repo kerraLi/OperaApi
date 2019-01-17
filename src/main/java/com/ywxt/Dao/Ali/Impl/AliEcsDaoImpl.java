@@ -5,6 +5,7 @@ import com.ywxt.Dao.CommonDao;
 import com.ywxt.Domain.Ali.AliEcs;
 import org.hibernate.*;
 
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 
 import java.util.HashMap;
@@ -26,6 +27,21 @@ public class AliEcsDaoImpl extends CommonDao implements AliEcsDao {
         } finally {
             this.closeSession();
         }
+    }
+
+    // group by 查找个数
+    public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(AliEcs.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("status"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
     }
 
     // 获取数量

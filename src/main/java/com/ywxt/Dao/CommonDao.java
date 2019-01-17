@@ -5,9 +5,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -29,6 +27,9 @@ public class CommonDao {
         Criteria criteria = session.createCriteria(c);
         if (params != null) {
             for (Map.Entry<String, Object> e : params.entrySet()) {
+                if (e.getKey().equals("NO_ORDER")) {
+                    continue;
+                }
                 if (e.getKey().equals("orderAsc")) {
                     criteria.addOrder(Order.asc((String) e.getValue()));
                 } else if (e.getKey().equals("orderDesc")) {
@@ -62,13 +63,18 @@ public class CommonDao {
                         criteria.add(Restrictions.lt(strings[0], e.getValue()));
                     } else if (strings[1].equals("gt")) {
                         criteria.add(Restrictions.gt(strings[0], e.getValue()));
+                    } else if (strings[1].equals("ge")) {
+                        criteria.add(Restrictions.ge(strings[0], e.getValue()));
                     } else if (strings[1].equals("like")) {
                         criteria.add(Restrictions.like(strings[0], e.getValue()));
                     }
                 }
             }
         }
-        criteria.addOrder(Order.asc("id"));
+        // 不自动排序
+        if (params.get("NO_ORDER") == null || !(boolean) params.get("NO_ORDER")) {
+            criteria.addOrder(Order.asc("id"));
+        }
         return criteria;
     }
 

@@ -2,7 +2,7 @@ package com.ywxt.Controller.Godaddy;
 
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
-import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyDomainServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
@@ -51,7 +51,7 @@ public class GodaddyDomainController extends CommonController {
         if (!(request.getParameter("ifMarked") == null) && !(request.getParameter("ifMarked").isEmpty())) {
             params.put("ifMarked", request.getParameter("ifMarked"));
         }
-        return new GodaddyServiceImpl().getDomainList(params, pageNumber, pageSize);
+        return new GodaddyDomainServiceImpl().getDomainList(params, pageNumber, pageSize);
     }
 
     // domain 批量保存标记
@@ -61,12 +61,12 @@ public class GodaddyDomainController extends CommonController {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
             for (Integer i : list) {
-                GodaddyDomain godaddyDomain = new GodaddyServiceImpl().getDomain(i);
+                GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(i);
                 new ParameterIgnoreServiceImpl().saveMarked(godaddyDomain);
             }
         } else if (status.equals("unmark")) {
             for (Integer i : list) {
-                GodaddyDomain godaddyDomain = new GodaddyServiceImpl().getDomain(i);
+                GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(i);
                 new ParameterIgnoreServiceImpl().deleteMarked(godaddyDomain);
             }
         }
@@ -78,7 +78,7 @@ public class GodaddyDomainController extends CommonController {
     @ResponseBody
     @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
     public com.alibaba.fastjson.JSONObject domainParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
-        GodaddyDomain godaddyDomain = new GodaddyServiceImpl().getDomain(id);
+        GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(id);
         if (status.equals("mark")) {
             new ParameterIgnoreServiceImpl().saveMarked(godaddyDomain);
         } else if (status.equals("unmark")) {

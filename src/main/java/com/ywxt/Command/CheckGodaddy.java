@@ -5,6 +5,8 @@ import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyCertificateServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyDomainServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Utils.TelegramUtils;
@@ -18,7 +20,7 @@ public class CheckGodaddy {
 
     // 校验域名有效期
     private static void checkDomain() throws Exception {
-        List<GodaddyDomain> list = new GodaddyServiceImpl().getDomainList(new HashMap<String, Object>() {{
+        List<GodaddyDomain> list = new GodaddyDomainServiceImpl().getDomainList(new HashMap<String, Object>() {{
         }});
         String action = "GODADDY_DOMAIN_EXPIRED";
         for (GodaddyDomain domain : list) {
@@ -38,7 +40,7 @@ public class CheckGodaddy {
 
     // 校验证书有效期
     private static void checkCertificate() throws Exception {
-        List<GodaddyCertificate> list = new GodaddyServiceImpl().getCertificateList(new HashMap<String, Object>() {{
+        List<GodaddyCertificate> list = new GodaddyCertificateServiceImpl().getCertificateList(new HashMap<String, Object>() {{
         }});
         String action = "GODADDY_CERTIFICATE_EXPIRED";
         for (GodaddyCertificate certificate : list) {

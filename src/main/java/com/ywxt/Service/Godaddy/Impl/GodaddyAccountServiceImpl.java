@@ -19,6 +19,11 @@ import java.util.Map;
 
 public class GodaddyAccountServiceImpl implements GodaddyAccountService {
 
+    // 获取总数
+    public int getTotal(HashMap<String, Object> params) throws Exception {
+        return new GodaddyAccountDaoImpl().getListTotal(params);
+    }
+
     // 列表
     public List<GodaddyAccount> getList() {
         return new GodaddyAccountDaoImpl().getAccounts();

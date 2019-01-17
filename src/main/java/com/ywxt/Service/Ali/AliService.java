@@ -15,30 +15,4 @@ public interface AliService {
     // 获取账户余额
     public abstract QueryAccountBalanceResponse.Data getAccountBalance() throws Exception;
 
-    // ECS:获取服务器列表
-    public abstract List<AliEcs> getEcsList(HashMap<String, Object> params) throws Exception;
-
-    // ECS：获取服务器列表&分页
-    public abstract JSONObject getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
-
-    // ECS：服务器启动
-    public abstract void startEcs(String regionId, String instanceId) throws Exception;
-
-    // ECS：服务器停止
-    public abstract void stopEcs(String regionId, String instanceId, boolean forceStop) throws Exception;
-
-    // ECS：服务器重启
-    public abstract void restartEcs(String regionId, String instanceId, boolean forceStop) throws Exception;
-
-    // ECS：服务器释放
-    public abstract void deleteEcs(String regionId, String instanceId, boolean forceStop) throws Exception;
-
-    // CDN：域名列表
-    public abstract JSONObject getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
-
-    // CDN：刷新CDN
-    public abstract Map<String, String> refreshCdnObjectCaches(String objectPath, String objectType) throws Exception;
-
-    // CDN：刷新任务查看
-    public abstract List<DescribeRefreshTasksResponse.CDNTask> getCdnRefreshTask(String taskId) throws Exception;
 }

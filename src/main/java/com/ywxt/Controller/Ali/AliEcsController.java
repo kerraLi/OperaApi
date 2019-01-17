@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
@@ -46,7 +47,7 @@ public class AliEcsController extends CommonController {
         if (!(request.getParameter("ifMarked") == null) && !(request.getParameter("ifMarked").isEmpty())) {
             params.put("ifMarked", request.getParameter("ifMarked"));
         }
-        return new AliServiceImpl().getEcsList(params, pageNumber, pageSize);
+        return new AliEcsServiceImpl().getEcsList(params, pageNumber, pageSize);
     }
 
     @ResponseBody
@@ -55,12 +56,12 @@ public class AliEcsController extends CommonController {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
             for (Integer i : list) {
-                AliEcs aliEcs = new AliServiceImpl().getEcs(i);
+                AliEcs aliEcs = new AliEcsServiceImpl().getEcs(i);
                 new ParameterIgnoreServiceImpl().saveMarked(aliEcs);
             }
         } else if (status.equals("unmark")) {
             for (Integer i : list) {
-                AliEcs aliEcs = new AliServiceImpl().getEcs(i);
+                AliEcs aliEcs = new AliEcsServiceImpl().getEcs(i);
                 new ParameterIgnoreServiceImpl().deleteMarked(aliEcs);
             }
         }
@@ -71,7 +72,7 @@ public class AliEcsController extends CommonController {
     @ResponseBody
     @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
     public JSONObject ecsParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
-        AliEcs aliEcs = new AliServiceImpl().getEcs(id);
+        AliEcs aliEcs = new AliEcsServiceImpl().getEcs(id);
         if (status.equals("mark")) {
             new ParameterIgnoreServiceImpl().saveMarked(aliEcs);
         } else if (status.equals("unmark")) {

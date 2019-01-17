@@ -5,6 +5,7 @@ import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliCdn;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Ali.Impl.AliCdnServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +42,7 @@ public class AliCdnController extends CommonController {
         if (!(request.getParameter("ifMarked") == null) && !(request.getParameter("ifMarked").isEmpty())) {
             params.put("ifMarked", request.getParameter("ifMarked"));
         }
-        return new AliServiceImpl().getCdnDomainList(params, pageNumber, pageSize);
+        return new AliCdnServiceImpl().getCdnDomainList(params, pageNumber, pageSize);
     }
 
     // 批量设置mark
@@ -51,12 +52,12 @@ public class AliCdnController extends CommonController {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
             for (Integer i : list) {
-                AliCdn aliCdn = new AliServiceImpl().getCdn(i);
+                AliCdn aliCdn = new AliCdnServiceImpl().getCdn(i);
                 new ParameterIgnoreServiceImpl().saveMarked(aliCdn);
             }
         } else if (status.equals("unmark")) {
             for (Integer i : list) {
-                AliCdn aliCdn = new AliServiceImpl().getCdn(i);
+                AliCdn aliCdn = new AliCdnServiceImpl().getCdn(i);
                 new ParameterIgnoreServiceImpl().deleteMarked(aliCdn);
             }
         }
@@ -69,7 +70,7 @@ public class AliCdnController extends CommonController {
     @ResponseBody
     @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
     public JSONObject cdnParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
-        AliCdn aliCdn = new AliServiceImpl().getCdn(id);
+        AliCdn aliCdn = new AliCdnServiceImpl().getCdn(id);
         if (status.equals("mark")) {
             new ParameterIgnoreServiceImpl().saveMarked(aliCdn);
         } else if (status.equals("unmark")) {
@@ -89,7 +90,7 @@ public class AliCdnController extends CommonController {
         if (objectType.isEmpty()) {
             objectType = "File";
         }
-        return new AliServiceImpl(accessId).refreshCdnObjectCaches(objectPath, objectType);
+        return new AliCdnServiceImpl(accessId).refreshCdnObjectCaches(objectPath, objectType);
     }
 
     // cdn:节点刷新任务查看
@@ -98,6 +99,6 @@ public class AliCdnController extends CommonController {
     public DescribeRefreshTasksResponse.CDNTask getRefreshObjectCacheTask(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String accessId = request.getParameter("access-id");
         String taskId = request.getParameter("task-id");
-        return new AliServiceImpl(accessId).getCdnRefreshTask(taskId).get(0);
+        return new AliCdnServiceImpl(accessId).getCdnRefreshTask(taskId).get(0);
     }
 }

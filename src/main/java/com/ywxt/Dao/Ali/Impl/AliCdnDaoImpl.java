@@ -4,6 +4,7 @@ import com.ywxt.Dao.Ali.AliCdnDao;
 import com.ywxt.Dao.CommonDao;
 import com.ywxt.Domain.Ali.AliCdn;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 
 import java.util.HashMap;
@@ -26,6 +27,22 @@ public class AliCdnDaoImpl extends CommonDao implements AliCdnDao {
             this.closeSession();
         }
     }
+
+    // group by 查找个数
+    public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(AliCdn.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("domainStatus"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
+    }
+
 
     // 获取数量
     public int getCdnTotal(HashMap<String, Object> params) throws Exception {
