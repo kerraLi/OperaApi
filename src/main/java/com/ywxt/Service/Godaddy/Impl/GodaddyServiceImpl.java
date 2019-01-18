@@ -132,7 +132,7 @@ public class GodaddyServiceImpl implements GodaddyService {
     }
 
     // 获取userName
-    protected String getUserName(String accessKeyId) throws Exception {
+    public String getUserName(String accessKeyId) throws Exception {
         if (this.userNameMap.get(accessKeyId) == null) {
             GodaddyAccount godaddyAccount = new GodaddyAccountDaoImpl().getAccount(accessKeyId);
             this.userNameMap.put(accessKeyId, godaddyAccount.getUserName());

@@ -44,9 +44,9 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         HashMap<String, Object> params = new HashMap<String, Object>();
         for (Object[] os : new AliEcsDaoImpl().getCountGroup(params)) {
             if (os[0].equals("Running")) {
-                resultParams.put(os[1] + "-normal", os[2]);
+                resultParams.put("ali-ecs-" + os[1] + "-normal", os[2]);
             } else {
-                resultParams.put(os[1] + "-invalid", os[2]);
+                resultParams.put("ali-ecs-" + os[1] + "-invalid", os[2]);
             }
         }
         // expired
@@ -57,13 +57,13 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         params.put("status", "Running");
         params.put("expiredTime@lt", thresholdDate);
         for (Object[] os : this.getEcsTotalByAccount(params)) {
-            resultParams.put(os[0] + "-expired", os[1]);
+            resultParams.put("ali-ecs-" + os[0] + "-expired", os[1]);
         }
         // deprecated
         params = new HashMap<String, Object>();
         params.put("ifMarked", "true");
         for (Object[] os : this.getEcsTotalByAccount(params)) {
-            resultParams.put(os[0] + "-deprecated", os[1]);
+            resultParams.put("ali-ecs-" + os[0] + "-deprecated", os[1]);
         }
         return resultParams;
     }

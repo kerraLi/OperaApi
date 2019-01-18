@@ -142,7 +142,7 @@ public class AliServiceImpl implements AliService {
     }
 
     // 获取userName
-    protected String getUserName(String accessKeyId) throws Exception {
+    public String getUserName(String accessKeyId) throws Exception {
         if (this.userNameMap.get(accessKeyId) == null) {
             AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(accessKeyId);
             this.userNameMap.put(accessKeyId, aliAccount.getUserName());

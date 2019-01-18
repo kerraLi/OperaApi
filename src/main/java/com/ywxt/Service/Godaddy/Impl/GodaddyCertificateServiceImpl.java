@@ -40,9 +40,9 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
         HashMap<String, Object> params = new HashMap<String, Object>();
         for (Object[] os : new GodaddyCertificateDaoImpl().getCountGroup(params)) {
             if (os[0].equals("ISSUED")) {
-                resultParams.put(os[1] + "-normal", os[2]);
+                resultParams.put("go-certificate-" + os[1] + "-normal", os[2]);
             } else {
-                resultParams.put(os[1] + "-invalid", os[2]);
+                resultParams.put("go-certificate-" + os[1] + "-invalid", os[2]);
             }
         }
         // expired
@@ -52,13 +52,13 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
         params.put("certificateStatus", "ISSUED");
         params.put("validEnd@lt", thresholdDate);
         for (Object[] os : this.getCertificateTotalByAccount(params)) {
-            resultParams.put(os[0] + "-expired", os[1]);
+            resultParams.put("go-certificate-" + os[0] + "-expired", os[1]);
         }
         // deprecated
         params = new HashMap<String, Object>();
         params.put("ifMarked", "true");
         for (Object[] os : this.getCertificateTotalByAccount(params)) {
-            resultParams.put(os[0] + "-deprecated", os[1]);
+            resultParams.put("go-certificate-" + os[0] + "-deprecated", os[1]);
         }
         return resultParams;
     }

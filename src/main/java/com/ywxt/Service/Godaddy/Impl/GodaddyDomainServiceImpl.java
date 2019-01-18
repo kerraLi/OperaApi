@@ -40,9 +40,9 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
         HashMap<String, Object> params = new HashMap<String, Object>();
         for (Object[] os : new GodaddyDomainDaoImpl().getCountGroup(params)) {
             if (os[0].equals("ACTIVE")) {
-                resultParams.put(os[1] + "-normal", os[2]);
+                resultParams.put("go-domain-" + os[1] + "-normal", os[2]);
             } else {
-                resultParams.put(os[1] + "-invalid", os[2]);
+                resultParams.put("go-domain-" + os[1] + "-invalid", os[2]);
             }
         }
         // expired
@@ -52,13 +52,13 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
         params.put("status", "ACTIVE");
         params.put("expires@lt", thresholdDate);
         for (Object[] os : this.getDomainTotalByAccount(params)) {
-            resultParams.put(os[0] + "-expired", os[1]);
+            resultParams.put("go-domain-" + os[0] + "-expired", os[1]);
         }
         // deprecated
         params = new HashMap<String, Object>();
         params.put("ifMarked", "true");
         for (Object[] os : this.getDomainTotalByAccount(params)) {
-            resultParams.put(os[0] + "-deprecated", os[1]);
+            resultParams.put("go-domain-" + os[0] + "-deprecated", os[1]);
         }
         return resultParams;
     }
