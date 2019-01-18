@@ -8,8 +8,11 @@ import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService , UserDetailsService {
 
 
     // 登陆
@@ -48,5 +51,12 @@ public class UserServiceImpl implements UserService {
     // 获取用户
     public User getUserByUsername(String username) throws Exception {
         return new UserDaoImpl().getUserByUsername(username);
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+
+        return null;
     }
 }
