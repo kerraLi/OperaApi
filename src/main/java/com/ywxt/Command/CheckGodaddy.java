@@ -92,7 +92,7 @@ public class CheckGodaddy {
         } catch (Exception e) {
             try {
                 Map<String, String> param = new HashMap<String, String>();
-                param.put("message", e.getMessage());
+                param.put("message", "Godaddy-" + action + e.getMessage());
                 param.put("class", e.getClass().toString());
                 TelegramUtils.sendMessage("ERROR", param);
             } catch (Exception e2) {
