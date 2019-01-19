@@ -1,7 +1,9 @@
 package com.ywxt.Dao;
 
 import com.ywxt.Domain.User;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface UserDao {
 
     public abstract Long saveUser(User user);

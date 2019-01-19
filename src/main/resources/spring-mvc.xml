@@ -13,14 +13,17 @@
 
     <!--配置处理器映射器和处理器适配器 使用<mvc:annotation-drvier/>配置注解映射器和注解适配器-->
     <mvc:annotation-driven/>
-
+    <!--静态资源过滤-->
     <!--<mvc:default-servlet-handler/>-->
 
-
+    <!--开启AOP-->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
     <!-- 启动包扫描功能，以便注册带有@Controller、@Service、@repository、@Component等注解的类成为spring的bean -->
     <context:component-scan base-package="com.ywxt.Controller"/>
     <context:component-scan base-package="com.ywxt.Domain"/>
     <context:component-scan base-package="com.ywxt.Command"/>
+    <context:component-scan base-package="com.ywxt.Dao"/>
+    <context:component-scan base-package="com.ywxt.Service"/>
     <!-- 统一异常处理：先注释方便调试 -->
     <!--<context:component-scan base-package="com.ywxt.Handler"/>-->
 
@@ -61,5 +64,11 @@
             <mvc:mapping path="/**"/>
             <bean class="com.ywxt.Handler.AllowCrossDomainHandler"></bean>
         </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.ywxt.Handler.SecurityHandler"></bean>
+        </mvc:interceptor>
     </mvc:interceptors>
+    <!--导入security-->
+    <import resource="classpath:spring-security.xml" />
 </beans>

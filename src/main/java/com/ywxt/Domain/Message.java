@@ -2,6 +2,7 @@ package com.ywxt.Domain;
 
 import com.ywxt.Annotation.NotFilterCloumn;
 
+import javax.persistence.Column;
 import java.util.Date;
 
 public class Message {

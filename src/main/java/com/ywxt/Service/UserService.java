@@ -1,8 +1,9 @@
 package com.ywxt.Service;
 
 import com.ywxt.Domain.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     public abstract String login(String clientUsername, String clientPassword) throws Exception;
 

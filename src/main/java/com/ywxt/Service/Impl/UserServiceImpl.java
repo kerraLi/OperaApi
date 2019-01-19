@@ -8,12 +8,21 @@ import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-public class UserServiceImpl implements UserService , UserDetailsService {
+import java.util.ArrayList;
+import java.util.List;
+@Service
+public class UserServiceImpl implements UserService{
 
+    @Autowired
+    public UserDao userDao;
 
     // 登陆
     public String login(String clientUsername, String clientPassword) throws Exception {
@@ -55,8 +64,20 @@ public class UserServiceImpl implements UserService , UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // 先设置假的权限
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        // 传入角色
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        User sysUser = null;
+        try {
+            sysUser = userDao.getUserByUsername(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 创建用户
+        org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(username,"{noop}"+sysUser.getPassword() , authorities) ;
 
-        return null;
+        return user;
     }
 }
