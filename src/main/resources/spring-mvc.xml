@@ -15,7 +15,8 @@
     <mvc:annotation-driven/>
     <!--静态资源过滤-->
     <!--<mvc:default-servlet-handler/>-->
-
+    <!--     启用spring mvc 注解 -->
+    <context:annotation-config />
     <!--开启AOP-->
     <aop:aspectj-autoproxy proxy-target-class="true" />
     <!-- 启动包扫描功能，以便注册带有@Controller、@Service、@repository、@Component等注解的类成为spring的bean -->
@@ -71,4 +72,5 @@
     </mvc:interceptors>
     <!--导入security-->
     <import resource="classpath:spring-security.xml" />
+
 </beans>
