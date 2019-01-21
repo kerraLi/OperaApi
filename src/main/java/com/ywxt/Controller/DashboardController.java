@@ -65,23 +65,23 @@ public class DashboardController {
         for (Map.Entry<String, Object> e : map.entrySet()) {
             // 单个资源
             String[] strs = e.getKey().split("-");
-            String key = strs[0] + "-" + strs[1] + "-" + strs[2];
-            JSONObject temp = new JSONObject();
-            if (mapByAccount.get(key) != null) {
-                temp = (JSONObject) mapByAccount.get(key);
-            } else {
-                String accountName = "";
-                if (strs[0].equals("ali")) {
-                    accountName = new AliServiceImpl().getUserName(strs[2]);
-                }else{
-                    accountName = new GodaddyServiceImpl().getUserName(strs[2]);
-                }
-                temp.put("type", strs[0]);
-                temp.put("username", accountName);
-                temp.put("theme", strs[1]);
-            }
-            temp.put(strs[3], e.getValue());
-            mapByAccount.put(key, temp);
+            // String key = strs[0] + "-" + strs[1] + "-" + strs[2];
+            // JSONObject temp = new JSONObject();
+            // if (mapByAccount.get(key) != null) {
+            //     temp = (JSONObject) mapByAccount.get(key);
+            // } else {
+            //     String accountName = "";
+            //     if (strs[0].equals("ali")) {
+            //         accountName = new AliServiceImpl().getUserName(strs[2]);
+            //     }else{
+            //         accountName = new GodaddyServiceImpl().getUserName(strs[2]);
+            //     }
+            //     temp.put("type", strs[0]);
+            //     temp.put("username", accountName);
+            //     temp.put("theme", strs[1]);
+            // }
+            // temp.put(strs[3], e.getValue());
+            // mapByAccount.put(key, temp);
 
             // 资源总计
             int x = 0;
@@ -116,10 +116,10 @@ public class DashboardController {
             }
             numbers[x][y] += (Long) e.getValue();
         }
-        JSONArray jsonArray = new JSONArray();
-        for (Map.Entry<String, Object> e : mapByAccount.entrySet()) {
-            jsonArray.add(e.getValue());
-        }
+        // JSONArray jsonArray = new JSONArray();
+        // for (Map.Entry<String, Object> e : mapByAccount.entrySet()) {
+        //     jsonArray.add(e.getValue());
+        // }
         jsonObject.put("total", new JSONObject() {{
             put("xData", xData);
             put("normal", numbers[0]);
@@ -127,7 +127,7 @@ public class DashboardController {
             put("expired", numbers[2]);
             put("deprecated", numbers[3]);
         }});
-        jsonObject.put("divide", jsonArray);
+        // jsonObject.put("divide", jsonArray);
         return jsonObject;
     }
 

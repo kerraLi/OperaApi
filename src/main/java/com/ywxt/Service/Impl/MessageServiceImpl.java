@@ -32,7 +32,7 @@ public class MessageServiceImpl {
         Calendar startDate = Calendar.getInstance();
         // 不计算当天
         startDate.setTime(new Date());
-        startDate.add(Calendar.DATE, -(limitDay + 1));
+        startDate.add(Calendar.DATE, -limitDay);
         startDate.set(Calendar.HOUR_OF_DAY, 0);
         startDate.set(Calendar.MINUTE, 0);
         startDate.set(Calendar.SECOND, 0);
