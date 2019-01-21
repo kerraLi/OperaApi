@@ -17,6 +17,7 @@ import java.util.List;
  */
 @Repository
 public class RoleDaoImpl extends CommonDao implements RoleDao {
+	protected String domain = "Role";
 	@Override
 	public List<Role> findAll() {
 		return null;
@@ -33,8 +34,11 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 	}
 
 	@Override
-	public void save(Role model) {
-
+	public Long save(Role role) {
+          session.beginTransaction();
+		Long id = (Long) session.save(role);
+		session.getTransaction().commit();
+		return id;
 	}
 
 	@Override

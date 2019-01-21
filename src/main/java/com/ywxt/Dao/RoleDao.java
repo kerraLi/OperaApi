@@ -2,7 +2,7 @@ package com.ywxt.Dao;
 
 
 import com.ywxt.Domain.Role;
-import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface RoleDao {
 
 	Role findById(Long id);
 
-	void save(Role model);
+	Long save(Role role);
 
 	void update(Role role);
 

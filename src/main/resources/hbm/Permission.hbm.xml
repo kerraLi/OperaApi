@@ -4,11 +4,11 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="com.ywxt.Domain.Permission" table="sprivilege">
+	<class name="com.ywxt.Domain.Permission" table="permissions">
 		<id name="id">
 			<generator class="native"></generator>
 		</id>
-		<property name="permissionName" length="64" />
+		<property name="permissionName" length="20" />
 		<property name="url" length="255"/>
 
 		<!-- 配置下级权限和上级权限的多对一关系 -->
@@ -20,7 +20,7 @@
 		</set>
 		
 		<!-- 配置权限和角色的多对多关系 -->
-		<set name="roles" table="role_privilege">
+		<set name="roles" table="role_permission">
 			<key column="permissionId"/>
 			<many-to-many class="com.ywxt.Domain.Role" column="roleId"/>
 		</set>

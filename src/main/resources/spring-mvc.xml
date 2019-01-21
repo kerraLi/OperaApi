@@ -70,7 +70,6 @@
             <bean class="com.ywxt.Handler.SecurityHandler"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
-    <!--导入security-->
-    <import resource="classpath:spring-security.xml" />
 
+<import resource="./spring-security.xml"/>
 </beans>

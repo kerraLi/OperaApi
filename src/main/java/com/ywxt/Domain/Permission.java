@@ -17,7 +17,7 @@ public class Permission {
     private Permission parent;//当前权限的上级权限
     private Set<Permission> children = new HashSet<Permission>();//当前权限的下级权限集合
     //一个权限可以授予多个角色，权限和角色之间属于一对多关系，彼此之间属于多对多关系
-    private List<Role> rols;
+    private Set<Role> rols;
 
     public Long getId() {
         return id;
@@ -59,11 +59,11 @@ public class Permission {
         this.children = children;
     }
 
-    public List<Role> getRols() {
+    public Set<Role> getRols() {
         return rols;
     }
 
-    public void setRols(List<Role> rols) {
+    public void setRols(Set<Role> rols) {
         this.rols = rols;
     }
 }

@@ -3,6 +3,7 @@ package com.ywxt.Dao.Impl;
 import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.UserDao;
 import com.ywxt.Domain.User;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -48,6 +49,7 @@ public class UserDaoImpl extends CommonDao implements UserDao {
 
     public User getUserByUsername(String username) throws Exception {
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        Criteria criteria = session.createCriteria(User.class);
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
         Root<User> from = criteriaQuery.from(User.class);
         // 设置查询属性

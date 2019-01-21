@@ -20,6 +20,7 @@
             <!-- 映射集合属性的集合索引列 -->
             <list-index column="listIndex"/>
             <element type="java.lang.String" column="roleName"/>
+            <many-to-many class="com.ywxt.Domain.Role" column="roleId"/>
         </array>
     </class>
 </hibernate-mapping>
