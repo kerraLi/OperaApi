@@ -83,14 +83,8 @@ public class AliCdnController extends CommonController {
     // cdn:节点刷新
     @ResponseBody
     @RequestMapping(value = {"/refresh"}, method = RequestMethod.POST)
-    public Map<String, String> cdnRefreshObjectCache(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String accessId = request.getParameter("access-id");
-        String objectPath = request.getParameter("object-path");
-        String objectType = request.getParameter("object-type");
-        if (objectType.isEmpty()) {
-            objectType = "File";
-        }
-        return new AliCdnServiceImpl(accessId).refreshCdnObjectCaches(objectPath, objectType);
+    public Map<String, String> cdnRefreshObjectCache(String operateType, String refreshType, String content) throws Exception {
+        return new AliCdnServiceImpl().refreshCdn(operateType, refreshType, content);
     }
 
     // cdn:节点刷新任务查看

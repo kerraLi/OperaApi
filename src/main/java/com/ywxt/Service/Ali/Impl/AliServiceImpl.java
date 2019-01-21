@@ -152,4 +152,10 @@ public class AliServiceImpl implements AliService {
         }
     }
 
+    // 获取accessKeySecret
+    public String getAccessKeySecret(String accessKeyId) throws Exception {
+        AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(accessKeyId);
+        return aliAccount.getAccessKeySecret();
+    }
+
 }

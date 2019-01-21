@@ -13,7 +13,7 @@ public interface AliCdnService {
     public abstract JSONObject getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 
     // CDN：刷新CDN
-    public abstract Map<String, String> refreshCdnObjectCaches(String objectPath, String objectType) throws Exception;
+//    public abstract Map<String, String> refreshCdn(String objectPath, String objectType) throws Exception;
 
     // CDN：刷新任务查看
     public abstract List<DescribeRefreshTasksResponse.CDNTask> getCdnRefreshTask(String taskId) throws Exception;

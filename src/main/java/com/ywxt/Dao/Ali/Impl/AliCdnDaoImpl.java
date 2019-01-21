@@ -28,6 +28,14 @@ public class AliCdnDaoImpl extends CommonDao implements AliCdnDao {
         }
     }
 
+    public AliCdn getCdn(String domainName) throws Exception{
+        Criteria criteria = this.getCriteria(AliCdn.class, new HashMap<>() {{
+            put("domainName", domainName);
+        }});
+        return (AliCdn) criteria.uniqueResult();
+    }
+
+
     // group by 查找个数&account
     public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
         // 数据库限制 group时无法使用order

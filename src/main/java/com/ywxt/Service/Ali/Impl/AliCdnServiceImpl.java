@@ -16,6 +16,8 @@ import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
 
@@ -101,8 +103,39 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         return jsonObject;
     }
 
+    // CDN-刷新&预热
+    public Map<String, String> refreshCdn(String operateType, String refreshType, String objectPath) throws Exception {
+        String regex = "[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
+        Pattern p = Pattern.compile(regex);
+        String[] objectPaths = objectPath.split("\\n");
+        // 默认未同一个账号内，若为不同账号更新失败
+        Matcher matcher = p.matcher(objectPaths[0]);
+        if (matcher.find()) {
+            String domain = matcher.group();
+            if (this.accessKeyId == null) {
+                AliCdn c = new AliCdnDaoImpl().getCdn(domain);
+                System.out.println(c.getId());
+                this.accessKeyId = c.getAccessKeyId();
+                this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
+            }
+        }
+        if (operateType.equals("refresh")) {
+            // 刷新
+            String objectType = "File";
+            if (refreshType.equals("directory")) {
+                objectType = "Directory";
+            }
+            return this.refreshCdnObjectCaches(objectPath, objectType);
+        } else if (operateType.equals("warm")) {
+            // 预热
+            return this.pushObjectCache(objectPath);
+        } else {
+            throw new Exception("error OperateType");
+        }
+    }
+
     // CDN-刷新
-    public Map<String, String> refreshCdnObjectCaches(String objectPath, String objectType) throws Exception {
+    private Map<String, String> refreshCdnObjectCaches(String objectPath, String objectType) throws Exception {
         IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
         RefreshObjectCachesRequest request = new RefreshObjectCachesRequest();
@@ -112,12 +145,26 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         request.setObjectType(objectType);
         RefreshObjectCachesResponse response = client.getAcsResponse(request);
         Map<String, String> map = new HashMap<>();
-        map.put("refreshTaskId", response.getRefreshTaskId());
+        map.put("taskId", response.getRefreshTaskId());
         map.put("requestId", response.getRequestId());
         return map;
     }
 
-    // CDN-刷新预热任务
+    // CDN-预热
+    private Map<String, String> pushObjectCache(String objectPath) throws Exception {
+        IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+        PushObjectCacheRequest request = new PushObjectCacheRequest();
+        // 设置刷新域名多个URL使用换行符分隔"\n"或者"\r\n"
+        request.setObjectPath(objectPath);
+        PushObjectCacheResponse response = client.getAcsResponse(request);
+        Map<String, String> map = new HashMap<>();
+        map.put("taskId", response.getPushTaskId());
+        map.put("requestId", response.getRequestId());
+        return map;
+    }
+
+    // CDN-刷新预热任务列表
     public List<DescribeRefreshTasksResponse.CDNTask> getCdnRefreshTask(String taskId) throws Exception {
         IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
