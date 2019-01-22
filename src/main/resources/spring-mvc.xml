@@ -65,10 +65,10 @@
             <mvc:mapping path="/**"/>
             <bean class="com.ywxt.Handler.AllowCrossDomainHandler"></bean>
         </mvc:interceptor>
-        <mvc:interceptor>
+      <!--  <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <bean class="com.ywxt.Handler.SecurityHandler"></bean>
-        </mvc:interceptor>
+        </mvc:interceptor>-->
     </mvc:interceptors>
 
 <import resource="./spring-security.xml"/>

@@ -2,11 +2,9 @@ package com.ywxt.Dao.Impl;
 
 import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.UserDao;
+import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.User;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.springframework.stereotype.Repository;
 
@@ -62,4 +60,20 @@ public class UserDaoImpl extends CommonDao implements UserDao {
         this.closeSession();
         return u;
     }
+
+    @Override
+    public List<User> list() {
+        try {
+            session.beginTransaction();
+            Criteria criteria = session.createCriteria(User.class);
+            List<User>users= criteria.list();
+            return users;
+        } catch (HibernateException e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
+    }
+
 }

@@ -3,7 +3,9 @@ package com.ywxt.Service;
 import com.ywxt.Domain.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService extends UserDetailsService {
+import java.util.List;
+
+public interface UserService/* extends UserDetailsService */{
 
     public abstract String login(String clientUsername, String clientPassword) throws Exception;
 
@@ -18,4 +20,9 @@ public interface UserService extends UserDetailsService {
 
     // 获取用户
     public abstract User getUserByUsername(String username) throws Exception;
+
+//查询所有用户
+    List<User> list();
+//
+    Long add(User user);
 }

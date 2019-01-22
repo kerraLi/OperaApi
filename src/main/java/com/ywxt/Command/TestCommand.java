@@ -8,6 +8,7 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
+import com.ywxt.Domain.Role;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
@@ -44,15 +45,17 @@ public class TestCommand {
         u.setNickname("超级管理员");
         u.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
         u.setIntroduction("我是超级管理员");
-        String[] roles = {"admin"};
-        u.setRoles(roles);
+        Role role = new Role();
+       // String[] roles = {"admin"};
+      //  u.setRoles(roles);
         userDao.saveUser(u);
     }
 
     private static void readUser() {
         // 读取用户
         User user = new UserServiceImpl().getUserById(1);
-        for (String s : user.getRoles()) {
+
+        for (Role s : user.getRoles()) {
             System.out.println(s);
         }
         System.out.println();

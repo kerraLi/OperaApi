@@ -5,6 +5,8 @@ import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.RoleDao;
 
 import com.ywxt.Domain.Role;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,10 +19,19 @@ import java.util.List;
  */
 @Repository
 public class RoleDaoImpl extends CommonDao implements RoleDao {
-	protected String domain = "Role";
+//	protected String domain = "Role";
 	@Override
 	public List<Role> findAll() {
-		return null;
+		try {
+			Criteria criteria = session.createCriteria(Role.class);
+			List<Role>roles=criteria.list();
+			return roles;
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+			throw e;
+		} finally {
+			this.closeSession();
+		}
 	}
 
 	@Override
@@ -36,9 +47,9 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 	@Override
 	public Long save(Role role) {
           session.beginTransaction();
-		Long id = (Long) session.save(role);
+
 		session.getTransaction().commit();
-		return id;
+		return 1l;
 	}
 
 	@Override

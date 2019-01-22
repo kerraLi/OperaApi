@@ -2,6 +2,7 @@ package com.ywxt.Dao;
 
 import com.ywxt.Domain.User;
 
+import java.util.List;
 
 
 public interface UserDao {
@@ -12,4 +13,5 @@ public interface UserDao {
 
     public abstract User getUserByUsername(String username) throws Exception;
 
+    List<User> list();
 }
