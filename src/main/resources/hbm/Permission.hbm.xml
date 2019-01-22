@@ -14,15 +14,15 @@
 		<!-- 配置下级权限和上级权限的多对一关系 -->
 		<many-to-one name="parent" class="com.ywxt.Domain.Permission" column="parentId"/>
 		<!-- 配置上级权限和下级权限的一对多关系 -->
-		<set name="children" order-by="id" lazy="false">
+		<list name="children" order-by="id" lazy="false">
 			<key column="parentId"></key>
 			<one-to-many class="com.ywxt.Domain.Permission"/>
-		</set>
+		</list>
 		
 		<!-- 配置权限和角色的多对多关系 -->
-		<set name="roles" table="role_permission">
+		<list name="roles" table="role_permission">
 			<key column="permissionId"/>
 			<many-to-many class="com.ywxt.Domain.Role" column="roleId"/>
-		</set>
+		</list>
 	</class>
 </hibernate-mapping>

@@ -4,6 +4,10 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+    <!--   配置Spring监听器-->
+    <!-- <listener>
+         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+     </listener>-->
 
     <!--  字符串控制
         ?todo 为啥 servlet-name 设置 spring-mvc
@@ -12,6 +16,14 @@
         <description>字符编码过滤器</description>
         <filter-name>encoding-filter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>encoding-filter</filter-name>
@@ -33,6 +45,14 @@
 
     classpath: resources 目录
     -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
     <!--spring-mvc前端控制器-->
     <servlet>
         <description>spring-mvc的前端控制器</description>
@@ -48,17 +68,5 @@
         <servlet-name>spring-mvc</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-         <!--   配置Spring监听器-->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-    <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
 
 </web-app>

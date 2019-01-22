@@ -3,9 +3,9 @@ package com.ywxt.Domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 public class Permission {
@@ -15,9 +15,9 @@ public class Permission {
     private String permissionName;
     private String url;
     private Permission parent;//当前权限的上级权限
-    private Set<Permission> children = new HashSet<Permission>();//当前权限的下级权限集合
+    private List<Permission> children ;//当前权限的下级权限集合
     //一个权限可以授予多个角色，权限和角色之间属于一对多关系，彼此之间属于多对多关系
-    private Set<Role> rols;
+    private List<Role>roles;
 
     public Long getId() {
         return id;
@@ -51,19 +51,19 @@ public class Permission {
         this.url = url;
     }
 
-    public Set<Permission> getChildren() {
+    public List<Permission> getChildren() {
         return children;
     }
 
-    public void setChildren(Set<Permission> children) {
+    public void setChildren(List<Permission> children) {
         this.children = children;
     }
 
-    public Set<Role> getRols() {
+    public List<Role> getRols() {
         return rols;
     }
 
-    public void setRols(Set<Role> rols) {
+    public void setRols(List<Role> rols) {
         this.rols = rols;
     }
 }

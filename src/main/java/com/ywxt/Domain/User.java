@@ -4,6 +4,7 @@ package com.ywxt.Domain;
 
 
 import javax.persistence.Entity;
+import java.util.List;
 
 
 @Entity
@@ -14,7 +15,7 @@ public class User{
     private String nickname;
     private String introduction;
     private String avatar;
-    private String[] roles;
+    private List<Role> roles;
     public long getId() {
         return id;
     }
@@ -69,11 +70,5 @@ public class User{
         this.avatar = avatar;
     }
 
-    public String[] getRoles() {
-        return roles;
-    }
 
-    public void setRoles(String[] roles) {
-        this.roles = roles;
-    }
 }

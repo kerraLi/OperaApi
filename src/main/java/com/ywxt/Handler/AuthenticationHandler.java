@@ -6,11 +6,15 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.ywxt.Annotation.PassToken;
+import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Impl.UserServiceImpl;
+import com.ywxt.Service.PermissionService;
+import com.ywxt.Service.UserService;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,6 +26,10 @@ import java.lang.reflect.Method;
 // 用户登陆鉴权
 // todo 后期增加权限校验
 public class AuthenticationHandler implements HandlerInterceptor {
+    @Autowired
+    private PermissionService permissionService;
+    @Autowired
+    private UserService userService;
     // 在业务处理器处理请求之前被调用
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -79,6 +87,11 @@ public class AuthenticationHandler implements HandlerInterceptor {
             throw new RuntimeException("401");
         }
         return true;
+
+        private Permission getTemplate(){
+
+return root;
+        }
     }
     // 在业务处理器处理请求完成之后，生成视图之前执行
     @Override
