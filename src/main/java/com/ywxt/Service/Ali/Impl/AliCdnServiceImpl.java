@@ -227,6 +227,10 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
     // CDN-刷新预热任务(更新process与status)
     public AliCdnTask updateCdnRefreshTask(int id) throws Exception {
         AliCdnTask act = new AliCdnTaskDaoImpl().getCdnTask(id);
+        if (this.accessKeyId == null || this.accessKeySecret == null) {
+            this.accessKeyId = act.getAccessKeyId();
+            this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
+        }
         DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
         act.setProcess(temp.getProcess());
         act.setStatus(temp.getStatus());

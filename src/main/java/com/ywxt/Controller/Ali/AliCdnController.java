@@ -119,12 +119,13 @@ public class AliCdnController extends CommonController {
                     break;
             }
         }
+        params.put("orderDesc", "creationTime");
         return new AliCdnServiceImpl().getCdnRefreshTaskList(params, pageSize, pageNumber);
     }
 
     // cdn:节点刷新任务状态更新
     @ResponseBody
-    @RequestMapping(value = {"/refresh/task/update/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/refresh/task/update/{id}"}, method = RequestMethod.GET)
     public AliCdnTask updateCdnRefreshTask(@PathVariable Integer id) throws Exception {
         return new AliCdnServiceImpl().updateCdnRefreshTask(id);
     }
