@@ -1,10 +1,9 @@
 package com.ywxt.Controller.Ali;
 
 import com.alibaba.fastjson.JSONObject;
-import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliCdn;
-import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Domain.Ali.AliCdnTask;
 import com.ywxt.Service.Ali.Impl.AliCdnServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import org.springframework.stereotype.Controller;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -89,10 +89,44 @@ public class AliCdnController extends CommonController {
 
     // cdn:节点刷新任务查看
     @ResponseBody
-    @RequestMapping(value = {"/refresh/task"}, method = RequestMethod.POST)
-    public DescribeRefreshTasksResponse.CDNTask getRefreshObjectCacheTask(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String accessId = request.getParameter("access-id");
-        String taskId = request.getParameter("task-id");
-        return new AliCdnServiceImpl(accessId).getCdnRefreshTask(taskId).get(0);
+    @RequestMapping(value = {"/refresh/task/list"}, method = RequestMethod.POST)
+    public JSONObject getCdnRefreshTaskList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
+        int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        if (!(request.getParameter("operDate") == null)) {
+            String[] operateDate = request.getParameter("operDate").split(",");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            params.put("creationTime@gt", sdf.parse(operateDate[0] + " 00:00:00"));
+            params.put("creationTime@lt", sdf.parse(operateDate[1] + " 23:59:59"));
+        }
+        if (!(request.getParameter("url") == null) && !(request.getParameter("url").isEmpty())) {
+            params.put("objectPath@like", "%" + request.getParameter("url") + "%");
+        }
+        if (!(request.getParameter("operType") == null) && !(request.getParameter("operType").isEmpty())) {
+            String operateType = request.getParameter("operType");
+            switch (operateType) {
+                case "url-refresh":
+                    params.put("objectType", "file");
+                    break;
+                case "content-refresh":
+                    params.put("objectType", "path");
+                    break;
+                case "url-warm":
+                    params.put("objectType", "preload");
+                    break;
+                default:
+                    break;
+            }
+        }
+        return new AliCdnServiceImpl().getCdnRefreshTaskList(params, pageSize, pageNumber);
     }
+
+    // cdn:节点刷新任务状态更新
+    @ResponseBody
+    @RequestMapping(value = {"/refresh/task/update/{id}"}, method = RequestMethod.POST)
+    public AliCdnTask updateCdnRefreshTask(@PathVariable Integer id) throws Exception {
+        return new AliCdnServiceImpl().updateCdnRefreshTask(id);
+    }
+
 }

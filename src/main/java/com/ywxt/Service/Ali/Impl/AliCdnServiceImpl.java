@@ -8,8 +8,10 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
+import com.ywxt.Dao.Ali.Impl.AliCdnTaskDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliCdn;
+import com.ywxt.Domain.Ali.AliCdnTask;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliCdnService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
@@ -104,6 +106,7 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
     }
 
     // CDN-刷新&预热
+    // 刷新后task存入本地数据库 & 综合所有账号
     public Map<String, String> refreshCdn(String operateType, String refreshType, String objectPath) throws Exception {
         String regex = "[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
         Pattern p = Pattern.compile(regex);
@@ -114,24 +117,35 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
             String domain = matcher.group();
             if (this.accessKeyId == null) {
                 AliCdn c = new AliCdnDaoImpl().getCdn(domain);
-                System.out.println(c.getId());
+                if (c == null) {
+                    throw new Exception("输入DOMAIN错误。");
+                }
                 this.accessKeyId = c.getAccessKeyId();
                 this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
             }
         }
+        Map<String, String> result = new HashMap<>();
         if (operateType.equals("refresh")) {
             // 刷新
             String objectType = "File";
             if (refreshType.equals("directory")) {
                 objectType = "Directory";
             }
-            return this.refreshCdnObjectCaches(objectPath, objectType);
+            result = this.refreshCdnObjectCaches(objectPath, objectType);
         } else if (operateType.equals("warm")) {
             // 预热
-            return this.pushObjectCache(objectPath);
+            result = this.pushObjectCache(objectPath);
         } else {
             throw new Exception("error OperateType");
         }
+        // 多个任务id
+        String[] taskIds = (result.get("taskIds")).split(",");
+        List<DescribeRefreshTasksResponse.CDNTask> cdnTasks = this.getCdnRefreshTask(taskIds.length, 1);
+        for (DescribeRefreshTasksResponse.CDNTask cdnTask : cdnTasks) {
+            AliCdnTask aliCdnTask = new AliCdnTask(this.accessKeyId, cdnTask);
+            new AliCdnTaskDaoImpl().saveCdnTask(aliCdnTask);
+        }
+        return result;
     }
 
     // CDN-刷新
@@ -145,7 +159,8 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         request.setObjectType(objectType);
         RefreshObjectCachesResponse response = client.getAcsResponse(request);
         Map<String, String> map = new HashMap<>();
-        map.put("taskId", response.getRefreshTaskId());
+        // 多个任务：逗号分隔数组
+        map.put("taskIds", response.getRefreshTaskId());
         map.put("requestId", response.getRequestId());
         return map;
     }
@@ -159,7 +174,8 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         request.setObjectPath(objectPath);
         PushObjectCacheResponse response = client.getAcsResponse(request);
         Map<String, String> map = new HashMap<>();
-        map.put("taskId", response.getPushTaskId());
+        // 多个任务：逗号分隔数组
+        map.put("taskIds", response.getPushTaskId());
         map.put("requestId", response.getRequestId());
         return map;
     }
@@ -172,6 +188,50 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         request.setTaskId(taskId);
         DescribeRefreshTasksResponse response = client.getAcsResponse(request);
         return response.getTasks();
+    }
+
+    // CDN-刷新预热任务列表(page)
+    public List<DescribeRefreshTasksResponse.CDNTask> getCdnRefreshTask(int pageSize, int pageNumber) throws Exception {
+        IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+        DescribeRefreshTasksRequest request = new DescribeRefreshTasksRequest();
+        request.setPageSize(pageSize);
+        request.setPageNumber(pageNumber);
+        DescribeRefreshTasksResponse response = client.getAcsResponse(request);
+        return response.getTasks();
+    }
+
+    // CDN-刷新预热任务列表(page&从数据库中读取)
+    public JSONObject getCdnRefreshTaskList(HashMap<String, Object> params, int pageSize, int pageNumber) throws Exception {
+        List<AliCdnTask> list = new AliCdnTaskDaoImpl().getList(params, pageNumber, pageSize);
+        for (AliCdnTask act : list) {
+            // 更新状态&进度
+            if (act.getStatus().equals("Refreshing") || act.getStatus().equals("Pending")) {
+                if (this.accessKeyId == null || this.accessKeySecret == null) {
+                    this.accessKeyId = act.getAccessKeyId();
+                    this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
+                }
+                DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
+                act.setProcess(temp.getProcess());
+                act.setStatus(temp.getStatus());
+                new AliCdnTaskDaoImpl().saveCdnTask(act);
+            }
+            act.setUserName(this.getUserName(act.getAccessKeyId()));
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", new AliCdnTaskDaoImpl().getTotal(params));
+        jsonObject.put("items", list);
+        return jsonObject;
+    }
+
+    // CDN-刷新预热任务(更新process与status)
+    public AliCdnTask updateCdnRefreshTask(int id) throws Exception {
+        AliCdnTask act = new AliCdnTaskDaoImpl().getCdnTask(id);
+        DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
+        act.setProcess(temp.getProcess());
+        act.setStatus(temp.getStatus());
+        new AliCdnTaskDaoImpl().saveCdnTask(act);
+        return act;
     }
 
 }
