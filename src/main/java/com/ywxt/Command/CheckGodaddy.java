@@ -33,7 +33,7 @@ public class CheckGodaddy {
                 param.put("expiredTime", dfOut.format(domain.getExpires()));
                 param.put("expirationProtected", String.valueOf(domain.isExpirationProtected()));
                 setMessage(action, domain.getDomain(), param);
-                TelegramUtils.sendMessage("", param);
+                TelegramUtils.sendMessage(action, param);
             }
         }
     }
@@ -53,7 +53,7 @@ public class CheckGodaddy {
                 param.put("expiredTime", dfOut.format(certificate.getValidEnd()));
                 param.put("subjectAlternativeNames", certificate.getSubjectAlternativeNames());
                 setMessage(action, certificate.getCommonName(), param);
-                TelegramUtils.sendMessage("GODADDY_CERTIFICATE_EXPIRED", param);
+                TelegramUtils.sendMessage(action, param);
             }
         }
     }
