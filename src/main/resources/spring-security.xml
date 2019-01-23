@@ -55,9 +55,20 @@
     </security:authentication-manager>
 
 
+    <!--密码加密-->
+    <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
 
-
-
+    <!--开启jsr250注解
+           @RolesAllowed
+           <security:global-method-security jsr250-annotations="enabled"/>
+       -->
+    <!--security自带注解
+        @Secured
+        <security:global-method-security secured-annotations="enabled"/>
+    -->
+    <!--spring 自带
+        @PreAuthorize
+    -->
     <security:global-method-security pre-post-annotations="enabled"/>
 
 </beans>

@@ -67,8 +67,8 @@ public class RoleServiceImpl implements RoleService {
 
 	/**
 	 * 根据id数组查询多个岗位
-	 */
+	 *//*
 	public List<Role> findRolesByIds(Long[] roleIds) {
 		return roleDao.findByIds(roleIds);
-	}
+	}*/
 }

@@ -4,18 +4,24 @@ package com.ywxt.Domain;
 
 
 import javax.persistence.Entity;
-import java.util.List;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
-public class User{
+public class User implements Serializable {
+    @Id
+    @GeneratedValue
     private long id;
     private String username;
     private String password;
     private String nickname;
     private String introduction;
     private String avatar;
-    private List<Role> roles;
+    private Set<Role> roles=new HashSet<>();
     public long getId() {
         return id;
     }
@@ -28,15 +34,9 @@ public class User{
         return username;
     }
 
-
-
-
-
     public void setUsername(String username) {
         this.username = username;
     }
-
-
 
     public String getPassword() {
         return password;
@@ -70,18 +70,12 @@ public class User{
         this.avatar = avatar;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-/* public String[] getRoles() {
-        return roles;
     }
 
-    public void setRoles(String[] roles) {
-        this.roles = roles;
-    }*/
 }

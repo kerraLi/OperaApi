@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 // 用户登陆鉴权
 // todo 后期增加权限校验
@@ -97,7 +98,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
         Permission root = getTemplate();
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User suser = userService.getUserByUsername(username);
-    //    User suser = userService.findByUsername(username);
+        //    User suser = userService.findByUsername(username);
         // 用户的所有的权限菜单
         List<Permission> userPermissions = new ArrayList<Permission>();
         for (Role role : suser.getRoles()) {
@@ -108,7 +109,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
         // 复制后的结果
         List<Permission> result = new ArrayList<Permission>();
 
-        List<Permission> l1Permissions = root.getChildren();
+        Set<Permission> l1Permissions = root.getChildren();
         for (Permission l1Permission : l1Permissions) {
             // 复制一级菜单
             Permission _l1 =  clone(l1Permission);
@@ -149,7 +150,6 @@ public class AuthenticationHandler implements HandlerInterceptor {
         }
         return root;
     }
-
 
     private Permission clone(Permission src){
         Permission newP = new Permission();

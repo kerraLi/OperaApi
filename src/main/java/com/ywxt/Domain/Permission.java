@@ -4,18 +4,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import java.util.ArrayList;
-
-import java.util.List;
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.*;
 
 
-@Entity
-public class Permission {
+public class Permission implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
     private String permissionName;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -29,21 +27,40 @@ public class Permission {
 
         return Objects.hash(id);
     }
-    private String url;
 
     private Long pid;
+
     public void add(Permission permission){
         if(null == this.children){
-            this.children = new ArrayList<Permission>();
+            this.children = new HashSet<>();
         }
         this.children.add(permission);
     }
+    private Set<Permission> children;
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Set<Permission> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Permission> children) {
+        this.children = children;
+    }
 
 
-    private List<Permission> children ;//当前权限的下级权限集合
+
+
+
+    private String url;
     //一个权限可以授予多个角色，权限和角色之间属于一对多关系，彼此之间属于多对多关系
-    private List<Role>roles;
-
+    private Set<Role>roles=new HashSet<>();
     public Long getId() {
         return id;
     }
@@ -64,35 +81,17 @@ public class Permission {
         return url;
     }
 
-
-
-
-
     public void setUrl(String url) {
         this.url = url;
     }
 
-    public List<Permission> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<Permission> children) {
-        this.children = children;
-    }
-
-    public Long getPid() {
-        return pid;
-    }
-
-    public void setPid(Long pid) {
-        this.pid = pid;
-    }
-
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+
 }

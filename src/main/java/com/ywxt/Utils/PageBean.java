@@ -1,64 +1,52 @@
 package com.ywxt.Utils;
 
+import org.hibernate.criterion.DetachedCriteria;
+
 import java.util.List;
 
 /**
- * 分页信息类
- * @param <T>
+ * 封装分页相关的属性
+ * @author
+ *
  */
-public class PageBean<T> {
-
-    // 当前页码，手动添加的默认值是1
-    private int pageCode = 1;
-
-    // 总记录数
-    private int totalCount;
-
-    // 每页显示的记录条数，每页显示5条
-    private int pageSize = 5;
-
-    // 每页显示的数据
-    private List<T> beanList;
-
-    public int getPageCode() {
-        return pageCode;
-    }
-    public void setPageCode(int pageCode) {
-        this.pageCode = pageCode;
-    }
-
-    /**
-     * 调用getTotalPage() 获取到总页数
-     * JavaBean的属性规定：totalPage是JavaBean是属性 ${pageBean.totalPage}
-     * @return
-     */
-    public int getTotalPage() {
-        // 计算
-        int totalPage = totalCount / pageSize;
-        // 说明整除
-        if(totalCount % pageSize == 0){
-            return totalPage;
-        }else{
-            return totalPage + 1;
-        }
-    }
-
-    public int getTotalCount() {
-        return totalCount;
-    }
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
-    }
-    public int getPageSize() {
-        return pageSize;
-    }
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-    public List<T> getBeanList() {
-        return beanList;
-    }
-    public void setBeanList(List<T> beanList) {
-        this.beanList = beanList;
-    }
+public class PageBean {
+	/**页面传递参数**/
+	private int currentPage;//当前页码
+	private int pageSize;//每页显示的记录数
+	private DetachedCriteria detachedCriteria;//查询条件
+	
+	/**需要查询数据库获得**/
+	private int total;//总记录数
+	private List rows;//当前页需要展示的数据集合
+	
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+	public int getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	public DetachedCriteria getDetachedCriteria() {
+		return detachedCriteria;
+	}
+	public void setDetachedCriteria(DetachedCriteria detachedCriteria) {
+		this.detachedCriteria = detachedCriteria;
+	}
+	public int getTotal() {
+		return total;
+	}
+	public void setTotal(int total) {
+		this.total = total;
+	}
+	public List getRows() {
+		return rows;
+	}
+	public void setRows(List rows) {
+		this.rows = rows;
+	}
 }

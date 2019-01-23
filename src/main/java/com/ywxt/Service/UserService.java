@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService/* extends UserDetailsService */{
+public interface UserService{
 
     public abstract String login(String clientUsername, String clientPassword) throws Exception;
 
@@ -25,4 +25,8 @@ public interface UserService/* extends UserDetailsService */{
     List<User> list();
 //
     Long add(User user);
+
+    public User login(User model);
+
+    public void editPassword(User user);
 }

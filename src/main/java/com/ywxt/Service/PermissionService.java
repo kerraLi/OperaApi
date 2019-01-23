@@ -1,6 +1,7 @@
 package com.ywxt.Service;
 
 import com.ywxt.Domain.Permission;
+import com.ywxt.Utils.PageBean;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface PermissionService {
      * @return
      */
     int add(Permission permission);
+
+    public void pageQuery(PageBean pageBean);
 }

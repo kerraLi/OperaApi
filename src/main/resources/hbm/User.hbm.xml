@@ -14,12 +14,15 @@
         <property name="nickname" type="java.lang.String" length="20" not-null="false"/>
         <property name="introduction" type="java.lang.String" length="20" not-null="false"/>
         <property name="avatar" type="java.lang.String" length="200" not-null="false"/>
-        <list name="roles" table="user_role">
-            <!-- 映射属性集合表的外键列  -->
-            <key column="userId" not-null="true"/>
+            <set name="roles" table="user_role" >
+            <key>
+                <column name="userId" length="32" not-null="true" />
+            </key>
+            <many-to-many entity-name="com.ywxt.Domain.Role">
+                <!-- 映射属性集合表的外键列  -->
+                <column name="roleId" length="32" not-null="true" />
+            </many-to-many>
+        </set>
 
-            <key column="roleId"/>
-            <many-to-many class="com.ywxt.Domain.Role" column="roleId"/>
-        </list>
     </class>
 </hibernate-mapping>

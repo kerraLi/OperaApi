@@ -1,6 +1,8 @@
 package com.ywxt.Dao;
 
 import com.ywxt.Annotation.NotFilterCloumn;
+import com.ywxt.Dao.Impl.BaseDaoImpl;
+import com.ywxt.Utils.PageBean;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,12 +10,12 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
+
 import java.util.Map;
 
-public class CommonDao {
+public class CommonDao /*extends BaseDaoImpl*/{
 
     protected SessionFactory sessionFactory;
     protected Session session;

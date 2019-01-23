@@ -12,14 +12,26 @@
 		<property name="roleName" length="20" />
 		<property name="roleDesc" length="255"/>
 		<!-- 配置岗位和用户的多对多关系 -->
-		<list name="users" table="user_role">
-			<key column="roleId"></key>
-			<many-to-many class="com.ywxt.Domain.User" column="userId"/>
-		</list>
+		<set name="users" inverse="true" table="user_role" >
+			<key>
+				<column name="roleId" length="32" not-null="true" />
+			</key>
+                <many-to-many entity-name="com.ywxt.Domain.User">
+				<column name="userId" length="32" not-null="true" />
+			</many-to-many>
+		</set>
 		<!-- 配置角色和权限的多对多关系 -->
-		<list name="permissions" table="role_permission" lazy="false">
-			<key column="roleId"/>
-			<many-to-many class="com.ywxt.Domain.Permission" column="permissionId"/>
-		</list>
+		<set name="permissions" table="role_permission" >
+			<key>
+				<column name="roleI" length="32" not-null="true" />
+			</key>
+			<many-to-many entity-name="com.ywxt.Domain.Permission">
+				<column name="permissionId" length="32" not-null="true" />
+			</many-to-many>
+		</set>
+
+
+
+
 	</class>
 </hibernate-mapping>

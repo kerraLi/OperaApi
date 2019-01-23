@@ -18,12 +18,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
@@ -83,6 +86,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User login(User model) {
+        return null;
+    }
+
+    @Override
+    public void editPassword(User user) {
+
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user= null;
         try {
@@ -98,7 +111,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // 第三个参数为authorities 权限信息集合
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         // 获取用户所拥有的角色
-        List<Role> roles = user.getRoles();
+        Set<Role> roles = user.getRoles();
         for (Role role : roles) {
             // 根据角色名称创建授权信息
             // 添加到集合中
@@ -109,22 +122,4 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return user2;
     }
 
-
-   /* @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 先设置假的权限
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        // 传入角色
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        User sysUser = null;
-        try {
-            sysUser = userDao.getUserByUsername(username);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // 创建用户
-        org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(username,"{noop}"+sysUser.getPassword() , authorities) ;
-
-        return user;
-    }*/
 }
