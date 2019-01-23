@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
+import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +38,19 @@ public class AliAccountController extends CommonController {
             }});
         }
         throw new Exception("删除失败。");
+    }
+
+    // 设置mark
+    @ResponseBody
+    @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
+    public JSONObject ecsParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
+        AliAccount aliAccount = new AliAccountServiceImpl().getAliAccount(id);
+        if (status.equals("mark")) {
+            new ParameterIgnoreServiceImpl().saveMarked(aliAccount);
+        } else if (status.equals("unmark")) {
+            new ParameterIgnoreServiceImpl().deleteMarked(aliAccount);
+        }
+        return this.returnObject(new HashMap<String, Object>() {{
+        }});
     }
 }

@@ -138,6 +138,38 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         return jsonObject;
     }
 
+    // ecs-操作
+    public void actionEcs(String action, int id) throws Exception {
+        AliEcs aliEcs = new AliEcsDaoImpl().getEcs(id);
+        if (this.accessKeyId == null || this.accessKeySecret == null) {
+            this.accessKeyId = aliEcs.getAccessKeyId();
+            this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
+        }
+        switch (action) {
+            case "run":
+                this.startEcs(aliEcs.getRegionId(), aliEcs.getInstanceId());
+                break;
+            case "stop":
+                this.stopEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
+                break;
+            case "stop-force":
+                this.stopEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
+                break;
+            case "rerun":
+                this.restartEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
+                break;
+            case "rerun-force":
+                this.restartEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
+                break;
+            case "free":
+                this.deleteEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
+                break;
+            case "free-force":
+                this.deleteEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
+                break;
+        }
+    }
+
     // ecs-启动
     public void startEcs(String regionId, String instanceId) throws Exception {
         IClientProfile profile = DefaultProfile.getProfile(regionId, this.accessKeyId, this.accessKeySecret);

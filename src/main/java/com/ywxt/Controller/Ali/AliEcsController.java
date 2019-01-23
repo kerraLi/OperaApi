@@ -3,7 +3,6 @@ package com.ywxt.Controller.Ali;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliEcs;
-import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Utils.Parameter;
@@ -50,6 +49,7 @@ public class AliEcsController extends CommonController {
         return new AliEcsServiceImpl().getEcsList(params, pageNumber, pageSize);
     }
 
+    // 批量设置mark
     @ResponseBody
     @RequestMapping(value = {"/param/{status}"}, method = RequestMethod.POST)
     public JSONObject ecsParamSetAll(Integer[] ids, @PathVariable String status) throws Exception {
@@ -69,6 +69,7 @@ public class AliEcsController extends CommonController {
         }});
     }
 
+    // 设置mark
     @ResponseBody
     @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
     public JSONObject ecsParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
@@ -78,6 +79,15 @@ public class AliEcsController extends CommonController {
         } else if (status.equals("unmark")) {
             new ParameterIgnoreServiceImpl().deleteMarked(aliEcs);
         }
+        return this.returnObject(new HashMap<String, Object>() {{
+        }});
+    }
+
+    // ecs:操作服务器状态
+    @ResponseBody
+    @RequestMapping(value = {"/status/{action}/{id}"}, method = RequestMethod.GET)
+    public JSONObject ecsStatusAction(@PathVariable String action, @PathVariable Integer id) throws Exception {
+        new AliEcsServiceImpl().actionEcs(action, id);
         return this.returnObject(new HashMap<String, Object>() {{
         }});
     }

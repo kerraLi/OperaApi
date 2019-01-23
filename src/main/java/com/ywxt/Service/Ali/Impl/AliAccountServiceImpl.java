@@ -13,6 +13,8 @@ import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Handler.AsyncHandler;
 import com.ywxt.Service.Ali.AliAccountService;
+import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.AsyncUtils;
 import com.ywxt.Utils.Parameter;
 
@@ -21,6 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AliAccountServiceImpl implements AliAccountService {
+
+    // 获取账户
+    public AliAccount getAliAccount(int id) {
+        return new AliAccountDaoImpl().getAliAccount(id);
+    }
 
     // 获取总数
     public int getTotal(HashMap<String, Object> params) throws Exception {
@@ -36,6 +43,9 @@ public class AliAccountServiceImpl implements AliAccountService {
     public List<AliAccount> getList(boolean checkMoney) throws Exception {
         List<AliAccount> list = new AliAccountDaoImpl().getAliAccounts();
         if (checkMoney) {
+            // 是否弃用标记
+            String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliAccount.class);
+            String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliAccount.class);
             for (AliAccount aa : list) {
                 if (aa.getStatus().equals("normal")) {
                     QueryAccountBalanceResponse.Data data = new AliServiceImpl(aa.getAccessKeyId(), aa.getAccessKeySecret()).getAccountBalance();
@@ -44,6 +54,9 @@ public class AliAccountServiceImpl implements AliAccountService {
                     if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue() <= Double.parseDouble(Parameter.alertThresholds.get("ALI_ACCOUNT_BALANCE"))) {
                         aa.setAlertBalance(true);
                     }
+                }
+                if (ArrayUtils.hasString(markeValues, aa.getAccessKeyId())) {
+                    aa.setAlertMarked(true);
                 }
             }
         }

@@ -20,7 +20,7 @@ public class CheckAli {
         List<AliAccount> list = new AliAccountServiceImpl().getList(true);
         String action = "ALI_ACCOUNT_NO_MONEY";
         for (AliAccount aliAccount : list) {
-            if (aliAccount.getAlertBalance()) {
+            if (aliAccount.getAlertBalance() && (!aliAccount.getAlertMarked())) {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("accountName", aliAccount.getUserName());
                 param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
@@ -83,11 +83,12 @@ public class CheckAli {
         } catch (Exception e) {
             try {
                 Map<String, String> param = new HashMap<String, String>();
-                param.put("message", "Ali-" + action + e.getMessage());
+                param.put("message", "Ali-" + action + "-" + e.getMessage());
                 param.put("class", e.getClass().toString());
                 TelegramUtils.sendMessage("ERROR", param);
+                CheckAli.printException(e);
             } catch (Exception e2) {
-                System.out.println(e2.getMessage());
+                CheckAli.printException(e2);
             }
         }
     }
@@ -103,6 +104,16 @@ public class CheckAli {
             param.put("message", e.getMessage());
             param.put("class", e.getClass().toString());
             TelegramUtils.sendMessage("ERROR", param);
+            CheckAli.printException(e);
+        }
+    }
+
+    // 输出错误（记录日志中排查问题）
+    private static void printException(Exception e) {
+        StackTraceElement[] ses = e.getStackTrace();
+        System.err.println("Exception " + e.toString());
+        for (StackTraceElement se : ses) {
+            System.err.println("\tat " + se);
         }
     }
 }

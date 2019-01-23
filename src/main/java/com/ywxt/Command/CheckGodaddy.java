@@ -92,11 +92,12 @@ public class CheckGodaddy {
         } catch (Exception e) {
             try {
                 Map<String, String> param = new HashMap<String, String>();
-                param.put("message", "Godaddy-" + action + e.getMessage());
+                param.put("message", "Godaddy-" + action + "-" + e.getMessage());
                 param.put("class", e.getClass().toString());
                 TelegramUtils.sendMessage("ERROR", param);
+                CheckGodaddy.printException(e);
             } catch (Exception e2) {
-                System.out.println(e2.getMessage());
+                CheckGodaddy.printException(e2);
             }
         }
     }
@@ -112,6 +113,16 @@ public class CheckGodaddy {
             param.put("message", e.getMessage());
             param.put("class", e.getClass().toString());
             TelegramUtils.sendMessage("ERROR", param);
+            CheckGodaddy.printException(e);
+        }
+    }
+
+    // 输出错误（记录日志中排查问题）
+    private static void printException(Exception e) {
+        StackTraceElement[] ses = e.getStackTrace();
+        System.err.println("Exception " + e.toString());
+        for (StackTraceElement se : ses) {
+            System.err.println("\tat " + se);
         }
     }
 

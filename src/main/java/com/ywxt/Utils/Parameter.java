@@ -14,9 +14,13 @@ public class Parameter {
     public static String ENV = "dev";
     // 调用本机websocket http
     public static String urlWebsocket = "http://10.10.24.56:9000/api/message/websocket";
+    // test环境
+    // public static String urlWebsocket = "http://47.75.103.32:8080/api/message/websocket";
     // redis
     public static String redisHost = "127.0.0.1";
     public static int redisPort = 63790;
+    // test环境
+    // public static int redisPort = 6379;
     public static String redisName = "master";
     // redis-key
     public static String redisKeyUserToken = "USER_TOKEN_{token}";
