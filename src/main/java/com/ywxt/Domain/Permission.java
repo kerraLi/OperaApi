@@ -3,11 +3,12 @@ package com.ywxt.Domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import java.io.Serializable;
 import java.util.*;
 
-
+@Entity
 public class Permission implements Serializable {
     @Id
     @GeneratedValue
@@ -36,6 +37,7 @@ public class Permission implements Serializable {
         }
         this.children.add(permission);
     }
+    @Transient
     private Set<Permission> children;
 
     public Long getPid() {

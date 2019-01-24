@@ -1,6 +1,6 @@
 package com.ywxt.Dao.Impl;
 
-import com.ywxt.Dao.CommonDao;
+
 import com.ywxt.Dao.UserDao;
 import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.User;

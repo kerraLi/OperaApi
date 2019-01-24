@@ -1,10 +1,9 @@
 package com.ywxt.Dao.Impl;
 
-import com.ywxt.Dao.CommonDao;
+
 import com.ywxt.Dao.PermissionDao;
 import com.ywxt.Domain.Permission;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
+
 
 import org.springframework.stereotype.Repository;
 

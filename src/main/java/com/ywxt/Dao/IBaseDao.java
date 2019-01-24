@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * 抽取持久层通用方法
- * @author zhaoqx
+ * @author
  *
  * @param <T>
  */

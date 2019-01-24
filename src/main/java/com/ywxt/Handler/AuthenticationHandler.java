@@ -17,6 +17,7 @@ import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
+@Component
 // 用户登陆鉴权
 // todo 后期增加权限校验
 public class AuthenticationHandler implements HandlerInterceptor {

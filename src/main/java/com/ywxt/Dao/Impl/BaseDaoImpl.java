@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * 持久层通用实现
- * @author zhaoqx
+ * @author
  *
  * @param <T>
  */

@@ -10,24 +10,26 @@
       http://www.springframework.org/schema/context/spring-context.xsd
       http://www.springframework.org/schema/mvc
       http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-    <!--开启AOP-->
-    <aop:aspectj-autoproxy proxy-target-class="true" />
+   <!-- &lt;!&ndash;开启AOP&ndash;&gt;
+    <aop:aspectj-autoproxy proxy-target-class="true" />-->
     <!--配置处理器映射器和处理器适配器 使用<mvc:annotation-drvier/>配置注解映射器和注解适配器-->
     <mvc:annotation-driven/>
     <!--静态资源过滤-->
     <!--<mvc:default-servlet-handler/>-->
     <!--     启用spring mvc 注解 -->
     <context:annotation-config />
-    <!--开启AOP-->
-    <aop:aspectj-autoproxy proxy-target-class="true" />
+
     <!-- 启动包扫描功能，以便注册带有@Controller、@Service、@repository、@Component等注解的类成为spring的bean -->
+    <!--<context:component-scan base-package="com.ywxt"/>-->
+
+
     <context:component-scan base-package="com.ywxt.Controller"/>
     <context:component-scan base-package="com.ywxt.Domain"/>
     <context:component-scan base-package="com.ywxt.Command"/>
     <context:component-scan base-package="com.ywxt.Dao"/>
     <context:component-scan base-package="com.ywxt.Service"/>
     <!-- 统一异常处理：先注释方便调试 -->
-    <!--<context:component-scan base-package="com.ywxt.Handler"/>-->
+    <context:component-scan base-package="com.ywxt.Handler"/>
 
     <!-- 配置JSON视图 -->
     <bean id="mappingJacksonHttpMessageConverter"
@@ -66,11 +68,13 @@
             <mvc:mapping path="/**"/>
             <bean class="com.ywxt.Handler.AllowCrossDomainHandler"></bean>
         </mvc:interceptor>
-      <!--  <mvc:interceptor>
-            <mvc:mapping path="/**"/>
-            <bean class="com.ywxt.Handler.SecurityHandler"></bean>
-        </mvc:interceptor>-->
+
     </mvc:interceptors>
 
-<import resource="./spring-security.xml"/>
+
+
+
+
+
+<!--<import resource="./spring-security.xml"/>-->
 </beans>
