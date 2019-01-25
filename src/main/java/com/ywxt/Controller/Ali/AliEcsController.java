@@ -83,6 +83,14 @@ public class AliEcsController extends CommonController {
         }});
     }
 
+    // ecs:状态更新
+    @ResponseBody
+    @RequestMapping(value = {"/status/update/{id}"}, method = RequestMethod.GET)
+    public AliEcs updateCdnRefreshTask(@PathVariable Integer id) throws Exception {
+        AliEcs aliEcs = new AliEcsServiceImpl().getEcs(id);
+        return new AliEcsServiceImpl().updateEcsStatus(aliEcs);
+    }
+
     // ecs:操作服务器状态
     @ResponseBody
     @RequestMapping(value = {"/status/{action}/{id}"}, method = RequestMethod.GET)

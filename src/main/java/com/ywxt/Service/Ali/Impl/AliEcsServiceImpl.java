@@ -102,6 +102,10 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (AliEcs ae : list) {
+            // 执行中&更新状态
+            if (ae.getStatus().equals("Starting") || ae.getStatus().equals("Stopping")) {
+                ae.setStatus(this.updateEcsStatus(ae).getStatus());
+            }
             if (ae.getStatus().equals("Running")) {
                 ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
             }
@@ -124,6 +128,10 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (AliEcs ae : list) {
+            // 执行中&更新状态
+            if (ae.getStatus().equals("Starting") || ae.getStatus().equals("Stopping")) {
+                ae.setStatus(this.updateEcsStatus(ae).getStatus());
+            }
             if (ae.getStatus().equals("Running")) {
                 ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
             }
@@ -148,18 +156,28 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         switch (action) {
             case "run":
                 this.startEcs(aliEcs.getRegionId(), aliEcs.getInstanceId());
+                aliEcs.setStatus("Starting");
+                new AliEcsDaoImpl().saveAliEcs(aliEcs);
                 break;
             case "stop":
                 this.stopEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
+                aliEcs.setStatus("Stopping");
+                new AliEcsDaoImpl().saveAliEcs(aliEcs);
                 break;
             case "stop-force":
                 this.stopEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
+                aliEcs.setStatus("Stopping");
+                new AliEcsDaoImpl().saveAliEcs(aliEcs);
                 break;
             case "rerun":
                 this.restartEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
+                aliEcs.setStatus("Starting");
+                new AliEcsDaoImpl().saveAliEcs(aliEcs);
                 break;
             case "rerun-force":
                 this.restartEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
+                aliEcs.setStatus("Starting");
+                new AliEcsDaoImpl().saveAliEcs(aliEcs);
                 break;
             case "free":
                 this.deleteEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
@@ -168,6 +186,21 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
                 this.deleteEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
                 break;
         }
+    }
+
+    // ecs-最新状态
+    public AliEcs updateEcsStatus(AliEcs aliEcs) throws Exception {
+        this.accessKeyId = aliEcs.getAccessKeyId();
+        this.accessKeySecret = this.getAccessKeySecret(this.accessKeySecret);
+        IClientProfile profile = DefaultProfile.getProfile(aliEcs.getRegionId(), this.accessKeyId, this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+        DescribeInstancesRequest request = new DescribeInstancesRequest();
+        request.setRegionId(aliEcs.getRegionId());
+        request.setInstanceIds("[\"" + aliEcs.getInstanceId() + "\"]");
+        DescribeInstancesResponse response = client.getAcsResponse(request);
+        DescribeInstancesResponse.Instance instance = response.getInstances().get(0);
+        aliEcs.setStatus(instance.getStatus());
+        return aliEcs;
     }
 
     // ecs-启动
