@@ -32,8 +32,9 @@
     <context:component-scan base-package="com.ywxt.Controller"/>
     <context:component-scan base-package="com.ywxt.Domain"/>
     <context:component-scan base-package="com.ywxt.Command"/>
+    <context:component-scan base-package="com.ywxt.Service"/>
     <!-- 统一异常处理：先注释方便调试 -->
-    <context:component-scan base-package="com.ywxt.Handler"/>
+    <!--<context:component-scan base-package="com.ywxt.Handler"/>-->
 
     <!-- 配置JSON视图 -->
     <bean id="mappingJacksonHttpMessageConverter"

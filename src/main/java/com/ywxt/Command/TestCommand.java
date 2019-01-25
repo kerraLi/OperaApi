@@ -3,6 +3,7 @@ package com.ywxt.Command;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
+import com.ywxt.Dao.Impl.ParameterDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
@@ -33,6 +34,14 @@ public class TestCommand {
         aa.setAccessKeySecret("154");
         aa.setStatus("normal");
         new AliAccountServiceImpl().saveAliAccount(aa);
+    }
+
+    private static void saveParameter() throws Exception {
+        com.ywxt.Domain.Parameter parameter = new com.ywxt.Domain.Parameter();
+        parameter.setKey("test");
+        parameter.setValue("aaaaaaa");
+        parameter.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter);
     }
 
     private static void saveAdmin() {
@@ -142,6 +151,7 @@ public class TestCommand {
 //        }
 
 
+        TestCommand.saveParameter();
 //        TestCommand.setIgnore();
 //        TestCommand.checkGodaddyAccount();
 //        TestCommand.setGodaddyAccount();
@@ -152,7 +162,7 @@ public class TestCommand {
 //        TestCommand.getAliEcs();
 //        TestCommand.refreshAli();
 //        System.out.println(TestCommand.checkAccount());
-        TestCommand.saveAdmin();
+//        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
 
     }

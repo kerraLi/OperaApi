@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-7-8 1:31:59 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.ywxt.Domain.Parameter" table="parameter">
+        <!-- id主键设置 -->
+        <id name="id" type="integer">
+            <column name="id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="key" type="java.lang.String">
+            <column name='"key"' length="30" not-null="true" unique="true"/>
+        </property>
+        <property name="value" type="java.lang.String" length="100" not-null="true"/>
+        <property name="status" type="java.lang.String" length="20" not-null="true"/>
+    </class>
+</hibernate-mapping>
