@@ -18,8 +18,13 @@ import java.util.List;
  *
  */
 @Repository
-public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
+public class RoleDaoImpl extends CommonDao /*BaseDaoImpl<Role> */implements RoleDao {
 
+
+	@Override
+	public List<Role> findAll() {
+		return null;
+	}
 
 	@Override
 	public void delete(Long id) {
@@ -29,6 +34,11 @@ public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
 	@Override
 	public Role findById(Long id) {
 		return null;
+	}
+
+	@Override
+	public void update(Role role) {
+
 	}
 
 	@Override

@@ -11,13 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @Service
-@Transactional
+//@Transactional
 public class PermissionServiceImpl implements PermissionService {
     @Autowired
     private PermissionDao permissionDao;
-    @Override
+   /* @Override
     public List<Permission> findAll() {
         return permissionDao.findAll();
+    }*/
+
+    @Override
+    public List<Permission> findAll() {
+        return null;
     }
 
     /**
@@ -27,16 +32,62 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public List<Permission> list() {
-
-        return permissionDao.list();
+        return null;
     }
 
     /**
      * 添加权限资源
      *
-     * @param Permission
+     * @param permission
      * @return
      */
+    @Override
+    public int add(Permission permission) {
+        return 0;
+    }
+
+    @Override
+    public void pageQuery(PageBean pageBean) {
+
+    }
+
+    @Override
+    public Permission findPermissionById(Long id) {
+        return null;
+    }
+
+/**
+ * 查询所有权限信息
+ *
+ * @return
+ *//*
+    @Override
+    public List<Permission> list() {
+
+        return permissionDao.list();
+    }*/
+    /**
+     * 添加权限资源
+     *
+     * @param permission
+     * @return
+     */
+    /*@Override
+    public int add(Permission permission) {
+        return 0;
+    }
+
+    @Override
+    public void pageQuery(PageBean pageBean) {
+
+    }*/
+
+  /*  *//**
+     * 添加权限资源
+     *
+     * @param Permission
+     * @return
+     *//*
     @Override
     public int add(Permission permission) {
         return permissionDao.add(permission);
@@ -45,5 +96,5 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public void pageQuery(PageBean pageBean) {
             permissionDao.pageQuery(pageBean);
-    }
+    }*/
 }

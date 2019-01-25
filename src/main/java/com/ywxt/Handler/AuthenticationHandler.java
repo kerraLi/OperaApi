@@ -1,34 +1,37 @@
 package com.ywxt.Handler;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
+
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+
 import com.ywxt.Annotation.PassToken;
 import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.Role;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Service.PermissionService;
+import com.ywxt.Service.RoleService;
 import com.ywxt.Service.UserService;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 @Component
 // 用户登陆鉴权
 // todo 后期增加权限校验
@@ -37,6 +40,8 @@ public class AuthenticationHandler implements HandlerInterceptor {
     private PermissionService permissionService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
     // 在业务处理器处理请求之前被调用
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -95,79 +100,42 @@ public class AuthenticationHandler implements HandlerInterceptor {
         }
 
 
-// 模板
-        Permission root = getTemplate();
+        String requestUrl = request.getScheme()+"://" + request.getServerName()+ ":" + request.getServerPort() + request.getContextPath() + request.getServletPath() + (StringUtils.isBlank(request.getQueryString())?"":("?"+request.getQueryString())); //请求参
+
+
+
+
+       /* Set<Role> roles = user.getRoles();
+        for (Role role : roles) {
+            Role role2 = roleService.findRoleById(role.getId());
+            if (!role2.equals(role)) {
+
+            }
+        }*/
+        /* Set<Role> roles = user.getRoles();
+        Set<Permission>permissions=new HashSet<>();
+        for (Role role : roles) {
+            Set<Permission> permissions2 = role.getPermissions();
+            for (Permission permission : permissions2) {
+                permissions.add(permission);
+            }
+        }*/
+
+
+
+
+
+/*// 模板
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User suser = userService.getUserByUsername(username);
-        //    User suser = userService.findByUsername(username);
         // 用户的所有的权限菜单
         List<Permission> userPermissions = new ArrayList<Permission>();
         for (Role role : suser.getRoles()) {
             userPermissions.addAll(role.getPermissions());
         }
-
-
-        // 复制后的结果
-        List<Permission> result = new ArrayList<Permission>();
-
-        Set<Permission> l1Permissions = root.getChildren();
-        for (Permission l1Permission : l1Permissions) {
-            // 复制一级菜单
-            Permission _l1 =  clone(l1Permission);
-            for (Permission l2Permission : l1Permission.getChildren()) {
-                // 二级菜单
-                // 判断用户下是否有二级菜单
-                if(userPermissions.contains(l2Permission)){
-                    // 复制二级菜单
-                    Permission _l2 =  clone(l2Permission);
-                    _l1.add(_l2);
-                }
-            }
-            if(null != _l1.getChildren() && _l1.getChildren().size() > 0){
-                // 有二级菜单就添加进来
-                result.add(_l1);
-            }
-        }
         // 把菜单的结果放入session中
-        request.getSession().setAttribute("menus",result);
-
-
-
-
+        request.getSession().setAttribute("menus",userPermissions);*/
         return true;
-    }
-    private Permission getTemplate(){
-        List<Permission> permissionList = permissionService.list();
-        HashMap<Long, Permission> hashMap = new HashMap<>();
-        for (Permission permission : permissionList) {
-            hashMap.put(permission.getId(),permission);
-        }
-        Permission root = new Permission();
-        root.setId(0l);
-        hashMap.put(0l,root);
-        for (Permission permission : permissionList) {
-            Permission parent = hashMap.get(permission.getPid());
-            parent.add(permission);
-        }
-        return root;
-    }
-
-    private Permission clone(Permission src){
-        Permission newP = new Permission();
-        newP.setId(src.getId());
-        newP.setPermissionName(src.getPermissionName());
-        newP.setUrl(src.getUrl());
-        newP.setPid(src.getPid());
-        return newP;
-    }
-    // 在业务处理器处理请求完成之后，生成视图之前执行
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
     }
 }

@@ -29,4 +29,6 @@ public interface UserService{
     public User login(User model);
 
     public void editPassword(User user);
+
+    Long add(String username, String password);
 }

@@ -8,7 +8,7 @@
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/ywxt?characterEncoding=utf8</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/ywxt?serverTimezone=GMT%2B8</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">123456789</property>
         <!-- 输出sql -->
@@ -18,8 +18,16 @@
         <property name="hibernate.jdbc.batch_size">100</property>
         <!-- 关闭二级缓存（批量操作） -->
         <property name="hiberante.cache.use_second_level_cache">false</property>
-        <!-- 自动更新到数据库配置 -->
+        <!-- 显示SQL语句，在控制台显示 -->
+        <property name="hibernate.show_sql">true</property>
+        <!-- 格式化SQL语句 -->
+        <property name="hibernate.format_sql">true</property>
+        <!-- 自动更新到数据库配置 --><!-- 生成数据库的表结构
+			update：如果没有表结构，创建表结构。如果存在，不会创建，添加数据
+		-->
         <property name="hibernate.hbm2ddl.auto">update</property>
+        <!-- 开启绑定本地的session -->
+        <property name="hibernate.current_session_context_class">thread</property>
         <mapping resource="hbm/User.hbm.xml"/>
         <mapping resource="hbm/Role.hbm.xml"/>
         <mapping resource="hbm/Permission.hbm.xml"/>

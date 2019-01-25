@@ -5,6 +5,7 @@ import com.ywxt.Utils.PageBean;
 
 import java.util.List;
 
+
 public interface PermissionService {
 
     public List<Permission> findAll();
@@ -24,4 +25,8 @@ public interface PermissionService {
     int add(Permission permission);
 
     public void pageQuery(PageBean pageBean);
+
+  Permission  findPermissionById(Long id);
+
+/*  public findPermissionByUser()*/
 }

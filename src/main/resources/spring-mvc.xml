@@ -74,6 +74,8 @@
 
 
 
+    <!--密码加密-->
+    <!--<bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>-->
 
 
 <!--<import resource="./spring-security.xml"/>-->

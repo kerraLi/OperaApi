@@ -15,7 +15,7 @@ public class Permission implements Serializable {
     private Long id;
     private String permissionName;
 
-    @Override
+  /*  @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -55,7 +55,7 @@ public class Permission implements Serializable {
     public void setChildren(Set<Permission> children) {
         this.children = children;
     }
-
+*/
 
 
 

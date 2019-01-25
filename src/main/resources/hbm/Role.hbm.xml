@@ -11,7 +11,7 @@
 		</id>
 		<property name="roleName" length="20" />
 		<property name="roleDesc" length="255"/>
-		<!-- 配置岗位和用户的多对多关系 -->
+		<!-- 配置角色和用户的多对多关系 -->
 		<set name="users" inverse="true" table="user_role" >
 			<key>
 				<column name="roleId" length="32" not-null="true" />

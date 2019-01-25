@@ -1,6 +1,7 @@
 package com.ywxt.Dao.Impl;
 
 
+import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.PermissionDao;
 import com.ywxt.Domain.Permission;
 
@@ -10,10 +11,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class PermissionDaoImpl extends BaseDaoImpl<Permission> implements PermissionDao {
+public class PermissionDaoImpl extends CommonDao /*BaseDaoImpl<Permission>*/ implements PermissionDao {
 
 
-
+/*
 
     @Override
     public void save(Permission entity) {
@@ -33,7 +34,7 @@ public class PermissionDaoImpl extends BaseDaoImpl<Permission> implements Permis
     @Override
     public void saveOrUpdate(Permission entity) {
 
-    }
+    }*/
 
     @Override
     public List<Permission> list() {

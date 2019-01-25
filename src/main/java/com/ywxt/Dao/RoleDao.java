@@ -9,7 +9,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import java.io.Serializable;
 import java.util.List;
 
-public interface RoleDao extends IBaseDao<Role>{
+public interface RoleDao /*extends IBaseDao<Role>*/{
 	List<Role> findAll();
 	void delete(Long id);
 	Role findById(Long id);

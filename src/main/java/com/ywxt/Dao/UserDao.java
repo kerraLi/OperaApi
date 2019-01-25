@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public interface UserDao extends IBaseDao<User>{
+public interface UserDao /*extends IBaseDao<User>*/{
 
     public abstract Long saveUser(User user);
 
@@ -19,4 +19,5 @@ public interface UserDao extends IBaseDao<User>{
     List<User> list();
 
 
+    Long add(String username, String password);
 }

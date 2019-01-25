@@ -30,10 +30,10 @@ import java.io.PrintWriter;
  * @date:
  *
  ****/
-@Configuration
-@Component
-@EnableWebSecurity
-@ComponentScan("com.ywxt.Service.Impl.*")
+//@Configuration
+//@Component
+//@EnableWebSecurity
+//@ComponentScan("com.ywxt.Service.Impl.*")
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     /****
      * 1）公开链接
@@ -138,4 +138,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                .passwordEncoder(encoder);                //指定加密对象
 
     }
+
+
+
+
 }

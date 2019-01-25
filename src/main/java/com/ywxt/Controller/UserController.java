@@ -2,6 +2,8 @@ package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.PassToken;
+import com.ywxt.Domain.Permission;
+import com.ywxt.Domain.Role;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Service.RoleService;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 
 @Validated
@@ -78,9 +81,9 @@ public class UserController extends CommonController {
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public Result add(@RequestBody User User){
+    public Result add(@NotBlank @RequestParam("username") String username, @NotBlank @RequestParam("password") String password){
         try {
-            Long account=  userService.add(user);
+            Long account=  userService.add(username,password);
             if (account>0){
                 return new Result(true,"增加成功");
             }
@@ -90,6 +93,17 @@ public class UserController extends CommonController {
         return new Result(false,"增加失败");
     }
 
+//@RequestMapping(value = "/find")
+         List<Permission> findPermissionByUserId(Long userId){
+             User user = userService.getUserById(userId);
+             Set<Role> roles = user.getRoles();
+             for (Role role : roles) {
+                 Role role2 = roleService.findRoleById(role.getId());
+                 if (role2.equals(role)){
 
+                 }
+             }
 
+             return null;
+              }
 }

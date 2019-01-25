@@ -71,7 +71,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Long add(User user) {
-        return null;
+
+        return  userDao.saveUser(user);
      /*   String encode = passwordEncoder.encode(user.getPassword());
         user.setPassword(encode);
 //        Long account= userDao.saveUser(user);
@@ -86,10 +87,21 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void editPassword(User user) {
+
+    }
+
+    @Override
+    public Long add(String username, String password) {
+      Long cno=  userDao.add(username,password);
+        return cno;
+    }
+
+    /*@Override
+    public void editPassword(User user) {
         Long id = user.getId();
         String password = MD5Utils.md5(user.getPassword());
         userDao.executeUpdate("user.editpassword", password,id);
-    }
+    }*/
 
 
 
