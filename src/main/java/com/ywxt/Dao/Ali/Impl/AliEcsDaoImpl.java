@@ -96,10 +96,24 @@ public class AliEcsDaoImpl extends CommonDao implements AliEcsDao {
     }
 
     // 保存更新
-    public int saveAliEcs(AliEcs aliEcs) {
-        int id = (int) session.save(aliEcs);
-        this.closeSession();
-        return id;
+    public int saveAliEcs(AliEcs aliEcs) throws Exception {
+        try {
+            session.beginTransaction();
+            if (aliEcs.getId() == 0) {
+                int id = (Integer) session.save(aliEcs);
+                session.getTransaction().commit();
+                return id;
+            } else {
+                session.update(aliEcs);
+                session.getTransaction().commit();
+                return aliEcs.getId();
+            }
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
     }
 
     // 删除

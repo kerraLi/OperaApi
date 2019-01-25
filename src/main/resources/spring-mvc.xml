@@ -12,7 +12,18 @@
       http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
     <!--配置处理器映射器和处理器适配器 使用<mvc:annotation-drvier/>配置注解映射器和注解适配器-->
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <!-- 处理请求返回json字符串的乱码问题 -->
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <!--<mvc:default-servlet-handler/>-->
 
@@ -53,13 +64,13 @@
         <!-- 配置登陆拦截器 -->
         <!-- 多个拦截器使用的时候，preHandler是顺序执行的，而postHandler和afterHandler是倒序执行的；-->
         <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.ywxt.Handler.AllowCrossDomainHandler"></bean>
+        </mvc:interceptor>
+        <mvc:interceptor>
             <!-- /** 表示所有的url，包括子url路径 -->
             <mvc:mapping path="/**"/>
             <bean class="com.ywxt.Handler.AuthenticationHandler"></bean>
-        </mvc:interceptor>
-        <mvc:interceptor>
-            <mvc:mapping path="/**"/>
-            <bean class="com.ywxt.Handler.AllowCrossDomainHandler"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
 </beans>

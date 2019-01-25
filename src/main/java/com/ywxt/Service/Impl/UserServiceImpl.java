@@ -22,9 +22,18 @@ public class UserServiceImpl implements UserService {
             throw new Exception("账号或密码错误");
         }
         String authToken = AuthUtils.createJWT(Parameter.loginTtlMs, u);
-        // 存入redis
+        // 存入redis(单位秒)
         new RedisUtils().getJedis().setex(Parameter.redisKeyUserToken.replace("{token}", authToken), Parameter.redisTllUserToken, authToken);
         return authToken;
+    }
+
+    // 修改密码
+    public void resetPwd(User user, String oldPwd, String newPwd) throws Exception {
+        if (!user.getPassword().equals(MD5Utils.md5(oldPwd))) {
+            throw new Exception("账号或密码错误");
+        }
+        user.setPassword(MD5Utils.md5(newPwd));
+        new UserDaoImpl().saveUser(user);
     }
 
     // 退出

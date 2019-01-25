@@ -16,6 +16,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.HashMap;
 
 
@@ -45,6 +46,14 @@ public class UserController extends CommonController {
     public JSONObject logout(HttpServletRequest request) {
         String authToken = request.getHeader("Authorization");
         new UserServiceImpl().logout(authToken);
+        return this.returnObject(new HashMap<String, Object>() {{
+        }});
+    }
+
+    @RequestMapping(value = {"/reset/password"}, method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject resetPwd(HttpServletRequest request, @NotBlank String oldPwd, @NotBlank @Size(min = 6, max = 15) String newPwd) throws Exception {
+        new UserServiceImpl().resetPwd(this.getUserFromAuthToken(request), oldPwd, newPwd);
         return this.returnObject(new HashMap<String, Object>() {{
         }});
     }

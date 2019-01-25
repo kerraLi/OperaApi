@@ -80,7 +80,7 @@ public class AliCdnController extends CommonController {
         }});
     }
 
-    // cdn:节点刷新
+    // cdn:节点刷新&预热
     @ResponseBody
     @RequestMapping(value = {"/refresh"}, method = RequestMethod.POST)
     public Map<String, String> cdnRefreshObjectCache(String operateType, String refreshType, String content) throws Exception {

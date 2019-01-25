@@ -86,7 +86,7 @@ public class GodaddyDomainDaoImpl extends CommonDao implements GodaddyDomainDao 
         return list;
     }
 
-    // 批量保存
+    // 批量新增
     public void saveDomains(List<GodaddyDomain> list) {
         for (GodaddyDomain godaddyDomain : list) {
             session.save(godaddyDomain);
@@ -95,10 +95,24 @@ public class GodaddyDomainDaoImpl extends CommonDao implements GodaddyDomainDao 
     }
 
     // 保存更新
-    public int saveDomain(GodaddyDomain godaddyDomain) {
-        int id = (int) session.save(godaddyDomain);
-        this.closeSession();
-        return id;
+    public int saveDomain(GodaddyDomain godaddyDomain) throws Exception {
+        try {
+            session.beginTransaction();
+            if (godaddyDomain.getId() == 0) {
+                int id = (Integer) session.save(godaddyDomain);
+                session.getTransaction().commit();
+                return id;
+            } else {
+                session.update(godaddyDomain);
+                session.getTransaction().commit();
+                return godaddyDomain.getId();
+            }
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
     }
 
     // 删除

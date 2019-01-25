@@ -14,7 +14,7 @@ public interface GodaddyCertificateDao {
 
     public abstract void saveCertificates(List<GodaddyCertificate> list);
 
-    public abstract int saveCertificate(GodaddyCertificate godaddyCertificate);
+    public abstract int saveCertificate(GodaddyCertificate godaddyCertificate) throws Exception;
 
     public abstract void deleteCertificateByAccessId(String accessId);
 }

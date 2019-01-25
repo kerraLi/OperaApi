@@ -87,7 +87,7 @@ public class GodaddyCertificateDaoImpl extends CommonDao implements GodaddyCerti
         return list;
     }
 
-    // 批量保存
+    // 批量新增
     public void saveCertificates(List<GodaddyCertificate> list) {
         for (GodaddyCertificate godaddyCertificate : list) {
             session.save(godaddyCertificate);
@@ -96,10 +96,24 @@ public class GodaddyCertificateDaoImpl extends CommonDao implements GodaddyCerti
     }
 
     // 保存更新
-    public int saveCertificate(GodaddyCertificate godaddyCertificate) {
-        int id = (int) session.save(godaddyCertificate);
-        this.closeSession();
-        return id;
+    public int saveCertificate(GodaddyCertificate godaddyCertificate) throws Exception {
+        try {
+            session.beginTransaction();
+            if (godaddyCertificate.getId() == 0) {
+                int id = (Integer) session.save(godaddyCertificate);
+                session.getTransaction().commit();
+                return id;
+            } else {
+                session.update(godaddyCertificate);
+                session.getTransaction().commit();
+                return godaddyCertificate.getId();
+            }
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
     }
 
     // 删除

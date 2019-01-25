@@ -19,9 +19,15 @@ public class MessageDaoImpl extends CommonDao implements MessageDao {
     public int save(Message message) {
         try {
             session.beginTransaction();
-            int id = (Integer) session.save(message);
-            session.getTransaction().commit();
-            return id;
+            if (message.getId() == 0) {
+                int id = (Integer) session.save(message);
+                session.getTransaction().commit();
+                return id;
+            } else {
+                session.update(message);
+                session.getTransaction().commit();
+                return message.getId();
+            }
         } catch (Exception e) {
             session.getTransaction().rollback();
             throw e;

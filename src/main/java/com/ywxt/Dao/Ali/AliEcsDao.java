@@ -15,6 +15,6 @@ public interface AliEcsDao {
 
     public abstract void saveAliEcses(List<AliEcs> list);
 
-    public abstract int saveAliEcs(AliEcs aliEcs);
+    public abstract int saveAliEcs(AliEcs aliEcs) throws Exception;
 
 }

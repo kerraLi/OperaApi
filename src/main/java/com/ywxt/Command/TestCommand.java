@@ -128,12 +128,12 @@ public class TestCommand {
 //        jsonObject.put("message", "message");
 //        new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
         // 发送消息
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("accountName", "account");
-        param.put("ecsId", "ecsId");
-        param.put("ecsName", "ecsTime");
-        param.put("expiredTime", "时间");
-        new MessageServiceImpl().create("ALI_ECS_EXPIRED", "aaaaaaaa", new HashMap<String, String>(), new HashMap<String, String>());
+//        Map<String, String> param = new HashMap<String, String>();
+//        param.put("accountName", "account");
+//        param.put("ecsId", "ecsId");
+//        param.put("ecsName", "ecsTime");
+//        param.put("expiredTime", "时间");
+//        new MessageServiceImpl().create("ALI_ECS_EXPIRED", "aaaaaaaa", new HashMap<String, String>(), new HashMap<String, String>());
 //        try {
 //            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 //        } catch (NullPointerException e) {
@@ -152,7 +152,7 @@ public class TestCommand {
 //        TestCommand.getAliEcs();
 //        TestCommand.refreshAli();
 //        System.out.println(TestCommand.checkAccount());
-//        TestCommand.saveAdmin();
+        TestCommand.saveAdmin();
 //        TestCommand.saveAliAccount();
 
     }

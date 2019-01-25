@@ -24,7 +24,8 @@ public class Parameter {
     public static String redisName = "master";
     // redis-key
     public static String redisKeyUserToken = "USER_TOKEN_{token}";
-    public static int redisTllUserToken = 60 * 60 * 1000 * 2;
+    // redis-time(s)
+    public static int redisTllUserToken = 60 * 60 * 2;
 
     // 登陆有效时间（ms）
     public static int loginTtlMs = 60 * 60 * 1000 * 2;
