@@ -46,16 +46,16 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
     // 删除
-    public int delete(int id) throws Exception {
+    public void delete(int id) throws Exception {
         Parameter parameter = new ParameterDaoImpl().getParameter(id);
-        return this.delete(parameter);
+        this.delete(parameter);
     }
 
     // 删除
-    public int delete(Parameter parameter) throws Exception {
+    public void delete(Parameter parameter) throws Exception {
         if (parameter.getStatus().equals("fixed")) {
             throw new Exception("删除失败。该参数为常驻参数，删除将会影响平台运行。");
         }
-        return new ParameterDaoImpl().save(parameter);
+        new ParameterDaoImpl().delete(parameter.getId());
     }
 }

@@ -4,7 +4,7 @@ import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.Impl.GodaddyDomainServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Utils.Parameter;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +41,7 @@ public class GodaddyDomainController extends CommonController {
         if (!(request.getParameter("ifExpired") == null) && !(request.getParameter("ifExpired").isEmpty())) {
             if (request.getParameter("ifExpired").equals("true")) {
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
+                calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_DOMAIN_EXPIRED_DAY")));
                 Date thresholdDate = calendar.getTime();
                 params.put("orderAsc", "expires");
                 params.put("status", "ACTIVE");

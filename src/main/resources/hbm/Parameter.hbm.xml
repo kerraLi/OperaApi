@@ -10,7 +10,7 @@
             <generator class="identity"/>
         </id>
         <property name="key" type="java.lang.String">
-            <column name='"key"' length="30" not-null="true" unique="true"/>
+            <column name='"key"' length="50" not-null="true" unique="true"/>
         </property>
         <property name="value" type="java.lang.String" length="100" not-null="true"/>
         <property name="status" type="java.lang.String" length="20" not-null="true"/>

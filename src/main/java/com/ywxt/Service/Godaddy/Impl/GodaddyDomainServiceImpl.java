@@ -6,6 +6,7 @@ import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.GodaddyDomainService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
@@ -47,7 +48,7 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
         }
         // expired
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         params.put("status", "ACTIVE");
         params.put("expires@lt", thresholdDate);
@@ -95,7 +96,7 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
         HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
         List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (GodaddyDomain gd : list) {
             if (gd.getStatus().equals("ACTIVE")) {
@@ -117,7 +118,7 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
         HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
         List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (GodaddyDomain gd : list) {
             if (gd.getStatus().equals("ACTIVE")) {

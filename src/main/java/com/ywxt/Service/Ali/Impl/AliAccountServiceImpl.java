@@ -14,6 +14,7 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Handler.AsyncHandler;
 import com.ywxt.Service.Ali.AliAccountService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.AsyncUtils;
 import com.ywxt.Utils.Parameter;
@@ -51,7 +52,7 @@ public class AliAccountServiceImpl implements AliAccountService {
                     QueryAccountBalanceResponse.Data data = new AliServiceImpl(aa.getAccessKeyId(), aa.getAccessKeySecret()).getAccountBalance();
                     aa.setBalanceData(data);
                     // ali 金额 带千分符(,)
-                    if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue() <= Double.parseDouble(Parameter.alertThresholds.get("ALI_ACCOUNT_BALANCE"))) {
+                    if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue() <= Double.parseDouble(new ParameterServiceImpl().getValue("ALI_ACCOUNT_BALANCE"))) {
                         aa.setAlertBalance(true);
                     }
                 }

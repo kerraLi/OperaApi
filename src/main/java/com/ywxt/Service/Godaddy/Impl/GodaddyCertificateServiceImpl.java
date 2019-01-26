@@ -6,6 +6,7 @@ import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Service.Godaddy.GodaddyCertificateService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.Parameter;
 
@@ -47,7 +48,7 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
         }
         // expired
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         params.put("certificateStatus", "ISSUED");
         params.put("validEnd@lt", thresholdDate);
@@ -94,7 +95,7 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
         HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
         List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (GodaddyCertificate gc : list) {
             if (gc.getCertificateStatus().equals("ISSUED")) {
@@ -116,7 +117,7 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
         HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
         List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (GodaddyCertificate gc : list) {
             if (gc.getCertificateStatus().equals("ISSUED")) {

@@ -12,6 +12,7 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.AliEcsService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.Parameter;
 
@@ -51,7 +52,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         }
         // expired
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         params = new HashMap<String, Object>();
         params.put("status", "Running");
@@ -99,7 +100,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
         List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(filterParams);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (AliEcs ae : list) {
             // 执行中&更新状态
@@ -125,7 +126,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
         List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(filterParams, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
         for (AliEcs ae : list) {
             // 执行中&更新状态

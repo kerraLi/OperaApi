@@ -5,6 +5,7 @@ import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,7 @@ public class AliEcsController extends CommonController {
         if (!(request.getParameter("ifExpired") == null) && !(request.getParameter("ifExpired").isEmpty())) {
             if (request.getParameter("ifExpired").equals("true")) {
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("ALI_ECS_EXPIRED_DAY")));
+                calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("ALI_ECS_EXPIRED_DAY")));
                 Date thresholdDate = calendar.getTime();
                 params.put("orderAsc", "expiredTime");
                 params.put("status", "Running");

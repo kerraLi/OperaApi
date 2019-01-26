@@ -4,6 +4,7 @@ import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Service.Godaddy.Impl.GodaddyCertificateServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +42,7 @@ public class GodaddyCertificateController extends CommonController {
         if (!(request.getParameter("ifExpired") == null) && !(request.getParameter("ifExpired").isEmpty())) {
             if (request.getParameter("ifExpired").equals("true")) {
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
+                calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
                 Date thresholdDate = calendar.getTime();
                 params.put("orderAsc", "validEnd");
                 params.put("certificateStatus", "ISSUED");

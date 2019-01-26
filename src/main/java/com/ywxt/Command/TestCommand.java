@@ -38,10 +38,25 @@ public class TestCommand {
 
     private static void saveParameter() throws Exception {
         com.ywxt.Domain.Parameter parameter = new com.ywxt.Domain.Parameter();
-        parameter.setKey("test");
-        parameter.setValue("aaaaaaa");
+        parameter.setKey("ALI_ACCOUNT_BALANCE");
+        parameter.setValue("3000.00");
         parameter.setStatus("fixed");
         new ParameterDaoImpl().save(parameter);
+        com.ywxt.Domain.Parameter parameter2 = new com.ywxt.Domain.Parameter();
+        parameter2.setKey("ALI_ECS_EXPIRED_DAY");
+        parameter2.setValue("3");
+        parameter2.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter2);
+        com.ywxt.Domain.Parameter parameter3 = new com.ywxt.Domain.Parameter();
+        parameter3.setKey("GODADDY_DOMAIN_EXPIRED_DAY");
+        parameter3.setValue("30");
+        parameter3.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter3);
+        com.ywxt.Domain.Parameter parameter4 = new com.ywxt.Domain.Parameter();
+        parameter4.setKey("GODADDY_CERTIFICATE_EXPIRED_DAY");
+        parameter4.setValue("30");
+        parameter4.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter4);
     }
 
     private static void saveAdmin() {
