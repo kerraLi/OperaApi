@@ -56,6 +56,12 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
     }
 
+    @Override
+    public List<String> findAllUrl() {
+      return   permissionDao.findAllUrl();
+
+}
+
 /**
  * 查询所有权限信息
  *

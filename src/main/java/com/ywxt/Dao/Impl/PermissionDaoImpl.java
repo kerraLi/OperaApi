@@ -6,7 +6,10 @@ import com.ywxt.Dao.PermissionDao;
 import com.ywxt.Domain.Permission;
 
 
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import redis.clients.jedis.Jedis;
 
 import java.util.List;
 
@@ -40,4 +43,13 @@ public class PermissionDaoImpl extends CommonDao /*BaseDaoImpl<Permission>*/ imp
     public List<Permission> list() {
         return null;
     }
+
+    @Override
+    public List<String> findAllUrl() {
+        String hql="";
+        Query query = session.createQuery(hql);
+
+        return null;
+    }
+
 }

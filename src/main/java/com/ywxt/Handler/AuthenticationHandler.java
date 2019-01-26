@@ -100,42 +100,27 @@ public class AuthenticationHandler implements HandlerInterceptor {
         }
 
 
-        String requestUrl = request.getScheme()+"://" + request.getServerName()+ ":" + request.getServerPort() + request.getContextPath() + request.getServletPath() + (StringUtils.isBlank(request.getQueryString())?"":("?"+request.getQueryString())); //请求参
+//        String requestUrl = request.getScheme()+"://" + request.getServerName()+ ":" + request.getServerPort() + request.getContextPath() + request.getServletPath() + (StringUtils.isBlank(request.getQueryString())?"":("?"+request.getQueryString())); //请求参
 
+//        String contextPath = request.getContextPath();
+//        String queryString = request.getQueryString();
+//        StringBuffer requestURL = request.getRequestURL();
+//        String requestURI = request.getRequestURI();
+        String url = request.getServletPath();
 
-
-
-       /* Set<Role> roles = user.getRoles();
-        for (Role role : roles) {
-            Role role2 = roleService.findRoleById(role.getId());
-            if (!role2.equals(role)) {
-
-            }
-        }*/
-        /* Set<Role> roles = user.getRoles();
-        Set<Permission>permissions=new HashSet<>();
+         Set<Role> roles = user.getRoles();
+        List<String>urlList=new ArrayList<>();
         for (Role role : roles) {
             Set<Permission> permissions2 = role.getPermissions();
             for (Permission permission : permissions2) {
-                permissions.add(permission);
+                urlList.add(permission.getUrl());
             }
-        }*/
-
-
-
-
-
-/*// 模板
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User suser = userService.getUserByUsername(username);
-        // 用户的所有的权限菜单
-        List<Permission> userPermissions = new ArrayList<Permission>();
-        for (Role role : suser.getRoles()) {
-            userPermissions.addAll(role.getPermissions());
         }
-        // 把菜单的结果放入session中
-        request.getSession().setAttribute("menus",userPermissions);*/
+if (!urlList.contains(url)){
+                    // 用户没有访问权限
+                 throw new RuntimeException("401");
+}
+
         return true;
     }
 }

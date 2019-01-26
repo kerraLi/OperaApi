@@ -9,6 +9,7 @@ import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Service.RoleService;
 import com.ywxt.Service.UserService;
 import com.ywxt.Utils.Result;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,9 +67,13 @@ public class UserController extends CommonController {
         System.out.println(22222222);
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            String requestUrl = request.getScheme()+"://" + request.getServerName()+ ":" + request.getServerPort() + request.getContextPath() + request.getServletPath() + (StringUtils.isBlank(request.getQueryString())?"":("?"+request.getQueryString())); //请求参
+            System.out.printf("", requestUrl);
+            System.out.println(request);
         } catch (NullPointerException e) {
             System.out.println(11111111);
             System.out.println(e.getClass());
+
         }
         System.out.println(333333);
     }

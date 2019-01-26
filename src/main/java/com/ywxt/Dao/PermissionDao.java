@@ -10,4 +10,6 @@ import java.util.List;
 public interface PermissionDao /*extends IBaseDao<Permission>*/{
 
     List<Permission> list();
+
+    List<String> findAllUrl();
 }

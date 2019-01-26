@@ -28,5 +28,7 @@ public interface PermissionService {
 
   Permission  findPermissionById(Long id);
 
-/*  public findPermissionByUser()*/
+    List<String> findAllUrl();
+
+    /*  public findPermissionByUser()*/
 }
