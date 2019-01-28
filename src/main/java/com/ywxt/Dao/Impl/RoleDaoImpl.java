@@ -29,7 +29,19 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 
 	@Override
 	public void delete(Long id) {
+		try {
 
+			session.beginTransaction();
+			Role role=session.get(Role.class,id);
+
+			session.delete(role);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.getTransaction().rollback();
+		}finally {
+			session.close();
+		}
 	}
 
 	@Override

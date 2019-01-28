@@ -52,5 +52,10 @@ roleDao.save(model);
 		return null;
 	}
 
+	@Override
+	public void deleteById(Long id) {
+			roleDao.delete(id);
+	}
+
 
 }

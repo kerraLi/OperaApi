@@ -48,8 +48,14 @@ public void add(@RequestBody Role role){
 
 
 @RequestMapping("/update")
-    public void update(Role role){
+    public void update(@RequestBody Role role){
         roleService.update(role);
+}
+
+
+@RequestMapping("/delete")
+    public void deleteById(Long id){
+        roleService.deleteById(id);
 }
 
 }
