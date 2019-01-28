@@ -73,11 +73,7 @@ public class UserServiceImpl implements UserService{
     public Long add(User user) {
 
         return  userDao.saveUser(user);
-     /*   String encode = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encode);
-//        Long account= userDao.saveUser(user);
 
-        return userDao.saveUser(user);*/
     }
 
     @Override
@@ -96,12 +92,7 @@ public class UserServiceImpl implements UserService{
         return cno;
     }
 
-    /*@Override
-    public void editPassword(User user) {
-        Long id = user.getId();
-        String password = MD5Utils.md5(user.getPassword());
-        userDao.executeUpdate("user.editpassword", password,id);
-    }*/
+
 
 
 

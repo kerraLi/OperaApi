@@ -1,7 +1,7 @@
 package com.ywxt.Service;
 
 import com.ywxt.Domain.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
+
 
 import java.util.List;
 
@@ -23,10 +23,10 @@ public interface UserService{
 
 //查询所有用户
     List<User> list();
-//
+//新增用户
     Long add(User user);
-
-    public User login(User model);
+//
+    public User login(User user);
 
     public void editPassword(User user);
 

@@ -1,8 +1,6 @@
 package com.ywxt.Dao;
 
 import com.ywxt.Annotation.NotFilterCloumn;
-import com.ywxt.Dao.Impl.BaseDaoImpl;
-import com.ywxt.Utils.PageBean;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

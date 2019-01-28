@@ -1,14 +1,11 @@
 package com.ywxt.Dao;
 
 import com.ywxt.Domain.User;
-import com.ywxt.Utils.PageBean;
-import org.hibernate.criterion.DetachedCriteria;
 
-import java.io.Serializable;
 import java.util.List;
 
 
-public interface UserDao /*extends IBaseDao<User>*/{
+public interface UserDao {
 
     public abstract Long saveUser(User user);
 

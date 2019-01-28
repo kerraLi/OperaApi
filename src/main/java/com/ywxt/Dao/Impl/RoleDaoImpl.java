@@ -7,6 +7,7 @@ import com.ywxt.Dao.RoleDao;
 import com.ywxt.Domain.Role;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  */
 @Repository
-public class RoleDaoImpl extends CommonDao /*BaseDaoImpl<Role> */implements RoleDao {
+public class RoleDaoImpl extends CommonDao implements RoleDao {
 
 
 	@Override
@@ -38,11 +39,36 @@ public class RoleDaoImpl extends CommonDao /*BaseDaoImpl<Role> */implements Role
 
 	@Override
 	public void update(Role role) {
+		try {
 
+			session.beginTransaction();
+			session.update(role);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.getTransaction().rollback();
+		}finally {
+			session.close();
+		}
 	}
 
 	@Override
 	public List<Role> findRoleByName(String name) {
 		return null;
+	}
+
+	@Override
+	public void save(Role model) {
+		try {
+		//	model.setRoleName("会计");
+	        session.beginTransaction();
+			session.save(model);
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.getTransaction().rollback();
+		}finally {
+              session.close();
+		}
 	}
 }

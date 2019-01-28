@@ -34,7 +34,7 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public void save(Role model) {
-
+roleDao.save(model);
 	}
 
 	@Override
@@ -43,62 +43,14 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public void update(Role role) {
-
-	}
-
-	@Override
-	public List<Role> findRoleByName(String name) {
-		return null;
-	}
-
-	/**
-	 * 查询岗位列表
-	 *//*
-	public List<Role> findAll() {
-		return roleDao.findAll();
-	}
-
-	@Override
-	*//**
-	 * 删除岗位实体
-	 *//*
-	public void delete(Role model) {
-		roleDao.delete(model.getId());
-	}
-
-	*//**
-	 * 添加岗位
-	 *//*
-	public void save(Role model) {
-		roleDao.save(model);
-	}
-	
-	*//**
-	 * 根据id查询岗位
-	 *//*
-	public Role findRoleById(Long id) {
-		return roleDao.findById(id);
-	}
-
-	*//**
-	 * 修改岗位
-	 *//*
 	public void update(Role role) {
 		roleDao.update(role);
 	}
 
-	*//**
-	 * 根据名称查询岗位
-	 *//*
+	@Override
 	public List<Role> findRoleByName(String name) {
-		return roleDao.findRoleByName(name);
+		return null;
 	}
-*/
-	/**
-	 * 根据id数组查询多个岗位
-	 *//*
-	public List<Role> findRolesByIds(Long[] roleIds) {
-		return roleDao.findByIds(roleIds);
-	}*/
+
+
 }

@@ -1,13 +1,12 @@
 package com.ywxt.Service;
 
 import com.ywxt.Domain.Permission;
-import com.ywxt.Utils.PageBean;
 
 import java.util.List;
 
 
 public interface PermissionService {
-
+//    查询所用权限
     public List<Permission> findAll();
 
 
@@ -24,11 +23,16 @@ public interface PermissionService {
      */
     int add(Permission permission);
 
-    public void pageQuery(PageBean pageBean);
 
+/*
+* 通过权限id查询权限
+* */
   Permission  findPermissionById(Long id);
 
     List<String> findAllUrl();
 
-    /*  public findPermissionByUser()*/
+/*
+* 更新权限信息
+* */
+    void update(Permission permission);
 }

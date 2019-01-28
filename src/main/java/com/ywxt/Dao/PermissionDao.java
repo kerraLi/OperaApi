@@ -1,15 +1,16 @@
 package com.ywxt.Dao;
 
 import com.ywxt.Domain.Permission;
-import com.ywxt.Utils.PageBean;
-import org.hibernate.criterion.DetachedCriteria;
 
-import java.io.Serializable;
 import java.util.List;
 
-public interface PermissionDao /*extends IBaseDao<Permission>*/{
+public interface PermissionDao {
 
     List<Permission> list();
 
     List<String> findAllUrl();
+
+    void update(Permission permission);
+
+    int add(Permission permission);
 }

@@ -68,12 +68,9 @@ public class UserController extends CommonController {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String requestUrl = request.getScheme()+"://" + request.getServerName()+ ":" + request.getServerPort() + request.getContextPath() + request.getServletPath() + (StringUtils.isBlank(request.getQueryString())?"":("?"+request.getQueryString())); //请求参
-            System.out.printf("", requestUrl);
-            System.out.println(request);
         } catch (NullPointerException e) {
             System.out.println(11111111);
             System.out.println(e.getClass());
-
         }
         System.out.println(333333);
     }
@@ -82,33 +79,17 @@ public class UserController extends CommonController {
     @RequestMapping("/list")
     public List<User> list(){
             List<User>users =userService.list();
+        for (User user1 : users) {
+            System.out.println(user1);
+        }
             return users;
     }
 
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public Result add(@NotBlank @RequestParam("username") String username, @NotBlank @RequestParam("password") String password){
-        try {
+    @RequestMapping(value = "/add",method = RequestMethod.GET)
+    public void add(@NotBlank @RequestParam("username") String username, @NotBlank @RequestParam("password") String password){
+
             Long account=  userService.add(username,password);
-            if (account>0){
-                return new Result(true,"增加成功");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new Result(false,"增加失败");
+        System.out.println("zhen");
     }
 
-//@RequestMapping(value = "/find")
-         List<Permission> findPermissionByUserId(Long userId){
-             User user = userService.getUserById(userId);
-             Set<Role> roles = user.getRoles();
-             for (Role role : roles) {
-                 Role role2 = roleService.findRoleById(role.getId());
-                 if (role2.equals(role)){
-
-                 }
-             }
-
-             return null;
-              }
 }

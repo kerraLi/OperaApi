@@ -19,7 +19,7 @@ public interface RoleService {
 
 	public List<Role> findRoleByName(String name);
 
-	/*public List<Role> findRolesByIds(Long[] roleIds);*/
+
 
 
 }

@@ -60,4 +60,14 @@ public class Role implements Serializable {
         this.permissions = permissions;
     }
 
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", roleName='" + roleName + '\'' +
+                ", roleDesc='" + roleDesc + '\'' +
+                ", users=" + users +
+                ", permissions=" + permissions +
+                '}';
+    }
 }
