@@ -52,18 +52,6 @@ public class Parameter {
         put("GET_CERTIFICATE_LIST", "/v1/certificates");
     }};
 
-    // 报警阈值参数
-    // public static Map<String, String> alertThresholds = new HashMap<String, String>() {{
-    //     // ali余额阈值
-    //     put("ALI_ACCOUNT_BALANCE", "3000.00");
-    //     // ali ecs 服务器剩余时间阈值（单位 天）
-    //     put("ALI_ECS_EXPIRED_DAY", "3");
-    //     // godaddy domain 域名剩余时间阈值（单位 天）
-    //     put("GODADDY_DOMAIN_EXPIRED_DAY", "30");
-    //     // godaddy certificate 证书剩余时间阈值（单位 天）
-    //     put("GODADDY_CERTIFICATE_EXPIRED_DAY", "30");
-    // }};
-
     // message 消息
     private static String getParamValue(String key) {
         try {

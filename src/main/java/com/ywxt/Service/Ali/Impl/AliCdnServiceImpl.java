@@ -211,6 +211,7 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
                     this.accessKeyId = act.getAccessKeyId();
                     this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
                 }
+                // todo ?
                 DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
                 act.setProcess(temp.getProcess());
                 act.setStatus(temp.getStatus());

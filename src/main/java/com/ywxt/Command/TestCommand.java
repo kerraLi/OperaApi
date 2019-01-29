@@ -9,6 +9,7 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
+import com.ywxt.Domain.Resource.Hardware;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
@@ -17,6 +18,7 @@ import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
+import com.ywxt.Service.Resource.Impl.HardwareServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -166,7 +168,10 @@ public class TestCommand {
 //        }
 
 
-        TestCommand.saveParameter();
+        Hardware hardware = new Hardware();
+        hardware.setCabinet("aaa");
+        new HardwareServiceImpl().save(hardware);
+       // TestCommand.saveParameter();
 //        TestCommand.setIgnore();
 //        TestCommand.checkGodaddyAccount();
 //        TestCommand.setGodaddyAccount();
