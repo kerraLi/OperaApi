@@ -31,4 +31,8 @@ public interface UserService{
     public void editPassword(User user);
 
     Long add(String username, String password);
+
+       void   updateUserById(User user);
+
+    void deleteById(long id);
 }

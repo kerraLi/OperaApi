@@ -75,8 +75,10 @@ public class UserController extends CommonController {
         System.out.println(333333);
     }
 
-
-    @RequestMapping("/list")
+/*
+* 查询所有用户
+* */
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
     public List<User> list(){
             List<User>users =userService.list();
         for (User user1 : users) {
@@ -84,12 +86,38 @@ public class UserController extends CommonController {
         }
             return users;
     }
-
+/*
+* 添加用户
+* */
     @RequestMapping(value = "/add",method = RequestMethod.GET)
     public void add(@NotBlank @RequestParam("username") String username, @NotBlank @RequestParam("password") String password){
 
             Long account=  userService.add(username,password);
-        System.out.println("zhen");
+
+    }
+    /*
+    * 根据id查询用户
+    * */
+    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    public User findUserById(@PathVariable(value = "id")long id){
+       return userService.getUserById(id);
+    }
+    /***
+     * 修改用户信息
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    public void modify(@RequestBody User user){
+        //根据id修改user信息
+      userService.updateUserById(user);
     }
 
+    /*
+     * 根据id删除用户
+     * */
+    @RequestMapping("/delete")
+    public void deleteById(@RequestParam long id){
+        userService.deleteById(id);
+    }
 }

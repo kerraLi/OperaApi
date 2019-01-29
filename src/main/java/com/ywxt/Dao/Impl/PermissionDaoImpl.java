@@ -66,5 +66,21 @@ public class PermissionDaoImpl extends CommonDao  implements PermissionDao {
         }
     }
 
+    @Override
+    public void deleteById(long id) {
+        try {
+            session.beginTransaction();
+            Permission permission = session.get(Permission.class, id);
+            session.delete(permission);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
+
+    }
+
 
 }

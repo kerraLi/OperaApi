@@ -18,9 +18,6 @@ import java.util.List;
 @RequestMapping("/role")
 public class RoleController extends CommonController {
 
-
-
-
     @Autowired
     private RoleService roleService;
 
@@ -31,14 +28,18 @@ public class RoleController extends CommonController {
         return this.getUserFromAuthToken(request);
     }
 
-
-    @RequestMapping("/list")
+/*
+* 查询所有角色信息
+* */
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
    public List<Role> list(){
       List<Role>roles= roleService.findAll();
       return roles;
    }
 
-
+/*
+* 增加角色
+* */
    @RequestMapping("/add")
    @PassToken
 public void add(@RequestBody Role role){
@@ -46,16 +47,28 @@ public void add(@RequestBody Role role){
 
 }
 
-
-@RequestMapping("/update")
-    public void update(@RequestBody Role role){
-        roleService.update(role);
+/*
+* 修改角色信息
+* */
+    @RequestMapping("/update")
+    public void update(@RequestParam Long id){
+        roleService.update(id);
 }
 
-
+/*
+* 根据id删除角色
+* */
 @RequestMapping("/delete")
-    public void deleteById(Long id){
+    public void deleteById(@RequestParam Long id){
         roleService.deleteById(id);
 }
 
+/*
+* 根据id查询角色
+* */
+    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    public Role findRoleById(@PathVariable(value = "id")long id){
+        Role role = roleService.findRoleById(id);
+        return role;
+    }
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -28,13 +27,13 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
-	public void delete(Role model) {
+	public void delete(Role role) {
 
 	}
 
 	@Override
-	public void save(Role model) {
-roleDao.save(model);
+	public void save(Role role) {
+			roleDao.save(role);
 	}
 
 	@Override
@@ -43,8 +42,8 @@ roleDao.save(model);
 	}
 
 	@Override
-	public void update(Role role) {
-		roleDao.update(role);
+	public void update(Long id) {
+		roleDao.update(id);
 	}
 
 	@Override

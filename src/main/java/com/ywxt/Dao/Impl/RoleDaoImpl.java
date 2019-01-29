@@ -6,8 +6,7 @@ import com.ywxt.Dao.RoleDao;
 
 import com.ywxt.Domain.Role;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
+import org.hibernate.criterion.Expression;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -46,14 +45,23 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 
 	@Override
 	public Role findById(Long id) {
-		return null;
+
+		try {
+			Role role = session.get(Role.class, id);
+			return role;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			session.close();
+		}
 	}
 
 	@Override
-	public void update(Role role) {
+	public void update(Long id) {
 		try {
 
 			session.beginTransaction();
+			Role role = session.get(Role.class, id);
 			session.update(role);
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -63,18 +71,28 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 			session.close();
 		}
 	}
-
+// 模糊查询 角色名字
 	@Override
 	public List<Role> findRoleByName(String name) {
-		return null;
+
+		try {
+			Criteria criteria = session.createCriteria(Role.class);
+			criteria.add(Expression.like("roleName","%"+name+"%"));
+			List<Role> list = criteria.list();
+			return list;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			session.close();
+		}
 	}
 
 	@Override
-	public void save(Role model) {
+	public void save(Role role) {
 		try {
 		//	model.setRoleName("会计");
 	        session.beginTransaction();
-			session.save(model);
+			session.save(role);
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			e.printStackTrace();

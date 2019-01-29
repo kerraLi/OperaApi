@@ -5,6 +5,7 @@ import com.ywxt.Domain.Permission;
 import java.util.List;
 
 
+
 public interface PermissionService {
 //    查询所用权限
     public List<Permission> findAll();
@@ -35,4 +36,8 @@ public interface PermissionService {
 * 更新权限信息
 * */
     void update(Permission permission);
+/*
+* 根据id删除权限
+* */
+    void deleteById(long id);
 }

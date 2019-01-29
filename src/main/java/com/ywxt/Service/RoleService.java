@@ -9,13 +9,13 @@ public interface RoleService {
 
 	public List<Role> findAll();
 
-	public void delete(Role model);
+	public void delete(Role role);
 
-	public void save(Role model);
+	public void save(Role role);
 
 	public Role findRoleById(Long id);
 
-	public void update(Role role);
+	public void update(Long role);
 
 	public List<Role> findRoleByName(String name);
 

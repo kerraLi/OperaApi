@@ -17,4 +17,8 @@ public interface UserDao {
 
 
     Long add(String username, String password);
+
+    void updateUserById(User user);
+
+    void deleteById(long id);
 }

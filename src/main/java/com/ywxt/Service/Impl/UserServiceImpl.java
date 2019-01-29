@@ -92,8 +92,15 @@ public class UserServiceImpl implements UserService{
         return cno;
     }
 
+    @Override
+    public void updateUserById(User user) {
+       userDao.updateUserById(user);
+    }
 
-
+    @Override
+    public void deleteById(long id) {
+        userDao.deleteById(id);
+    }
 
 
 }

@@ -10,8 +10,8 @@ public interface RoleDao{
 	List<Role> findAll();
 	void delete(Long id);
 	Role findById(Long id);
-	void update(Role role);
+	void update(Long role);
 	List<Role> findRoleByName(String name);
 
-	void save(Role model);
+	void save(Role role);
 }

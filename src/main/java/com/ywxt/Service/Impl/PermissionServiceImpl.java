@@ -62,10 +62,10 @@ public class PermissionServiceImpl implements PermissionService {
        permissionDao.update(permission);
     }
 
-
-
-
-
+    @Override
+    public void deleteById(long id) {
+       permissionDao.deleteById(id);
+    }
 
 
 }

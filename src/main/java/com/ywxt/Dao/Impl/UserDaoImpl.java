@@ -90,4 +90,33 @@ public class UserDaoImpl extends CommonDao implements UserDao {
             this.closeSession();
         }
     }
+
+    @Override
+    public void updateUserById(User user) {
+        try {
+            session.beginTransaction();
+            session.update(user);
+            session.getTransaction().commit();
+
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
+    }
+
+    @Override
+    public void deleteById(long id) {
+        try {
+            session.beginTransaction();
+            User user = session.get(User.class, id);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
+    }
 }
