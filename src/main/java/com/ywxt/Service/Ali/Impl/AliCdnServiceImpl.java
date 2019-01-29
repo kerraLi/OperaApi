@@ -211,11 +211,14 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
                     this.accessKeyId = act.getAccessKeyId();
                     this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
                 }
-                // todo ?
-                DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
-                act.setProcess(temp.getProcess());
-                act.setStatus(temp.getStatus());
-                new AliCdnTaskDaoImpl().saveCdnTask(act);
+                // 接口只支持查3天内数据
+                List<DescribeRefreshTasksResponse.CDNTask> l = this.getCdnRefreshTask(act.getTaskId());
+                if (l.size() > 0) {
+                    DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
+                    act.setProcess(temp.getProcess());
+                    act.setStatus(temp.getStatus());
+                    new AliCdnTaskDaoImpl().saveCdnTask(act);
+                }
             }
             act.setUserName(this.getUserName(act.getAccessKeyId()));
         }
