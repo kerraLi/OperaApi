@@ -28,6 +28,7 @@
         <mapping resource="hbm/AliEcs.hbm.xml"/>
         <mapping resource="hbm/AliCdn.hbm.xml"/>
         <mapping resource="hbm/AliCdnTask.hbm.xml"/>
+        <mapping resource="hbm/AwsAccount.hbm.xml"/>
         <mapping resource="hbm/GodaddyAccount.hbm.xml"/>
         <mapping resource="hbm/GodaddyDomain.hbm.xml"/>
         <mapping resource="hbm/GodaddyCertifacate.hbm.xml"/>
