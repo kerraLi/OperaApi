@@ -15,9 +15,9 @@ import com.ywxt.Service.UserService;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
-import org.apache.commons.lang.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -102,13 +102,11 @@ public class AuthenticationHandler implements HandlerInterceptor {
 
 //        String requestUrl = request.getScheme()+"://" + request.getServerName()+ ":" + request.getServerPort() + request.getContextPath() + request.getServletPath() + (StringUtils.isBlank(request.getQueryString())?"":("?"+request.getQueryString())); //请求参
 
-//        String contextPath = request.getContextPath();
-//        String queryString = request.getQueryString();
-//        StringBuffer requestURL = request.getRequestURL();
-//        String requestURI = request.getRequestURI();
-        String url = request.getServletPath();
 
-         Set<Role> roles = user.getRoles();
+      //  String url = request.getServletPath();
+ /*       StringBuffer url2 = request.getRequestURL();
+        String url = url2.toString();
+        Set<Role> roles = user.getRoles();
         List<String>urlList=new ArrayList<>();
         for (Role role : roles) {
             Set<Permission> permissions2 = role.getPermissions();
@@ -119,7 +117,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
 if (!urlList.contains(url)){
                     // 用户没有访问权限
                  throw new RuntimeException("401");
-}
+}*/
 
         return true;
     }

@@ -14,33 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommonDao /*extends BaseDaoImpl*/{
-/*    // ctrl + shift + x
-    private static final Configuration CONFIG;
-    private static final SessionFactory FACTORY;
 
-    // 编写静态代码块
-    static{
-        // 加载XML的配置文件
-        CONFIG = new Configuration().configure();
-        // 构造工厂
-        FACTORY = CONFIG.buildSessionFactory();
-    }
-
-    *//**
-     * 从工厂中获取Session对象
-     * @return
-     *//*
-    public static Session getSession(){
-        return FACTORY.openSession();
-    }
-
-    *//**
-     * // 从ThreadLocal类中获取到session的对象
-     * @return
-     *//*
-    public static Session getCurrentSession(){
-        return FACTORY.getCurrentSession();
-    }*/
     protected SessionFactory sessionFactory;
     protected Session session;
 
@@ -101,6 +75,6 @@ public class CommonDao /*extends BaseDaoImpl*/{
     // 关闭session
     protected void closeSession() {
         this.session.close();
-        this.sessionFactory.close();
+  //      this.sessionFactory.close();
     }
 }

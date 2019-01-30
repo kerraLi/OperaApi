@@ -6,7 +6,7 @@
 <hibernate-mapping>
 	<class name="com.ywxt.Domain.Permission" table="permissions">
 		<id name="id">
-			<generator class="native"></generator>
+			<generator class="native"/>
 		</id>
 		<property name="permissionName" length="20" />
 		<property name="url" length="255"/>
