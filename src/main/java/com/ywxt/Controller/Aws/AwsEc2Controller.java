@@ -23,7 +23,12 @@ public class AwsEc2Controller {
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         HashMap<String, Object> params = new HashMap<String, Object>();
         if (!(request.getParameter("status") == null) && !(request.getParameter("status").isEmpty())) {
-            params.put("status", request.getParameter("status"));
+            if (request.getParameter("status").equals("others")) {
+                String[] statusStrings = {"running"};
+                params.put("status@notIn", statusStrings);
+            } else {
+                params.put("status", request.getParameter("status"));
+            }
         }
         if (!(request.getParameter("key") == null) && !(request.getParameter("key").isEmpty())) {
             params.put("filter", request.getParameter("key"));
