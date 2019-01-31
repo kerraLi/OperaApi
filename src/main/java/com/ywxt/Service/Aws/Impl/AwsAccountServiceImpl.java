@@ -1,9 +1,17 @@
 package com.ywxt.Service.Aws.Impl;
 
 import com.ywxt.Dao.Aws.Impl.AwsAccountDaoImpl;
+import com.ywxt.Dao.Aws.Impl.AwsEc2DaoImpl;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Handler.AsyncHandler;
 import com.ywxt.Utils.AsyncUtils;
+
+import software.amazon.awssdk.auth.credentials.*;
+import software.amazon.awssdk.services.iam.model.IamException;
+import software.amazon.awssdk.services.iam.model.ListUsersRequest;
+import software.amazon.awssdk.services.iam.model.ListUsersResponse;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.iam.IamClient;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +38,12 @@ public class AwsAccountServiceImpl {
                 @Override
                 public void handle() {
                     try {
-                        // todo 处理ec2数据同步
+                        try {
+                            new AwsServiceImpl(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret()).freshSourceData();
+                        } catch (Exception e) {
+                            // 异步处理数据错误
+                            System.out.println(e.getMessage());
+                        }
                     } catch (Exception e) {
                         // 异步处理数据错误
                         System.out.println(e.getMessage());
@@ -53,7 +66,8 @@ public class AwsAccountServiceImpl {
             AsyncHandler handler = new AsyncHandler() {
                 @Override
                 public void handle() {
-                    // todo 处理ec2数据同步
+                    // 删除ec2
+                    new AwsEc2DaoImpl().deleteAwsEc2ByAccessId(awsAccount.getAccessKeyId());
                 }
             };
             AsyncUtils.asyncWork(handler);
@@ -61,8 +75,19 @@ public class AwsAccountServiceImpl {
         return new AwsAccountDaoImpl().deleteAccount(awsAccountId);
     }
 
-    // todo 校验密钥
+    // 校验密钥
     public boolean checkAccount(String accessKeyId, String accessKeySecret) throws Exception {
+        try {
+            Region region = Region.AWS_GLOBAL;
+            IamClient client = IamClient.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKeyId, accessKeySecret)))
+                    .region(region).build();
+            ListUsersRequest request = ListUsersRequest.builder().build();
+            ListUsersResponse response = client.listUsers(request);
+        } catch (IamException iamException) {
+            // 密钥错误等
+            return false;
+        }
         return true;
     }
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-7-8 1:31:59 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.ywxt.Domain.Aws.AwsEc2" table="aws_ec2">
+        <!-- id主键设置 -->
+        <id name="id" type="java.lang.Integer">
+            <column name="id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="accessKeyId" type="java.lang.String" length="40" not-null="true"/>
+        <property name="region" type="java.lang.String" length="40" not-null="true"/>
+        <property name="launchTime" type="java.util.Date"/>
+        <property name="imageId" type="java.lang.String" length="100"/>
+        <property name="instanceId" type="java.lang.String" length="100"/>
+        <property name="instanceType" type="java.lang.String" length="100"/>
+        <property name="kernelId" type="java.lang.String" length="100"/>
+        <property name="keyName" type="java.lang.String" length="100"/>
+        <property name="platform" type="java.lang.String" length="100"/>
+        <property name="privateDnsName" type="java.lang.String" length="100"/>
+        <property name="privateIpAddress" type="java.lang.String" length="100"/>
+        <property name="publicDnsName" type="java.lang.String" length="100"/>
+        <property name="publicIpAddress" type="java.lang.String" length="100"/>
+        <property name="ramdiskId" type="java.lang.String" length="100"/>
+        <property name="stateTransitionReason" type="java.lang.String" length="100"/>
+        <property name="subnetId" type="java.lang.String" length="100"/>
+        <property name="vpcId" type="java.lang.String" length="100"/>
+        <property name="architecture" type="java.lang.String" length="100"/>
+        <property name="rootDeviceName" type="java.lang.String" length="100"/>
+        <property name="rootDeviceType" type="java.lang.String" length="100"/>
+        <property name="status" type="java.lang.String" length="100"/>
+    </class>
+</hibernate-mapping>

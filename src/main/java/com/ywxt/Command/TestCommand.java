@@ -13,6 +13,8 @@ import com.ywxt.Domain.Resource.Hardware;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
+import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.Impl.MessageServiceImpl;
@@ -144,9 +146,15 @@ public class TestCommand {
 //        System.out.println(a);
     }
 
+    private static void checkAws() throws Exception {
+        //new AwsAccountServiceImpl().checkAccount("AKIAJB2HURSIKSOB67ZQ", "No4K6AlQvR+V43j732g+UQ7QygRyOXWSCxb7qVP6");
+        new AwsServiceImpl("AKIAJB2HURSIKSOB67ZQ", "No4K6AlQvR+V43j732g+UQ7QygRyOXWSCxb7qVP6").freshEc2();
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(123);
         System.out.println("发送消息");
+        TestCommand.checkAws();
 //        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
 //        jsonObject.put("timestamp", System.currentTimeMillis());
 //        jsonObject.put("id", 1);
@@ -167,11 +175,7 @@ public class TestCommand {
 //            System.out.println(e.getClass());
 //        }
 
-
-        Hardware hardware = new Hardware();
-        hardware.setCabinet("aaa");
-        new HardwareServiceImpl().save(hardware);
-       // TestCommand.saveParameter();
+        // TestCommand.saveParameter();
 //        TestCommand.setIgnore();
 //        TestCommand.checkGodaddyAccount();
 //        TestCommand.setGodaddyAccount();

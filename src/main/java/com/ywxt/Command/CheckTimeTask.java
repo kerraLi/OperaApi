@@ -16,6 +16,8 @@ public class CheckTimeTask {
         service.scheduleAtFixedRate(new CheckThread("ali", "refresh"), 3, 60 * 60 * 5, TimeUnit.SECONDS);
         // go refresh
         service.scheduleAtFixedRate(new CheckThread("godaddy", "refresh"), 3, 60 * 60 * 5, TimeUnit.SECONDS);
+        // aws refresh
+        service.scheduleAtFixedRate(new CheckThread("aws", "refresh"), 3, 60 * 60 * 5, TimeUnit.SECONDS);
 
 
         // ali account

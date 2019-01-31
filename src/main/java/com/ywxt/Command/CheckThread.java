@@ -16,6 +16,8 @@ public class CheckThread implements Runnable {
             CheckAli.exportCheck(action);
         } else if (c.equals("godaddy")) {
             CheckGodaddy.exportCheck(action);
+        } else if (c.equals("aws")) {
+            CheckAws.exportCheck(action);
         }
     }
 }

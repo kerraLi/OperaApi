@@ -214,7 +214,7 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
                 // 接口只支持查3天内数据
                 List<DescribeRefreshTasksResponse.CDNTask> l = this.getCdnRefreshTask(act.getTaskId());
                 if (l.size() > 0) {
-                    DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
+                    DescribeRefreshTasksResponse.CDNTask temp = l.get(0);
                     act.setProcess(temp.getProcess());
                     act.setStatus(temp.getStatus());
                     new AliCdnTaskDaoImpl().saveCdnTask(act);
@@ -235,10 +235,16 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
             this.accessKeyId = act.getAccessKeyId();
             this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
         }
-        DescribeRefreshTasksResponse.CDNTask temp = this.getCdnRefreshTask(act.getTaskId()).get(0);
-        act.setProcess(temp.getProcess());
-        act.setStatus(temp.getStatus());
-        new AliCdnTaskDaoImpl().saveCdnTask(act);
+        // 接口只支持查3天内数据
+        List<DescribeRefreshTasksResponse.CDNTask> l = this.getCdnRefreshTask(act.getTaskId());
+        if (l.size() > 0) {
+            DescribeRefreshTasksResponse.CDNTask temp = l.get(0);
+            act.setProcess(temp.getProcess());
+            act.setStatus(temp.getStatus());
+            new AliCdnTaskDaoImpl().saveCdnTask(act);
+        } else {
+            throw new Exception("接口只只差查询3天内数据，下次请及时查看刷新哦~若需查看具体完成情况，可登陆阿里云查看。");
+        }
         return act;
     }
 
