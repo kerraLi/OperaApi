@@ -102,10 +102,10 @@ public class AuthenticationHandler implements HandlerInterceptor {
 
 //        String requestUrl = request.getScheme()+"://" + request.getServerName()+ ":" + request.getServerPort() + request.getContextPath() + request.getServletPath() + (StringUtils.isBlank(request.getQueryString())?"":("?"+request.getQueryString())); //请求参
 
+        /*StringBuffer url2 = request.getRequestURL();
+        String url = url2.toString();*/
 
-      //  String url = request.getServletPath();
- /*       StringBuffer url2 = request.getRequestURL();
-        String url = url2.toString();
+          String url = request.getServletPath();
         Set<Role> roles = user.getRoles();
         List<String>urlList=new ArrayList<>();
         for (Role role : roles) {
@@ -114,10 +114,16 @@ public class AuthenticationHandler implements HandlerInterceptor {
                 urlList.add(permission.getUrl());
             }
         }
-if (!urlList.contains(url)){
-                    // 用户没有访问权限
-                 throw new RuntimeException("401");
-}*/
+
+        for (String s : urlList) {
+            if (!url.startsWith(s)){
+                throw new RuntimeException("401");
+            }
+        }
+
+
+      /*  Permission byUrl = permissionService.findByUrl(url);
+        Set<Role> roles1 = byUrl.getRoles();*/
 
         return true;
     }

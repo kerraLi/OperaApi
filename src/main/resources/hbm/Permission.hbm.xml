@@ -11,7 +11,7 @@
 		<property name="permissionName" length="20" />
 		<property name="url" length="255"/>
 		<!-- 配置权限和角色的多对多关系 -->
-		<set name="roles" inverse="true" table="role_permission" >
+		<set name="roles" inverse="true" table="role_permission" lazy="false">
 			<key>
 				<column name="permissionId" length="32" not-null="true" />
 			</key>

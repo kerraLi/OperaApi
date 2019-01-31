@@ -20,7 +20,7 @@ import java.util.List;
 
 
 @Service
-@Transactional
+//@Transactional
 public class UserServiceImpl implements UserService{
 
     @Autowired
@@ -88,7 +88,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Long add(String username, String password) {
-      Long cno=  userDao.add(username,password);
+        User user = new User();
+        String md5Password = MD5Utils.md5(password);
+        Long cno=  userDao.add(username,md5Password);
         return cno;
     }
 

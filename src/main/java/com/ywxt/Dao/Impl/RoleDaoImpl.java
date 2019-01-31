@@ -4,8 +4,10 @@ package com.ywxt.Dao.Impl;
 import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.RoleDao;
 
+import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.Role;
 import org.hibernate.Criteria;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Expression;
 import org.springframework.stereotype.Repository;
 
@@ -23,16 +25,16 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 
 	@Override
 	public List<Role> findAll() {
-		return null;
+		List<Role> list = session.createCriteria(Role.class).list();
+		return list;
 	}
 
 	@Override
 	public void delete(Long id) {
 		try {
-
 			session.beginTransaction();
-			Role role=session.get(Role.class,id);
-
+			Role role = new Role();
+			role.setId(id);
 			session.delete(role);
 			session.getTransaction().commit();
 		} catch (Exception e) {
@@ -45,21 +47,14 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 
 	@Override
 	public Role findById(Long id) {
-
-		try {
-			Role role = session.get(Role.class, id);
-			return role;
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			session.close();
-		}
+		Role role = session.get(Role.class, id);
+		session.close();
+		return role;
 	}
 
 	@Override
 	public void update(Long id) {
 		try {
-
 			session.beginTransaction();
 			Role role = session.get(Role.class, id);
 			session.update(role);
@@ -89,16 +84,23 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 
 	@Override
 	public void save(Role role) {
+		Transaction transaction=null;
 		try {
-		//	model.setRoleName("会计");
-	        session.beginTransaction();
+			transaction = session.beginTransaction();
 			session.save(role);
-			session.getTransaction().commit();
+			transaction.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-			session.getTransaction().rollback();
+			transaction.rollback();
 		}finally {
               session.close();
 		}
 	}
+
+	/*@Override
+	public Role findByPermission(Permission permission) {
+		Criteria criteria = session.createCriteria(Role.class);
+		criteria.add(Expression.eq(""))
+		return null;
+	}*/
 }

@@ -12,7 +12,7 @@
 		<property name="roleName" length="20" />
 		<property name="roleDesc" length="255"/>
 		<!-- 配置角色和用户的多对多关系 -->
-		<set name="users" inverse="true" table="user_role" >
+		<set name="users" inverse="true" table="user_role" lazy="false">
 			<key>
 				<column name="roleId" length="32" not-null="true" />
 			</key>
@@ -21,7 +21,7 @@
 			</many-to-many>
 		</set>
 		<!-- 配置角色和权限的多对多关系 -->
-		<set name="permissions" table="role_permission" >
+		<set name="permissions" table="role_permission" lazy="false" >
 			<key>
 				<column name="roleId" length="32" not-null="true" />
 			</key>

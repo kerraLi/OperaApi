@@ -7,6 +7,7 @@ import com.ywxt.Domain.Permission;
 
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Expression;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -80,6 +81,15 @@ public class PermissionDaoImpl extends CommonDao  implements PermissionDao {
             session.close();
         }
 
+    }
+
+    @Override
+    public Permission findByUrl(String url) {
+        Criteria criteria = session.createCriteria(Permission.class);
+        criteria.add(Expression.eq("url",url));
+        List<Permission> list = criteria.list();
+        Permission permission = list.get(0);
+        return permission;
     }
 
 

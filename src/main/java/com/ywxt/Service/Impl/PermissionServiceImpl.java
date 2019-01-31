@@ -67,5 +67,10 @@ public class PermissionServiceImpl implements PermissionService {
        permissionDao.deleteById(id);
     }
 
+    @Override
+    public Permission findByUrl(String url) {
+        return permissionDao.findByUrl(url);
+    }
+
 
 }

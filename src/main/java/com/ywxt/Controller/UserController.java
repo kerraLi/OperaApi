@@ -98,10 +98,16 @@ public class UserController extends CommonController {
     /*
     * 根据id查询用户
     * */
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+  /*  @RequestMapping(value = "/{id}",method = RequestMethod.GET)
     public User findUserById(@PathVariable(value = "id")long id){
        return userService.getUserById(id);
+    }*/
+
+    @RequestMapping(value = "/id",method = RequestMethod.GET)
+    public User findUserById(@RequestParam long id){
+        return userService.getUserById(id);
     }
+
     /***
      * 修改用户信息
      * @param user
@@ -117,7 +123,7 @@ public class UserController extends CommonController {
      * 根据id删除用户
      * */
     @RequestMapping("/delete")
-    public void deleteById(@RequestParam long id){
+    public void deleteById(@RequestParam("id") long id){
         userService.deleteById(id);
     }
 }

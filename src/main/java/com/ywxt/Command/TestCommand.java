@@ -46,8 +46,8 @@ public class TestCommand {
         u.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
         u.setIntroduction("我是超级管理员");
         Role role = new Role();
-       // String[] roles = {"admin"};
-      //  u.setRoles(roles);
+       /* String[] roles = {"admin"};
+        u.setRoles(roles);*/
         userDao.saveUser(u);
     }
 

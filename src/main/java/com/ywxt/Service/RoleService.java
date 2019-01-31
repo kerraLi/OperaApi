@@ -1,6 +1,7 @@
 package com.ywxt.Service;
 
 
+import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.Role;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface RoleService {
 
 
     void deleteById(Long id);
+
+  /*  Role findByPermission(Permission permission);*/
 }

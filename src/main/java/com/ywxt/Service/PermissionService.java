@@ -40,4 +40,6 @@ public interface PermissionService {
 * 根据id删除权限
 * */
     void deleteById(long id);
+
+    Permission findByUrl(String url);
 }

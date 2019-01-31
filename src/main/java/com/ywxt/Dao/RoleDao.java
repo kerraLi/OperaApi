@@ -1,6 +1,7 @@
 package com.ywxt.Dao;
 
 
+import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.Role;
 
 
@@ -14,4 +15,6 @@ public interface RoleDao{
 	List<Role> findRoleByName(String name);
 
 	void save(Role role);
+
+//    Role findByPermission(Permission permission);
 }

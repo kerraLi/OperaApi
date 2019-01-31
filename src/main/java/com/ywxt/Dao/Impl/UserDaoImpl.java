@@ -7,6 +7,7 @@ import com.ywxt.Domain.User;
 
 
 import org.hibernate.Criteria;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 
@@ -36,17 +37,9 @@ public class UserDaoImpl extends CommonDao implements UserDao {
     }
 
     public User getUserById(long id) {
-        try {
-            session.beginTransaction();
             User u = (User) session.get(User.class, id);
-            session.getTransaction().commit();
+            session.close();
             return u;
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            throw e;
-        } finally {
-            this.closeSession();
-        }
     }
             //根据用户名查询用户
     public User getUserByUsername(String username) throws Exception {
@@ -75,31 +68,32 @@ public class UserDaoImpl extends CommonDao implements UserDao {
 
     @Override
     public Long add(String username, String password) {
+        Transaction transaction=null;
         try {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             User user = new User();
             user.setPassword(password);
             user.setUsername(username);
             Long id = (Long) session.save(user);
-            session.beginTransaction().commit();
+            transaction.commit();
             return id;
         } catch (Exception e) {
-            session.beginTransaction().rollback();
+          transaction.rollback();
             throw e;
         } finally {
-            this.closeSession();
+         session.close();
         }
     }
 
     @Override
     public void updateUserById(User user) {
+        Transaction transaction=null;
         try {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.update(user);
-            session.getTransaction().commit();
-
+        transaction.commit();
         } catch (Exception e) {
-            session.getTransaction().rollback();
+            transaction.rollback();
             throw e;
         } finally {
             session.close();
@@ -108,12 +102,14 @@ public class UserDaoImpl extends CommonDao implements UserDao {
 
     @Override
     public void deleteById(long id) {
+        Transaction transaction=null;
         try {
-            session.beginTransaction();
-            User user = session.get(User.class, id);
-            session.getTransaction().commit();
+            transaction = session.beginTransaction();
+            User user = new User();
+            user.setId(id);
+           transaction.commit();
         } catch (Exception e) {
-            session.getTransaction().rollback();
+           transaction.rollback();
             throw e;
         } finally {
             session.close();

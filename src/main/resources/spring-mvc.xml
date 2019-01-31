@@ -16,8 +16,8 @@
     <mvc:annotation-driven/>
     <!--静态资源过滤-->
     <!--<mvc:default-servlet-handler/>-->
-    <!--     启用spring mvc 注解 -->
-    <context:annotation-config />
+   <!-- &lt;!&ndash;     启用spring mvc 注解 &ndash;&gt;
+    <context:annotation-config />-->
 
     <!-- 启动包扫描功能，以便注册带有@Controller、@Service、@repository、@Component等注解的类成为spring的bean -->
     <!--<context:component-scan base-package="com.ywxt"/>-->

@@ -21,6 +21,7 @@ public class User implements Serializable {
     private String introduction;
     private String avatar;
     private Set<Role> roles=new HashSet<>();
+//    private String[] roles;
     public long getId() {
         return id;
     }
@@ -76,17 +77,19 @@ public class User implements Serializable {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", introduction='" + introduction + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", roles=" + roles +
-                '}';
+/*  public Set<Role> getRoleList() {
+        return roleList;
     }
+
+    public void setRoleList(Set<Role> roleList) {
+        this.roleList = roleList;
+    }*/
+
+   /* public String[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String[] roles) {
+        this.roles = roles;
+    }*/
 }

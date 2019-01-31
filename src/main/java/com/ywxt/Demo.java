@@ -10,7 +10,7 @@ public class Demo  {
         user.setUsername("dd");
         user.setPassword("123");
         System.out.println(user);
-        String password = MD5Utils.md5("123");
+        String password = MD5Utils.md5("123456");
         System.out.println(password);
 
     }

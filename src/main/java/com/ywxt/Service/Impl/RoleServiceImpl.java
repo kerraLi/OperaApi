@@ -2,6 +2,7 @@ package com.ywxt.Service.Impl;
 
 
 import com.ywxt.Dao.RoleDao;
+import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.Role;
 import com.ywxt.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,11 @@ public class RoleServiceImpl implements RoleService {
 	public void deleteById(Long id) {
 			roleDao.delete(id);
 	}
+
+/*	@Override
+	public Role findByPermission(Permission permission) {
+		return roleDao.findByPermission(permission);
+	}*/
 
 
 }

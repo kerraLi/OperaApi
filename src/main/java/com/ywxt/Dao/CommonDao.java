@@ -75,6 +75,6 @@ public class CommonDao /*extends BaseDaoImpl*/{
     // 关闭session
     protected void closeSession() {
         this.session.close();
-  //      this.sessionFactory.close();
+        this.sessionFactory.close();
     }
 }

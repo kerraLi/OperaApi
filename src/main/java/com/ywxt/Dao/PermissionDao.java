@@ -15,4 +15,6 @@ public interface PermissionDao {
     int add(Permission permission);
 
     void deleteById(long id);
+
+    Permission findByUrl(String url);
 }
