@@ -21,7 +21,7 @@
             <list-index column="listIndex"/>
             <element type="java.lang.String" column="roleName"/>
         </array>-->
-            <set name="roles" table="user_role" lazy="false" >
+            <set name="roles" table="user_role"  lazy="false" fetch="select" >
             <key>
                 <column name="userId" length="32" not-null="true" />
             </key>

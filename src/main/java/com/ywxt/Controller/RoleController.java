@@ -32,6 +32,7 @@ public class RoleController extends CommonController {
 * 查询所有角色信息
 * */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @ResponseBody
    public List<Role> list(){
       List<Role>roles= roleService.findAll();
       return roles;
@@ -40,9 +41,9 @@ public class RoleController extends CommonController {
 /*
 * 增加角色
 * */
-   @RequestMapping("/add")
+   @RequestMapping(value = "/add",method = RequestMethod.POST)
    @PassToken
-public void add(@RequestBody Role role){
+public void add(@RequestBody(required = false) Role role){
     roleService.save(role);
 
 }
@@ -67,6 +68,7 @@ public void add(@RequestBody Role role){
 * 根据id查询角色
 * */
     @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    @ResponseBody
     public Role findRoleById(@PathVariable(value = "id")long id){
         Role role = roleService.findRoleById(id);
         return role;

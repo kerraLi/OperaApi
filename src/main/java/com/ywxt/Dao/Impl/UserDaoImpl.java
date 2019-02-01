@@ -37,7 +37,7 @@ public class UserDaoImpl extends CommonDao implements UserDao {
     }
 
     public User getUserById(long id) {
-            User u = (User) session.get(User.class, id);
+        User u = (User) session.get(User.class, id);
             session.close();
             return u;
     }

@@ -8,10 +8,28 @@
 		<id name="id">
 			<generator class="native"/>
 		</id>
+		<many-to-one name="parentPermission" class="com.ywxt.Domain.Permission" fetch="select">
+			<column name="pid" length="32" />
+		</many-to-one>
 		<property name="permissionName" length="20" />
+
 		<property name="url" length="255"/>
+		<property name="generatemenu" type="java.lang.String">
+			<column name="generatemenu" />
+		</property>
+		<property name="zindex" type="java.lang.Long">
+			<column name="zindex" />
+		</property>
+
+		<set name="children" inverse="true" lazy="false">
+			<key>
+				<column name="pid" length="32" />
+			</key>
+			<one-to-many class="com.ywxt.Domain.Permission" />
+		</set>
+
 		<!-- 配置权限和角色的多对多关系 -->
-		<set name="roles" inverse="true" table="role_permission" lazy="false">
+		<set name="roles"   table="role_permission" lazy="false" fetch="select">
 			<key>
 				<column name="permissionId" length="32" not-null="true" />
 			</key>

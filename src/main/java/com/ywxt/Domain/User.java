@@ -3,15 +3,18 @@ package com.ywxt.Domain;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
-
-@Entity
+/*@JsonIgnoreProperties()
+   @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "id")*/
 public class User implements Serializable {
 
     private long id;
@@ -20,8 +23,29 @@ public class User implements Serializable {
     private String nickname;
     private String introduction;
     private String avatar;
-    private Set<Role> roles=new HashSet<>();
+    private Set<Role> roles=new HashSet<>(0);
 //    private String[] roles;
+
+
+    public User() {
+    }
+
+    public User(long id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(long id, String username, String password, String nickname, String introduction, String avatar, Set<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.introduction = introduction;
+        this.avatar = avatar;
+        this.roles = roles;
+    }
+
     public long getId() {
         return id;
     }
@@ -77,19 +101,5 @@ public class User implements Serializable {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-/*  public Set<Role> getRoleList() {
-        return roleList;
-    }
 
-    public void setRoleList(Set<Role> roleList) {
-        this.roleList = roleList;
-    }*/
-
-   /* public String[] getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String[] roles) {
-        this.roles = roles;
-    }*/
 }

@@ -17,14 +17,14 @@ public class PermissionController extends CommonController{
 /*
 * 新增权限信息
 * */
-@RequestMapping("/add")
+@RequestMapping(value = "/add",method = RequestMethod.POST)
 public void add(@RequestBody Permission permission){
     permissionService.add(permission);
 }
 /*
 * 修改权限信息
 * */
-@RequestMapping("/update")
+@RequestMapping(value = "/update",method = RequestMethod.POST)
 public void update(@RequestBody Permission permission){
     permissionService.update(permission);
 }
@@ -39,6 +39,7 @@ public void deleteById(@RequestParam long id){
 * 通过权限id查询权限
 * */
 @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+@ResponseBody
 public Permission findPermissionById(@PathVariable(value = "id") Long id){
     return permissionService.findPermissionById(id);
 }
@@ -46,6 +47,7 @@ public Permission findPermissionById(@PathVariable(value = "id") Long id){
 * 查询所有权限信息
 * */
 @RequestMapping(value = "/list",method = RequestMethod.GET)
+@ResponseBody
     public List<Permission> list(){
     List<Permission> list = permissionService.list();
     return list;

@@ -79,6 +79,7 @@ public class UserController extends CommonController {
 * 查询所有用户
 * */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @ResponseBody
     public List<User> list(){
             List<User>users =userService.list();
         for (User user1 : users) {
@@ -104,6 +105,7 @@ public class UserController extends CommonController {
     }*/
 
     @RequestMapping(value = "/id",method = RequestMethod.GET)
+    @ResponseBody
     public User findUserById(@RequestParam long id){
         return userService.getUserById(id);
     }
