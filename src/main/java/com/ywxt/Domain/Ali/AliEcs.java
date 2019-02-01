@@ -25,8 +25,14 @@ public class AliEcs {
     private String instanceId;
     private String instanceName;
     private String instanceType;
+    // 实例网络类型 vpc/classic
     private String instanceNetworkType;
+    // 网络计费类型 PayByTraffic：按流量计费 / PayByBandwidth：按宽带计费
+    private String internetChargeType;
+    // 实例计费方式 PrePaid:预付费（包年包月）/PostPaid:按量付费
     private String instanceChargeType;
+    // 实例停机后是否继续收费 KeepCharging停机后继续收费、保留资源/StopCharging停机后释放资源不收费/Not-applicable本实例支持停机不收费功能
+    private String stoppedMode;
     private String hostName;
     private String imageId;
     private String regionId;
@@ -48,11 +54,17 @@ public class AliEcs {
 
     public AliEcs(String accessKeyId, DescribeInstancesResponse.Instance instance) throws Exception {
         this.accessKeyId = accessKeyId;
+        this.updateData(instance);
+    }
+
+    public void updateData(DescribeInstancesResponse.Instance instance) throws Exception {
         this.instanceId = instance.getInstanceId();
         this.instanceName = instance.getInstanceName();
         this.instanceType = instance.getInstanceType();
         this.instanceNetworkType = instance.getInstanceNetworkType();
+        this.internetChargeType = instance.getInternetChargeType();
         this.instanceChargeType = instance.getInstanceChargeType();
+        this.stoppedMode = instance.getStoppedMode();
         this.hostName = instance.getHostName();
         this.imageId = instance.getImageId();
         this.regionId = instance.getRegionId();
@@ -66,7 +78,6 @@ public class AliEcs {
         this.securityGroupIds = String.join("|", instance.getSecurityGroupIds());
         this.serialNumber = instance.getSerialNumber();
         this.status = instance.getStatus();
-
     }
 
     public int getId() {
@@ -236,5 +247,21 @@ public class AliEcs {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getInternetChargeType() {
+        return internetChargeType;
+    }
+
+    public void setInternetChargeType(String internetChargeType) {
+        this.internetChargeType = internetChargeType;
+    }
+
+    public String getStoppedMode() {
+        return stoppedMode;
+    }
+
+    public void setStoppedMode(String stoppedMode) {
+        this.stoppedMode = stoppedMode;
     }
 }

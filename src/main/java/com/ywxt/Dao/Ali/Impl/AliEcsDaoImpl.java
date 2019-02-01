@@ -8,6 +8,9 @@ import org.hibernate.*;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,6 +30,21 @@ public class AliEcsDaoImpl extends CommonDao implements AliEcsDao {
         } finally {
             this.closeSession();
         }
+    }
+
+    public AliEcs getEcs(String instanceId) throws Exception {
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<AliEcs> criteriaQuery = criteriaBuilder.createQuery(AliEcs.class);
+        Root<AliEcs> from = criteriaQuery.from(AliEcs.class);
+        // 设置查询属性
+        criteriaQuery.select(from).where(from.get("instanceId").in(instanceId));
+        List<AliEcs> list = session.createQuery(criteriaQuery).getResultList();
+        if (list.size() == 0) {
+            throw new Exception("无该服务器");
+        }
+        AliEcs aliEcs = (AliEcs) list.get(0);
+        this.closeSession();
+        return aliEcs;
     }
 
     // group by 查找个数&account

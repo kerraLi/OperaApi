@@ -14,7 +14,9 @@
         <property name="instanceName" type="java.lang.String" length="50" not-null="true"/>
         <property name="instanceType" type="java.lang.String" length="20" not-null="true"/>
         <property name="instanceNetworkType" type="java.lang.String" length="20"/>
+        <property name="internetChargeType" type="java.lang.String" length="20"/>
         <property name="instanceChargeType" type="java.lang.String" length="20"/>
+        <property name="stoppedMode" type="java.lang.String" length="30"/>
         <property name="hostName" type="java.lang.String" length="50"/>
         <property name="imageId" type="java.lang.String" length="100"/>
         <property name="regionId" type="java.lang.String" length="30" not-null="true"/>

@@ -12,6 +12,7 @@ import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Resource.Hardware;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
+import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
 import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
@@ -151,10 +152,16 @@ public class TestCommand {
         new AwsServiceImpl("AKIAJB2HURSIKSOB67ZQ", "No4K6AlQvR+V43j732g+UQ7QygRyOXWSCxb7qVP6").freshEc2();
     }
 
+    // 更新单个ecs
+    private static void updateEcs() throws Exception {
+        new AliEcsServiceImpl().updateEcs("i-j6c56n9npzzm3mnq6a3d");
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(123);
         System.out.println("发送消息");
-        TestCommand.checkAws();
+        TestCommand.updateEcs();
+//        TestCommand.checkAws();
 //        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
 //        jsonObject.put("timestamp", System.currentTimeMillis());
 //        jsonObject.put("id", 1);

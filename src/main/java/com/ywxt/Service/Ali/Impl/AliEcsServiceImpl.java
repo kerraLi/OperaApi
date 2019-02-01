@@ -192,7 +192,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
     // ecs-最新状态
     public AliEcs updateEcsStatus(AliEcs aliEcs) throws Exception {
         this.accessKeyId = aliEcs.getAccessKeyId();
-        this.accessKeySecret = this.getAccessKeySecret(this.accessKeySecret);
+        this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
         IClientProfile profile = DefaultProfile.getProfile(aliEcs.getRegionId(), this.accessKeyId, this.accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
         DescribeInstancesRequest request = new DescribeInstancesRequest();
@@ -202,6 +202,41 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         DescribeInstancesResponse.Instance instance = response.getInstances().get(0);
         aliEcs.setStatus(instance.getStatus());
         return aliEcs;
+    }
+
+    // ecs-预付费
+    public void perPay(String instanceId, String periodUnit, int period) throws Exception {
+        AliEcs aliEcs = new AliEcsDaoImpl().getEcs(instanceId);
+        this.accessKeyId = aliEcs.getAccessKeyId();
+        this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
+        IClientProfile profile = DefaultProfile.getProfile(aliEcs.getRegionId(), this.accessKeyId, this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+        RenewInstanceRequest request = new RenewInstanceRequest();
+        request.setInstanceId(instanceId);
+        request.setPeriodUnit(periodUnit);
+        request.setPeriod(period);
+        RenewInstanceResponse response = client.getAcsResponse(request);
+        // 更新数据库ecs
+        this.updateEcs(instanceId);
+    }
+
+    // ecs-更新单个ecs数据
+    public void updateEcs(String instanceId) throws Exception {
+        AliEcs aliEcs = new AliEcsDaoImpl().getEcs(instanceId);
+        this.accessKeyId = aliEcs.getAccessKeyId();
+        this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
+        IClientProfile profile = DefaultProfile.getProfile(aliEcs.getRegionId(), this.accessKeyId, this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+        DescribeInstancesRequest request = new DescribeInstancesRequest();
+        request.setInstanceIds("[\"" + aliEcs.getInstanceId() + "\"]");
+        DescribeInstancesResponse response = client.getAcsResponse(request);
+        // aeList
+        List<DescribeInstancesResponse.Instance> list = response.getInstances();
+        if (list.size() == 0) {
+            throw new Exception("无该服务器");
+        }
+        aliEcs.updateData(list.get(0));
+        new AliEcsDaoImpl().saveAliEcs(aliEcs);
     }
 
     // ecs-启动

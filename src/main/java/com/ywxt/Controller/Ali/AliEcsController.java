@@ -8,10 +8,7 @@ import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,6 +94,18 @@ public class AliEcsController extends CommonController {
     @RequestMapping(value = {"/status/{action}/{id}"}, method = RequestMethod.GET)
     public JSONObject ecsStatusAction(@PathVariable String action, @PathVariable Integer id) throws Exception {
         new AliEcsServiceImpl().actionEcs(action, id);
+        return this.returnObject(new HashMap<String, Object>() {{
+        }});
+    }
+
+    // 预付费服务器
+    @ResponseBody
+    @RequestMapping(value = {"/perpay"}, method = RequestMethod.POST)
+    public JSONObject ecsPerPay(@RequestBody JSONObject jsonObject) throws Exception {
+        String instanceId = (String) jsonObject.get("instanceId");
+        String periodUnit = (String) jsonObject.get("periodUnit");
+        int period = Integer.parseInt((String) jsonObject.get("period"));
+        new AliEcsServiceImpl().perPay(instanceId, periodUnit, period);
         return this.returnObject(new HashMap<String, Object>() {{
         }});
     }
