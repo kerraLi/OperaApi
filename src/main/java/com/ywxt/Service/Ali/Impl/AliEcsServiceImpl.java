@@ -205,7 +205,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
     }
 
     // ecs-预付费
-    public void perPay(String instanceId, String periodUnit, int period) throws Exception {
+    public AliEcs perPay(String instanceId, String periodUnit, int period) throws Exception {
         AliEcs aliEcs = new AliEcsDaoImpl().getEcs(instanceId);
         this.accessKeyId = aliEcs.getAccessKeyId();
         this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
@@ -217,11 +217,11 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         request.setPeriod(period);
         RenewInstanceResponse response = client.getAcsResponse(request);
         // 更新数据库ecs
-        this.updateEcs(instanceId);
+        return this.updateEcs(instanceId);
     }
 
     // ecs-更新单个ecs数据
-    public void updateEcs(String instanceId) throws Exception {
+    public AliEcs updateEcs(String instanceId) throws Exception {
         AliEcs aliEcs = new AliEcsDaoImpl().getEcs(instanceId);
         this.accessKeyId = aliEcs.getAccessKeyId();
         this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
@@ -237,6 +237,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
         }
         aliEcs.updateData(list.get(0));
         new AliEcsDaoImpl().saveAliEcs(aliEcs);
+        return aliEcs;
     }
 
     // ecs-启动

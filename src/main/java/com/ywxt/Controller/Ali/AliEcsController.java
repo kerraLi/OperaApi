@@ -101,12 +101,10 @@ public class AliEcsController extends CommonController {
     // 预付费服务器
     @ResponseBody
     @RequestMapping(value = {"/perpay"}, method = RequestMethod.POST)
-    public JSONObject ecsPerPay(@RequestBody JSONObject jsonObject) throws Exception {
+    public AliEcs ecsPerPay(@RequestBody JSONObject jsonObject) throws Exception {
         String instanceId = (String) jsonObject.get("instanceId");
         String periodUnit = (String) jsonObject.get("periodUnit");
         int period = Integer.parseInt((String) jsonObject.get("period"));
-        new AliEcsServiceImpl().perPay(instanceId, periodUnit, period);
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
+        return new AliEcsServiceImpl().perPay(instanceId, periodUnit, period);
     }
 }
