@@ -23,16 +23,17 @@ public class UserDaoImpl extends CommonDao implements UserDao {
 
 
     public Long saveUser(User user) {
+        Transaction transaction=null;
         try {
-            session.beginTransaction();
+           transaction = session.beginTransaction();
             Long id = (Long) session.save(user);
-            session.getTransaction().commit();
+          transaction.commit();
             return id;
         } catch (Exception e) {
-            session.getTransaction().rollback();
+            transaction.rollback();
             throw e;
         } finally {
-            this.closeSession();
+            session.close();
         }
     }
 
@@ -74,6 +75,7 @@ public class UserDaoImpl extends CommonDao implements UserDao {
             User user = new User();
             user.setPassword(password);
             user.setUsername(username);
+
             Long id = (Long) session.save(user);
             transaction.commit();
             return id;

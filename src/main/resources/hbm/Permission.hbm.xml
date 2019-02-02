@@ -8,7 +8,7 @@
 		<id name="id">
 			<generator class="native"/>
 		</id>
-		<many-to-one name="parentPermission" class="com.ywxt.Domain.Permission" fetch="select">
+		<many-to-one name="parentPermission" class="com.ywxt.Domain.Permission"  fetch="select">
 			<column name="pid" length="32" />
 		</many-to-one>
 		<property name="permissionName" length="20" />

@@ -96,10 +96,16 @@ public class UserController extends CommonController {
             Long account=  userService.add(username,password);
 
     }
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    public void add(@RequestBody User user){
+        userService.add(user);
+        System.out.println(user);
+    }
     /*
     * 根据id查询用户
     * */
   /*  @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    @ResponseBody
     public User findUserById(@PathVariable(value = "id")long id){
        return userService.getUserById(id);
     }*/

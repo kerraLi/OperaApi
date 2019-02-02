@@ -76,7 +76,7 @@ public class Permission implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
+    @JsonIgnore
     public Permission getParentPermission() {
         return parentPermission;
     }
@@ -108,7 +108,7 @@ public class Permission implements Serializable {
     public void setZindex(Long zindex) {
         this.zindex = zindex;
     }
-    @JsonIgnore
+ //   @JsonIgnore
     public Set<Permission> getChildren() {
         return children;
     }

@@ -67,10 +67,17 @@ public void add(@RequestBody(required = false) Role role){
 /*
 * 根据id查询角色
 * */
+
     @RequestMapping(value = "/{id}",method = RequestMethod.GET)
     @ResponseBody
     public Role findRoleById(@PathVariable(value = "id")long id){
         Role role = roleService.findRoleById(id);
         return role;
     }
+  /* @RequestMapping(value = "/id",method = RequestMethod.GET)
+    @ResponseBody
+    public Role findRoleById(@RequestParam long id){
+       Role role = roleService.findRoleById(id);
+       return role;
+   }*/
 }
