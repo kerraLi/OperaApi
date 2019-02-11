@@ -13,6 +13,7 @@ import java.util.Set;
 
    /*            @JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })*/
    /*    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "id")*/
+   @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 public class Role implements Serializable {
 
     private Long id;

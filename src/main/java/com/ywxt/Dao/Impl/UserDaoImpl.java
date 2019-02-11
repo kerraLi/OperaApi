@@ -107,8 +107,8 @@ public class UserDaoImpl extends CommonDao implements UserDao {
         Transaction transaction=null;
         try {
             transaction = session.beginTransaction();
-            User user = new User();
-            user.setId(id);
+            User user = session.get(User.class, id);
+            session.delete(user);
            transaction.commit();
         } catch (Exception e) {
            transaction.rollback();

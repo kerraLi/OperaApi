@@ -2,17 +2,13 @@ package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.PassToken;
-import com.ywxt.Domain.Permission;
-import com.ywxt.Domain.Role;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Service.RoleService;
 import com.ywxt.Service.UserService;
-import com.ywxt.Utils.Result;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 
 @Validated
@@ -127,11 +122,16 @@ public class UserController extends CommonController {
       userService.updateUserById(user);
     }
 
+   /*@RequestMapping(value = "/modifacation/{id}",method = RequestMethod.PUT)
+   public void update(@RequestBody User user,@PathVariable long id){
+       //根据id修改user信息
+       userService.updateUserById(user,id);
+   }*/
     /*
      * 根据id删除用户
      * */
-    @RequestMapping("/delete")
-    public void deleteById(@RequestParam("id") long id){
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    public void deleteById(@RequestParam long id){
         userService.deleteById(id);
     }
 }

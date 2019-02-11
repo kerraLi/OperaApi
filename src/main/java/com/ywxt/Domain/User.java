@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 /*@JsonIgnoreProperties()
    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "id")*/
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 public class User implements Serializable {
 
     private long id;

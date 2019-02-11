@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -71,7 +70,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Long add(User user) {
-
+        String md5Password = MD5Utils.md5(user.getPassword());
+        user.setPassword(md5Password);
         return  userDao.saveUser(user);
 
     }

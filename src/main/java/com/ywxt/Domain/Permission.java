@@ -1,13 +1,14 @@
 package com.ywxt.Domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 
 import java.io.Serializable;
 import java.util.*;
 
-
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 public class Permission implements Serializable {
 
 
