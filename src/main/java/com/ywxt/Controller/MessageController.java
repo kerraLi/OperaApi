@@ -92,11 +92,6 @@ public class MessageController extends CommonController {
         otherParam.put("imageUrl", String.valueOf(requestMap.get("imageUrl")));
         otherParam.put("evalMatches", requestMap.get("evalMatches").toString());
         new MessageServiceImpl().create("WEBHOOK_MESSAGE", String.valueOf(requestMap.get("ruleId")) + "-" + requestMap.get("state"), msgParam, otherParam);
-        PrintWriter out = null;
-        out = response.getWriter();
-        out.print("success");
-        out.flush();
-        out.close();
         return "success";
     }
 
