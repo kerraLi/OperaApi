@@ -38,8 +38,8 @@ public class ParameterController extends CommonController {
     // 新增参数
     @RequestMapping(value = {"/create"}, method = RequestMethod.POST)
     @ResponseBody
-    public Parameter createParameter(@NotBlank String key, @NotBlank String value) throws Exception {
-        return new ParameterServiceImpl().createKeyValue(key, value);
+    public Parameter createParameter(@NotBlank String key, @NotBlank String value, String introduce) throws Exception {
+        return new ParameterServiceImpl().createKeyValue(key, value, introduce);
     }
 
     // 删除参数

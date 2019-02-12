@@ -40,6 +40,20 @@ public class ParameterServiceImpl implements ParameterService {
         return new ParameterDaoImpl().getParameter(this.save(parameter));
     }
 
+    // 创建key-value-introduce
+    public Parameter createKeyValue(String key, String value, String introduce) throws Exception {
+        Parameter parameter = new ParameterDaoImpl().getParameter(key);
+        if (parameter != null) {
+            throw new Exception("该KEY值已存在，请更换后重试。");
+        }
+        parameter = new Parameter();
+        parameter.setKey(key);
+        parameter.setValue(value);
+        parameter.setStatus("temp");
+        parameter.setIntroduce(introduce);
+        return new ParameterDaoImpl().getParameter(this.save(parameter));
+    }
+
     // 新增&修改
     public int save(Parameter parameter) throws Exception {
         return new ParameterDaoImpl().save(parameter);

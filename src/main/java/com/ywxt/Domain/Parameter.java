@@ -11,6 +11,7 @@ public class Parameter {
     private String value;
     // fixed:常驻固定 || temp:临时
     private String status;
+    private String introduce;
 
     public int getId() {
         return id;
@@ -43,5 +44,13 @@ public class Parameter {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
     }
 }

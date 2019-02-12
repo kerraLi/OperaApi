@@ -14,5 +14,6 @@
         </property>
         <property name="value" type="java.lang.String" length="100" not-null="true"/>
         <property name="status" type="java.lang.String" length="20" not-null="true"/>
+        <property name="introduce" type="java.lang.String" length="255"/>
     </class>
 </hibernate-mapping>

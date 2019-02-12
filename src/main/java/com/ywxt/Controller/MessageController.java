@@ -19,6 +19,18 @@ import java.util.*;
 @RequestMapping("/message")
 public class MessageController extends CommonController {
 
+    // 获取消息数量
+    @ResponseBody
+    @RequestMapping(value = {"/number/{status}"}, method = RequestMethod.GET)
+    public JSONObject number(@PathVariable String status) throws Exception {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("status", status);
+        int number = new MessageServiceImpl().getTotal(params);
+        return this.returnObject(new HashMap<String, Object>() {{
+            put("number", number);
+        }});
+    }
+
     // 消息列表
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
