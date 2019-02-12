@@ -16,6 +16,8 @@ import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
@@ -26,11 +28,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 // 用户登陆鉴权
@@ -106,7 +104,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
         String url = url2.toString();*/
 
           String url = request.getServletPath();
-        Set<Role> roles = user.getRoles();
+      /*  Set<Role> roles = user.getRoles();
         List<String>urlList=new ArrayList<>();
         for (Role role : roles) {
             Set<Permission> permissions2 = role.getPermissions();
@@ -119,7 +117,35 @@ public class AuthenticationHandler implements HandlerInterceptor {
             if (!url.startsWith(s)){
                 throw new RuntimeException("401");
             }
-        }
+        }*/
+
+
+        List<String> allUrl = permissionService.findAllUrl();        //数据库里的所有url集合
+      if (CollectionUtils.isNotEmpty(allUrl)){
+          for (String resURL : allUrl) {
+                if (StringUtils.startsWith(url,resURL)){
+                    Set<Role> roleSets = permissionService.findByUrl(resURL).getRoles();    //通过数据库的url找url对应的角色，
+                    if (CollectionUtils.isNotEmpty(roleSets)){
+                        Iterator<Role> iterator = roleSets.iterator();
+                        while (iterator.hasNext()){
+                            Role next = iterator.next();
+                            String roleName = next.getRoleName();
+                            for (Role role : user.getRoles()) {
+                                String roleName1 = role.getRoleName();
+                                if (StringUtils.equals(roleName,roleName1)){
+                                    return true;
+                                }
+                            }
+                        }
+                        response.getWriter().print("没有访问权限");                  //无对URL权限
+                        return false;
+                    } else {
+                        return true;               //url没有宿主（都可以访问）
+                    }
+                }
+          }
+          return  true;
+      }
 
 
       /*  Permission byUrl = permissionService.findByUrl(url);

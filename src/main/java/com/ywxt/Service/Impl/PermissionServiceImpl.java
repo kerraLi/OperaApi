@@ -13,15 +13,8 @@ import java.util.List;
 public class PermissionServiceImpl implements PermissionService {
     @Autowired
     private PermissionDao permissionDao;
-   /* @Override
-    public List<Permission> findAll() {
-        return permissionDao.findAll();
-    }*/
 
-    @Override
-    public List<Permission> findAll() {
-        return null;
-    }
+
 
     /**
      * 查询所有权限信息
@@ -30,7 +23,7 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public List<Permission> list() {
-        return null;
+        return permissionDao.list();
     }
 
     /**
@@ -40,15 +33,17 @@ public class PermissionServiceImpl implements PermissionService {
      * @return
      */
     @Override
-    public int add(Permission permission) {
-        return (int) permissionDao.add(permission);
+    public void save(Permission permission) {
+       permissionDao.save(permission);
     }
+
+
 
 
 
     @Override
     public Permission findPermissionById(Long id) {
-        return null;
+        return permissionDao.findPermissionById(id);
     }
 
     @Override
@@ -63,7 +58,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(Long id) {
        permissionDao.deleteById(id);
     }
 

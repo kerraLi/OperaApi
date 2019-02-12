@@ -19,7 +19,7 @@ public class PermissionController extends CommonController{
 * */
 @RequestMapping(value = "/add",method = RequestMethod.POST)
 public void add(@RequestBody Permission permission){
-    permissionService.add(permission);
+    permissionService.save(permission);
 }
 /*
 * 修改权限信息
@@ -31,16 +31,16 @@ public void update(@RequestBody Permission permission){
 /*
 * 根据id删除权限
 * */
-@RequestMapping("/delete")
-public void deleteById(@RequestParam long id){
+@RequestMapping(value = "/delete",method = RequestMethod.POST)
+public void deleteById(@RequestParam Long id){
     permissionService.deleteById(id);
 }
 /*
 * 通过权限id查询权限
 * */
-@RequestMapping(value = "/{id}",method = RequestMethod.GET)
+@RequestMapping(value = "/id",method = RequestMethod.GET)
 @ResponseBody
-public Permission findPermissionById(@PathVariable(value = "id") Long id){
+public Permission findPermissionById(@RequestParam Long id){
     return permissionService.findPermissionById(id);
 }
 /*

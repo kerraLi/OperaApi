@@ -7,6 +7,7 @@ import com.ywxt.Domain.Permission;
 
 
 import org.hibernate.Criteria;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Expression;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,14 @@ public class PermissionDaoImpl extends CommonDao  implements PermissionDao {
 
     @Override
     public void update(Permission permission) {
+        Transaction transaction=null;
         try {
-            session.beginTransaction();
-            session.update(permission);
-            session.getTransaction().commit();
+            transaction = session.beginTransaction();
+            session.merge(permission);
+            transaction.commit();
         } catch (Exception e) {
-           session.getTransaction().rollback();
-           throw e;
+            transaction.rollback();
+            e.printStackTrace();
         } finally {
             session.close();
         }
@@ -53,14 +55,14 @@ public class PermissionDaoImpl extends CommonDao  implements PermissionDao {
     }
 
     @Override
-    public int add(Permission permission) {
+    public void save(Permission permission) {
+        Transaction transaction=null;
         try {
-            session.beginTransaction();
-           int  id = (int) session.save(permission);
-            session.getTransaction().commit();
-            return id;
+            transaction = session.beginTransaction();
+           session.save(permission);
+            transaction.commit();
         } catch (Exception e) {
-            session.getTransaction().rollback();
+            transaction.rollback();
             throw e;
         }finally {
             session.close();
@@ -68,14 +70,15 @@ public class PermissionDaoImpl extends CommonDao  implements PermissionDao {
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(Long id) {
+        Transaction transaction=null;
         try {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             Permission permission = session.get(Permission.class, id);
             session.delete(permission);
-            session.getTransaction().commit();
+            transaction.commit();
         } catch (Exception e) {
-            session.getTransaction().rollback();
+            transaction.rollback();
             throw e;
         } finally {
             session.close();
@@ -89,6 +92,14 @@ public class PermissionDaoImpl extends CommonDao  implements PermissionDao {
         criteria.add(Expression.eq("url",url));
         List<Permission> list = criteria.list();
         Permission permission = list.get(0);
+        session.close();
+        return permission;
+    }
+
+    @Override
+    public Permission findPermissionById(Long id) {
+        Permission permission = session.get(Permission.class, id);
+        session.close();
         return permission;
     }
 

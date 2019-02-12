@@ -27,8 +27,7 @@ import java.util.List;
 public class UserController extends CommonController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private RoleService roleService;
+
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     @ResponseBody

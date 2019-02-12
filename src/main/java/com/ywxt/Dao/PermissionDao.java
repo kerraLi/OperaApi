@@ -12,9 +12,13 @@ public interface PermissionDao {
 
     void update(Permission permission);
 
-    int add(Permission permission);
+    void save(Permission permission);
 
-    void deleteById(long id);
+    void deleteById(Long id);
 
     Permission findByUrl(String url);
+
+    Permission findPermissionById(Long id);
+
+
 }

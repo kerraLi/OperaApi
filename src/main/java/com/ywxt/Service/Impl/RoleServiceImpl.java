@@ -24,13 +24,9 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public List<Role> findAll() {
-		return null;
+		return roleDao.findAll();
 	}
 
-	@Override
-	public void delete(Role role) {
-
-	}
 
 	@Override
 	public void save(Role role) {
@@ -39,13 +35,10 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Role findRoleById(Long id) {
-		return null;
+		return roleDao.findById(id);
 	}
 
-	@Override
-	public void update(Long id) {
-		roleDao.update(id);
-	}
+
 
 	@Override
 	public List<Role> findRoleByName(String name) {
@@ -55,6 +48,11 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void deleteById(Long id) {
 			roleDao.delete(id);
+	}
+
+	@Override
+	public void update(Role role) {
+		roleDao.update(role);
 	}
 
 /*	@Override

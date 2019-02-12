@@ -7,8 +7,7 @@ import java.util.List;
 
 
 public interface PermissionService {
-//    查询所用权限
-    public List<Permission> findAll();
+
 
 
     /**
@@ -22,7 +21,7 @@ public interface PermissionService {
      * @param permission
      * @return
      */
-    int add(Permission permission);
+    void save(Permission permission);
 
 
 /*
@@ -39,7 +38,9 @@ public interface PermissionService {
 /*
 * 根据id删除权限
 * */
-    void deleteById(long id);
+    void deleteById(Long id);
 
     Permission findByUrl(String url);
+
+
 }

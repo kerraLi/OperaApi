@@ -1,7 +1,6 @@
 package com.ywxt.Dao;
 
 
-import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.Role;
 
 
@@ -11,7 +10,7 @@ public interface RoleDao{
 	List<Role> findAll();
 	void delete(Long id);
 	Role findById(Long id);
-	void update(Long role);
+	void update(Role role);
 	List<Role> findRoleByName(String name);
 
 	void save(Role role);

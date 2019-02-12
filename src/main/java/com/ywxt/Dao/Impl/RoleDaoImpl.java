@@ -4,7 +4,6 @@ package com.ywxt.Dao.Impl;
 import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.RoleDao;
 
-import com.ywxt.Domain.Permission;
 import com.ywxt.Domain.Role;
 import org.hibernate.Criteria;
 import org.hibernate.Transaction;
@@ -31,15 +30,16 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 
 	@Override
 	public void delete(Long id) {
+		Transaction transaction=null;
 		try {
-			session.beginTransaction();
+			transaction = session.beginTransaction();
 			Role role = new Role();
 			role.setId(id);
 			session.delete(role);
-			session.getTransaction().commit();
+			transaction.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-			session.getTransaction().rollback();
+			transaction.rollback();
 		}finally {
 			session.close();
 		}
@@ -53,15 +53,15 @@ public class RoleDaoImpl extends CommonDao implements RoleDao {
 	}
 
 	@Override
-	public void update(Long id) {
+	public void update(Role role) {
+		Transaction transaction=null;
 		try {
-			session.beginTransaction();
-			Role role = session.get(Role.class, id);
+			transaction = session.beginTransaction();
 			session.update(role);
-			session.getTransaction().commit();
+			transaction.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-			session.getTransaction().rollback();
+			transaction.rollback();
 		}finally {
 			session.close();
 		}
