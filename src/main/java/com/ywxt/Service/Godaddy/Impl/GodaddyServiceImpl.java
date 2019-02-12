@@ -91,8 +91,8 @@ public class GodaddyServiceImpl implements GodaddyService {
     }
 
     // 更新证书
+    // ***更新证书特殊处理：获取数据正常才更新；否则：使用上一次数据***
     public void freshCertificate() throws Exception {
-        new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(this.accessKeyId);
         String paramContext = "";
         List<GodaddyCertificate> gcList = new ArrayList<>();
         JSONArray result = JSONArray.fromObject(this.getData("GET_CERTIFICATE_LIST", paramContext));
@@ -109,6 +109,8 @@ public class GodaddyServiceImpl implements GodaddyService {
             JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd HH:mm:ss"}));
             gcList.add((GodaddyCertificate) JSONObject.toBean(object, config));
         }
+        // 不报错=》更新数据
+        new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(this.accessKeyId);
         new GodaddyCertificateDaoImpl().saveCertificates(gcList);
     }
 
