@@ -21,7 +21,7 @@ public class CheckGodaddy extends Check {
 
 
     // 校验域名有效期
-    @Scheduled(cron = "* * 0/5 * * ?")
+    @Scheduled(cron = "0 10 0/5 * * ?")
     private static void checkDomain() throws Exception {
         try {
             List<GodaddyDomain> list = new GodaddyDomainServiceImpl().getDomainList(new HashMap<String, Object>() {{
@@ -46,7 +46,7 @@ public class CheckGodaddy extends Check {
     }
 
     // 校验证书有效期
-    @Scheduled(cron = "* * 0/5 * * ?")
+    @Scheduled(cron = "0 10 0/5 * * ?")
     private static void checkCertificate() throws Exception {
         try {
             List<GodaddyCertificate> list = new GodaddyCertificateServiceImpl().getCertificateList(new HashMap<String, Object>() {{
@@ -71,7 +71,7 @@ public class CheckGodaddy extends Check {
     }
 
     // 刷新数据
-    @Scheduled(cron = "* * 0/5 * * ?")
+    @Scheduled(cron = "0 0 0/5 * * ?")
     private static void refreshData() throws Exception {
         try {
             List<GodaddyAccount> list = new GodaddyAccountServiceImpl().getList();

@@ -35,8 +35,10 @@
     <!-- 处理切面 -->
     <aop:aspectj-autoproxy/>
 
-    <!-- task任务注解 -->
+    <!-- task任务注解 && 配置任务线程池 -->
     <task:annotation-driven/>
+    <!--<task:scheduler id="myScheduler" pool-size="3"/>-->
+
     <!-- JSON视图 -->
     <bean id="mappingJacksonHttpMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">

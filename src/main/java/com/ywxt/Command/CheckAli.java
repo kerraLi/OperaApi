@@ -18,7 +18,7 @@ import java.util.*;
 public class CheckAli extends Check {
 
     // 校验余额
-    @Scheduled(cron = "* * 0/1 * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     private static void checkAccount() {
         try {
             List<AliAccount> list = new AliAccountServiceImpl().getList(true);
@@ -38,7 +38,7 @@ public class CheckAli extends Check {
     }
 
     // 校验ecs服务器过期
-    @Scheduled(cron = "* * 0/5 * * ?")
+    @Scheduled(cron = "0 10 0/5 * * ?")
     private static void checkEcsExpired() {
         try {
             List<AliEcs> list = new AliEcsServiceImpl().getEcsList(new HashMap<String, Object>() {{
@@ -63,7 +63,7 @@ public class CheckAli extends Check {
     }
 
     // 刷新数据
-    @Scheduled(cron = "* * 0/5 * * ?")
+    @Scheduled(cron = "0 0 0/5 * * ?")
     private static void refreshData() {
         try {
             List<AliAccount> list = new AliAccountServiceImpl().getList();

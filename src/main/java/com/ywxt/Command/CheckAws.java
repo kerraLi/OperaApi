@@ -12,7 +12,7 @@ import java.util.List;
 public class CheckAws extends Check {
 
     // 刷新数据
-    @Scheduled(cron = "* * 0/5 * * ?")
+    @Scheduled(cron = "0 0 0/5 * * ?")
     private static void refreshData() throws Exception {
         try {
             List<AwsAccount> list = new AwsAccountServiceImpl().getList();
