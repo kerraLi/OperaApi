@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:task="http://www.springframework.org/schema/task"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
       http://www.springframework.org/schema/context
       http://www.springframework.org/schema/context/spring-context.xsd
       http://www.springframework.org/schema/mvc
-      http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+      http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+      http://www.springframework.org/schema/aop
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+      http://www.springframework.org/schema/task
+      http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
     <!--配置处理器映射器和处理器适配器 使用<mvc:annotation-drvier/>配置注解映射器和注解适配器-->
     <mvc:annotation-driven>
@@ -26,33 +30,19 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
-    <!--<mvc:default-servlet-handler/>-->
+    <context:component-scan base-package="com.ywxt"/>
 
+    <!-- 处理切面 -->
+    <aop:aspectj-autoproxy/>
 
-    <!-- 启动包扫描功能，以便注册带有@Controller、@Service、@repository、@Component等注解的类成为spring的bean -->
-    <context:component-scan base-package="com.ywxt.Controller"/>
-    <context:component-scan base-package="com.ywxt.Domain"/>
-    <context:component-scan base-package="com.ywxt.Command"/>
-    <context:component-scan base-package="com.ywxt.Service"/>
-    <!-- 统一异常处理：先注释方便调试 -->
-    <context:component-scan base-package="com.ywxt.Handler"/>
-
-    <!-- 配置JSON视图 -->
+    <!-- task任务注解 -->
+    <task:annotation-driven/>
+    <!-- JSON视图 -->
     <bean id="mappingJacksonHttpMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-        <!-- 设置支持协议 -->
-        <!--<property name="supportedMediaTypes">-->
-        <!--<list>-->
-        <!--<value>application/json;charset=UTF-8</value>-->
-        <!--</list>-->
-        <!--</property>-->
-        <!-- 设置支持model-->
     </bean>
 
-    <!-- 对模型视图名称的解析，在请求时模型视图名称添加前后缀 -->
-    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/jsp/"-->
-    <!--p:suffix=".jsp"/>-->
-    <!-- 视图解析器 -->
+    <!-- JSP视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <!-- 重定向时是否添加上下文路径 -->
         <property name="redirectContextRelative" value="true"></property>

@@ -2,8 +2,12 @@ package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.PassToken;
+import com.ywxt.Dao.LogOperationDao;
+import com.ywxt.Domain.LogOperation;
 import com.ywxt.Domain.User;
+import com.ywxt.Service.Impl.LogOperationServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
+import com.ywxt.Service.LogOperationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
@@ -24,6 +29,9 @@ import java.util.HashMap;
 @Controller
 @RequestMapping("/user")
 public class UserController extends CommonController {
+
+    @Resource
+    private LogOperationService logOperationService;
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     @ResponseBody
@@ -63,12 +71,9 @@ public class UserController extends CommonController {
     @PassToken
     public void test() {
         System.out.println(22222222);
-        try {
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        } catch (NullPointerException e) {
-            System.out.println(11111111);
-            System.out.println(e.getClass());
-        }
+        LogOperation logOperation = new LogOperation();
+        logOperation.setSessionId("test123");
+        logOperationService.create(logOperation);
         System.out.println(333333);
     }
 

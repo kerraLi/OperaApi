@@ -5,10 +5,12 @@ import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Impl.ParameterDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
+import com.ywxt.Dao.LogOperationDao;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
+import com.ywxt.Domain.LogOperation;
 import com.ywxt.Domain.Resource.Hardware;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
@@ -24,13 +26,20 @@ import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Service.Resource.Impl.HardwareServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class TestCommand {
+
+    @Resource
+    private LogOperationDao logOperationDao;
+    @Resource
+    private TestCommand testCommand;
 
     private static void saveAliAccount() throws Exception {
         AliAccount aa = new AliAccount();
@@ -157,44 +166,18 @@ public class TestCommand {
         new AliEcsServiceImpl().updateEcs("i-j6c56n9npzzm3mnq6a3d");
     }
 
+    // log operation jpa方式
+    private void saveLog() throws Exception {
+        LogOperation logOperation = new LogOperation();
+        logOperation.setSessionId("test123");
+        logOperationDao.save(logOperation);
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(123);
         System.out.println("发送消息");
-        TestCommand.updateEcs();
-//        TestCommand.checkAws();
-//        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("timestamp", System.currentTimeMillis());
-//        jsonObject.put("id", 1);
-//        jsonObject.put("themeId", "2");
-//        jsonObject.put("message", "message");
-//        new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
-        // 发送消息
-//        Map<String, String> param = new HashMap<String, String>();
-//        param.put("accountName", "account");
-//        param.put("ecsId", "ecsId");
-//        param.put("ecsName", "ecsTime");
-//        param.put("expiredTime", "时间");
-//        new MessageServiceImpl().create("ALI_ECS_EXPIRED", "aaaaaaaa", new HashMap<String, String>(), new HashMap<String, String>());
-//        try {
-//            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-//        } catch (NullPointerException e) {
-//            System.out.println(11111111);
-//            System.out.println(e.getClass());
-//        }
-
-        // TestCommand.saveParameter();
-//        TestCommand.setIgnore();
-//        TestCommand.checkGodaddyAccount();
-//        TestCommand.setGodaddyAccount();
-//        TestCommand.checkGodaddyAccount();
-
-//        TestCommand.saveAliAccount();
-//        TestCommand.getNormalAccount();
-//        TestCommand.getAliEcs();
-//        TestCommand.refreshAli();
-//        System.out.println(TestCommand.checkAccount());
-//        TestCommand.saveAdmin();
-//        TestCommand.saveAliAccount();
-
+//        TestCommand.updateEcs();
+//        TestCommand testCommand = new TestCommand();
+//        testCommand.saveLog();
     }
 }
