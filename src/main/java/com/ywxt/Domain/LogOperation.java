@@ -15,7 +15,6 @@ public class LogOperation {
     private Integer id;
     @Column(unique = true)
     private String sessionId;
-    @CreatedDate
     private Date time;
     private long userId;
     private String path;
