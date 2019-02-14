@@ -72,8 +72,11 @@ public class UserController extends CommonController {
     @NotOperationAction
     public void test() {
         System.out.println(22222222);
-        LogOperation logOperation = logOperationService.getLogOperation("8A600DB098829D05E4F5917C34798188");
-        System.out.println(logOperation.getInParam());
+        JSONObject jsonObject = logOperationService.getList(new HashMap<>() {{
+            put("ip", "0:0:0:0:0:0:0:1");
+            put("path", "/ali/ecs/list");
+        }}, 1, 10);
+
         System.out.println(333333);
     }
 

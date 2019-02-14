@@ -87,7 +87,7 @@ public class MessageServiceImpl {
 
     // 批量设置状态
     public void setAllStatus(List<Integer> ids, String status) throws Exception {
-        new MessageDaoImpl().saveAliEcses(ids, status);
+        new MessageDaoImpl().setAllStatus(ids, status);
     }
 
     // 设置状态

@@ -37,7 +37,7 @@ public class MessageDaoImpl extends CommonDao implements MessageDao {
     }
 
     // 批量保存状态
-    public void saveAliEcses(List<Integer> ids, String status) throws Exception {
+    public void setAllStatus(List<Integer> ids, String status) throws Exception {
         try {
             session.beginTransaction();
             String hql = "update Message set status = :status, modifyTime = current_time() where id in (:ids) and status != :status2";

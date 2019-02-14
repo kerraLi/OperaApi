@@ -1,6 +1,9 @@
 package com.ywxt.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Domain.LogOperation;
+
+import java.util.HashMap;
 
 public interface LogOperationService {
 
@@ -12,4 +15,5 @@ public interface LogOperationService {
 
     public LogOperation getLogOperation(String sessionId);
 
+    public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize);
 }
