@@ -1,11 +1,10 @@
 package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Annotation.PassToken;
-import com.ywxt.Dao.LogOperationDao;
 import com.ywxt.Domain.LogOperation;
 import com.ywxt.Domain.User;
-import com.ywxt.Service.Impl.LogOperationServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
 import com.ywxt.Service.LogOperationService;
 import org.springframework.stereotype.Controller;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +33,7 @@ public class UserController extends CommonController {
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     @ResponseBody
     @PassToken
+    @NotOperationAction
     public JSONObject login(@NotBlank @RequestParam("username") String username, @NotBlank @RequestParam("password") String password) throws Exception {
         String authToken = new UserServiceImpl().login(username, password);
         return this.returnObject(new HashMap<String, Object>() {{
@@ -45,12 +43,14 @@ public class UserController extends CommonController {
 
     @RequestMapping(value = {"/info"}, method = RequestMethod.GET)
     @ResponseBody
+    @NotOperationAction
     public User info(HttpServletRequest request, HttpServletResponse response) throws Exception {
         return this.getUserFromAuthToken(request);
     }
 
     @RequestMapping(value = {"/logout"}, method = RequestMethod.GET)
     @ResponseBody
+    @NotOperationAction
     public JSONObject logout(HttpServletRequest request) {
         String authToken = request.getHeader("Authorization");
         new UserServiceImpl().logout(authToken);
@@ -69,11 +69,11 @@ public class UserController extends CommonController {
     @RequestMapping(value = {"/test"}, method = RequestMethod.GET)
     @ResponseBody
     @PassToken
+    @NotOperationAction
     public void test() {
         System.out.println(22222222);
-        LogOperation logOperation = new LogOperation();
-        logOperation.setSessionId("test123");
-        logOperationService.create(logOperation);
+        LogOperation logOperation = logOperationService.getLogOperation("8A600DB098829D05E4F5917C34798188");
+        System.out.println(logOperation.getInParam());
         System.out.println(333333);
     }
 

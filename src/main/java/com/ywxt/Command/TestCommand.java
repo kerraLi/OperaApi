@@ -170,7 +170,7 @@ public class TestCommand {
     private void saveLog() throws Exception {
         LogOperation logOperation = new LogOperation();
         logOperation.setSessionId("test123");
-        logOperationDao.save(logOperation);
+        logOperationDao.create(logOperation);
     }
 
     public static void main(String[] args) throws Exception {

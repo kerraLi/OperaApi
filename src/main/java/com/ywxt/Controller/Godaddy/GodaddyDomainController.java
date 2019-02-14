@@ -1,5 +1,6 @@
 package com.ywxt.Controller.Godaddy;
 
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.Impl.GodaddyDomainServiceImpl;
@@ -20,6 +21,7 @@ import java.util.*;
 public class GodaddyDomainController extends CommonController {
 
     // domain 列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public Map<String, Object> domainList(HttpServletRequest request, HttpServletResponse response) throws Exception {

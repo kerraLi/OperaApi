@@ -2,6 +2,7 @@ package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliCdnServiceImpl;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class DashboardController {
 
     // 面板模块数量
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/number"}, method = RequestMethod.GET)
     public JSONObject number() throws Exception {
@@ -40,6 +42,7 @@ public class DashboardController {
     }
 
     // 消息列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/message"}, method = RequestMethod.GET)
     public JSONObject message() throws Exception {
@@ -50,6 +53,7 @@ public class DashboardController {
     }
 
     // 账户列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/account"}, method = RequestMethod.GET)
     public JSONObject account() throws Exception {

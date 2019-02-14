@@ -6,7 +6,6 @@ import com.ywxt.Annotation.MarkCloumn;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 
-@Entity
 public class AliAccount {
 
     private int id;

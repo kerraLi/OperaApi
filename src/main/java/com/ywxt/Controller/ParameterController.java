@@ -1,6 +1,7 @@
 package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Domain.Parameter;
 import com.ywxt.Service.Impl.ParameterServiceImpl;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ public class ParameterController extends CommonController {
 
 
     // 列表
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     @ResponseBody
     public List<Parameter> parameterList() throws Exception {

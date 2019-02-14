@@ -1,5 +1,7 @@
 package com.ywxt.Domain;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -13,11 +15,13 @@ public class LogOperation {
     private Integer id;
     @Column(unique = true)
     private String sessionId;
+    @CreatedDate
     private Date time;
     private long userId;
     private String path;
     private String inParam;
     private String outParam;
+    private String ip;
     // unfinished未完成 / normal正常 / error异常
     private String status;
 
@@ -83,5 +87,13 @@ public class LogOperation {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 }

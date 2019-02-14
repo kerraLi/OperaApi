@@ -2,6 +2,7 @@ package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Annotation.PassToken;
 import com.ywxt.Command.Websocket;
 import com.ywxt.Service.Impl.MessageServiceImpl;
@@ -20,6 +21,7 @@ import java.util.*;
 public class MessageController extends CommonController {
 
     // 获取消息数量
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/number/{status}"}, method = RequestMethod.GET)
     public JSONObject number(@PathVariable String status) throws Exception {
@@ -32,6 +34,7 @@ public class MessageController extends CommonController {
     }
 
     // 消息列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -69,6 +72,7 @@ public class MessageController extends CommonController {
 
     // webhook接收
     @PassToken
+    @NotOperationAction
     @RequestMapping(value = {"/webhook"}, method = RequestMethod.POST)
     @ResponseBody
     public String getWebhookMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -97,6 +101,7 @@ public class MessageController extends CommonController {
 
     // 发送websocket消息
     @PassToken
+    @NotOperationAction
     @RequestMapping(value = {"/websocket"}, method = RequestMethod.POST)
     @ResponseBody
     public String sendWebsocketMessage(String message) {

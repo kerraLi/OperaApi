@@ -1,6 +1,7 @@
 package com.ywxt.Controller.Ali;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/ali/account")
 public class AliAccountController extends CommonController {
 
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
     @ResponseBody
     public List<AliAccount> list(HttpServletRequest request) throws Exception {

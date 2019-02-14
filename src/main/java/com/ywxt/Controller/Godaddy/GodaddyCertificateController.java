@@ -1,5 +1,6 @@
 package com.ywxt.Controller.Godaddy;
 
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Service.Godaddy.Impl.GodaddyCertificateServiceImpl;
@@ -21,6 +22,7 @@ import java.util.*;
 public class GodaddyCertificateController extends CommonController {
 
     // certificate 列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public Map<String, Object> certificateList(HttpServletRequest request, HttpServletResponse response) throws Exception {

@@ -1,6 +1,7 @@
 package com.ywxt.Controller.Aws;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Service.Aws.Impl.AwsEc2ServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 public class AwsEc2Controller {
 
     // ec2:服务器列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public JSONObject ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {

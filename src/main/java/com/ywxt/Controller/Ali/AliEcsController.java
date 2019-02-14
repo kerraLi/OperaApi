@@ -1,12 +1,12 @@
 package com.ywxt.Controller.Ali;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.ParameterServiceImpl;
-import com.ywxt.Utils.Parameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +19,7 @@ import java.util.*;
 public class AliEcsController extends CommonController {
 
     // ecs:服务器列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public JSONObject ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {

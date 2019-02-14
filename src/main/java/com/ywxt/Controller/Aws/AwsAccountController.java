@@ -1,6 +1,7 @@
 package com.ywxt.Controller.Aws;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequestMapping("/aws/account")
 public class AwsAccountController extends CommonController {
 
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
     @ResponseBody
     public List<AwsAccount> list(HttpServletRequest request) throws Exception {

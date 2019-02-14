@@ -1,6 +1,7 @@
 package com.ywxt.Controller.Resource;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Resource.Hardware;
 import com.ywxt.Service.Resource.Impl.HardwareServiceImpl;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 public class HardwareController extends CommonController {
 
     // 列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request, HttpServletResponse response) throws Exception {

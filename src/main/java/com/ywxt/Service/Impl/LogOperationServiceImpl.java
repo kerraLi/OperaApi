@@ -14,6 +14,18 @@ public class LogOperationServiceImpl implements LogOperationService {
     private LogOperationDao logOperationDao;
 
     public int create(LogOperation logOperation) {
-        return logOperationDao.save(logOperation);
+        return logOperationDao.create(logOperation);
+    }
+
+    public LogOperation update(LogOperation logOperation) {
+        return logOperationDao.update(logOperation);
+    }
+
+    public LogOperation getLogOperation(int id) {
+        return logOperationDao.getLogOperation(id);
+    }
+
+    public LogOperation getLogOperation(String sessionId) {
+        return logOperationDao.getLogOperation(sessionId);
     }
 }

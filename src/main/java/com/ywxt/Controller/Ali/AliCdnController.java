@@ -1,6 +1,7 @@
 package com.ywxt.Controller.Ali;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliCdn;
 import com.ywxt.Domain.Ali.AliCdnTask;
@@ -22,6 +23,7 @@ import java.util.*;
 public class AliCdnController extends CommonController {
 
     // cdn域名列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public JSONObject cdnDomainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
