@@ -28,8 +28,8 @@ public class LogOperationServiceImpl implements LogOperationService {
         return logOperationDao.getLogOperation(id);
     }
 
-    public LogOperation getLogOperation(String sessionId) {
-        return logOperationDao.getLogOperation(sessionId);
+    public LogOperation getLogOperation(String requestId) {
+        return logOperationDao.getLogOperation(requestId);
     }
 
     public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) {

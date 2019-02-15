@@ -14,7 +14,7 @@ public interface LogOperationDao {
 
     public abstract LogOperation getLogOperation(int id);
 
-    public abstract LogOperation getLogOperation(String sessionId);
+    public abstract LogOperation getLogOperation(String requestId);
 
     public abstract List<LogOperation> getList(HashMap<String, Object> params, int pageNumber, int pageSize);
 

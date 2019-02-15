@@ -14,7 +14,7 @@ public class LogOperation {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Column(unique = true)
-    private String sessionId;
+    private String requestId;
     private Date time;
     private long userId;
     private String path;
@@ -32,12 +32,12 @@ public class LogOperation {
         this.id = id;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public String getRequestId() {
+        return requestId;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 
     public Date getTime() {

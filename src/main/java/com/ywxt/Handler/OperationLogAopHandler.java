@@ -12,8 +12,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.UUID;
 
 @Aspect
 @Service
@@ -22,6 +22,10 @@ public class OperationLogAopHandler {
     @Resource
     private LogOperationService logOperationService;
 
+    /**
+     * 说明：
+     * 采用sessionId判断是否同一个请求：错误=》vue正式环境无跨域，因此访问到后台所有sessionId都相同导致访问出错
+     */
     // 定义控制器切点
     @Pointcut("execution(public * com.ywxt.Controller..*.*(..)) && !@annotation(com.ywxt.Annotation.NotOperationAction)")
     public void pointCut() {
@@ -41,9 +45,11 @@ public class OperationLogAopHandler {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String authToken = request.getHeader("Authorization");
         int userId = Integer.parseInt(JWT.decode(authToken).getSubject());
+        String uuid = UUID.randomUUID().toString();
+        request.setAttribute("requestId", uuid);
         LogOperation logOperation = new LogOperation();
         logOperation.setUserId(userId);
-        logOperation.setSessionId(request.getSession().getId());
+        logOperation.setRequestId(uuid);
         logOperation.setPath(request.getPathInfo());
         logOperation.setInParam(JSONArray.fromObject(request.getParameterMap()).toString());
         logOperation.setStatus("unfinished");
@@ -62,8 +68,8 @@ public class OperationLogAopHandler {
     @AfterReturning(returning = "rvt", pointcut = "pointCut()")
     public void afterReturningLog(Object rvt) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String sessionId = request.getSession().getId();
-        LogOperation logOperation = logOperationService.getLogOperation(sessionId);
+        String requestId = (String) request.getAttribute("requestId");
+        LogOperation logOperation = logOperationService.getLogOperation(requestId);
         logOperation.setStatus("normal");
         logOperation.setOutParam(JSONArray.fromObject(rvt).toString());
         logOperationService.update(logOperation);
@@ -73,8 +79,8 @@ public class OperationLogAopHandler {
     @AfterThrowing(throwing = "e", pointcut = "pointCut()")
     public void afterThrowingLog(Throwable e) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String sessionId = request.getSession().getId();
-        LogOperation logOperation = logOperationService.getLogOperation(sessionId);
+        String requestId = (String) request.getAttribute("requestId");
+        LogOperation logOperation = logOperationService.getLogOperation(requestId);
         logOperation.setStatus("error");
         logOperation.setOutParam("[" + e.getClass() + ":=:" + e.getMessage() + "]");
         logOperationService.update(logOperation);

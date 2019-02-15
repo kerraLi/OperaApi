@@ -169,7 +169,7 @@ public class TestCommand {
     // log operation jpa方式
     private void saveLog() throws Exception {
         LogOperation logOperation = new LogOperation();
-        logOperation.setSessionId("test123");
+        logOperation.setRequestId("test123");
         logOperationDao.create(logOperation);
     }
 

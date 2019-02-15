@@ -43,12 +43,12 @@ public class LogOperationDaoImpl implements LogOperationDao {
 
 
     @Transactional
-    public LogOperation getLogOperation(String sessionId) {
+    public LogOperation getLogOperation(String requestId) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<LogOperation> criteriaQuery = criteriaBuilder.createQuery(LogOperation.class);
         Root<LogOperation> from = criteriaQuery.from(LogOperation.class);
         // 设置查询属性
-        criteriaQuery.select(from).where(from.get("sessionId").in(sessionId));
+        criteriaQuery.select(from).where(from.get("requestId").in(requestId));
         List<LogOperation> list = em.createQuery(criteriaQuery).getResultList();
         if (list.size() == 0) {
             return null;
