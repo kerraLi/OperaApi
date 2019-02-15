@@ -53,6 +53,9 @@ public class MessageController extends CommonController {
     @RequestMapping(value = {"/status/{status}"}, method = RequestMethod.POST)
     @ResponseBody
     public JSONObject statusAll(Integer[] ids, @PathVariable String status) throws Exception {
+        if (ids.length == 0) {
+            throw new Exception("请先选择后再设置。");
+        }
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         new MessageServiceImpl().setAllStatus(list, status);
         return this.returnObject(new HashMap<String, Object>() {{
