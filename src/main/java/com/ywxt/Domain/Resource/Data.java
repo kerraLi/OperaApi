@@ -12,11 +12,14 @@ public class Data {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    private String category;
-    private String type;
+    //category path
+    private Integer categoryId;
+    //typeCode
+    private String typeCode;
     @Column(columnDefinition = "text")
     private String data;
     private Date createTime;
+    private Date modifyTime;
     private String status = "normal";
 
     public Integer getId() {
@@ -27,20 +30,20 @@ public class Data {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public String getType() {
-        return type;
+    public String getTypeCode() {
+        return typeCode;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     public String getData() {
@@ -57,6 +60,14 @@ public class Data {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
     public String getStatus() {

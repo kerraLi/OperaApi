@@ -22,7 +22,9 @@ public interface CategoryService {
 
     public Category update(Category category);
 
-    public Category getCategory(int id);
+    public Category getCategory(int id) throws Exception;
+
+    public Category getCategory(String path) throws Exception;
 
     public Category save(Category category) throws Exception;
 

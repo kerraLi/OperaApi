@@ -35,7 +35,7 @@ public class HardwareController extends CommonController {
     // 新增&修改
     @ResponseBody
     @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
-    public JSONObject add(@RequestBody Hardware hardware) throws Exception {
+    public JSONObject save(@RequestBody Hardware hardware) throws Exception {
         new HardwareServiceImpl().save(hardware);
         return this.returnObject(new HashMap<String, Object>() {{
         }});
@@ -53,7 +53,7 @@ public class HardwareController extends CommonController {
     // 批量删除
     @ResponseBody
     @RequestMapping(value = {"/remove"}, method = RequestMethod.POST)
-    public JSONObject ecsParamSetAll(Integer[] ids) throws Exception {
+    public JSONObject removeAll(Integer[] ids) throws Exception {
         new HardwareServiceImpl().deleteAll(ids);
         return this.returnObject(new HashMap<String, Object>() {{
         }});

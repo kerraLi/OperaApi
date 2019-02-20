@@ -16,6 +16,8 @@ public interface CategoryDao {
 
     public Category getCategory(int id);
 
+    public Category getCategory(String path);
+
     public List<Category> getList(HashMap<String, Object> params);
 
     public int getListTotal(HashMap<String, Object> params);

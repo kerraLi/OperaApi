@@ -16,5 +16,7 @@ public interface TypeDao {
 
     public Type getType(int id);
 
+    public Type getType(String code);
+
     public List<Type> getList();
 }

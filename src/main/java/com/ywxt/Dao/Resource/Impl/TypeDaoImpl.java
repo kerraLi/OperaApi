@@ -47,6 +47,20 @@ public class TypeDaoImpl implements TypeDao {
         return em.find(Type.class, id);
     }
 
+    @Transactional
+    public Type getType(String code) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Type> criteriaQuery = criteriaBuilder.createQuery(Type.class);
+        Root<Type> from = criteriaQuery.from(Type.class);
+        // 设置查询属性
+        criteriaQuery.select(from).where(from.get("code").in(code));
+        List<Type> list = em.createQuery(criteriaQuery).getResultList();
+        if (list.size() == 0) {
+            return null;
+        }
+        return (Type) list.get(0);
+    }
+
     public List<Type> getList() {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Type> query = builder.createQuery(Type.class);

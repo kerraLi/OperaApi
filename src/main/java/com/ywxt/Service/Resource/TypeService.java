@@ -14,6 +14,8 @@ public interface TypeService {
 
     public Type getType(int id);
 
+    public Type getType(String code);
+
     public Type save(Type type);
 
     public List<Type> getList();

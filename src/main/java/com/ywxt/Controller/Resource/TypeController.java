@@ -20,6 +20,12 @@ public class TypeController extends CommonController {
     @Resource
     private TypeService typeService;
 
+    @NotOperationAction
+    @ResponseBody
+    @RequestMapping(value = {"/info/{code}"}, method = RequestMethod.GET)
+    public Type info(@PathVariable String code) throws Exception {
+        return typeService.getType(code);
+    }
 
     @NotOperationAction
     @ResponseBody

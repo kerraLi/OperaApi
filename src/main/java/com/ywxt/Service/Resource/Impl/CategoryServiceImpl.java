@@ -43,8 +43,20 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryDao.update(category);
     }
 
-    public Category getCategory(int id) {
-        return categoryDao.getCategory(id);
+    public Category getCategory(int id) throws Exception {
+        Category category = categoryDao.getCategory(id);
+        if (category == null) {
+            throw new Exception("资源分类不存在");
+        }
+        return category;
+    }
+
+    public Category getCategory(String path) throws Exception {
+        Category category = categoryDao.getCategory(path);
+        if (category == null) {
+            throw new Exception("资源分类不存在");
+        }
+        return category;
     }
 
     public Category save(Category category) throws Exception {
@@ -52,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
             int id = this.create(category);
             return this.getCategory(id);
         } else {
-            return categoryDao.update(category);
+            return this.update(category);
         }
     }
 

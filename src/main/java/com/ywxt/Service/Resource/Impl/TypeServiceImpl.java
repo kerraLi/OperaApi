@@ -30,6 +30,10 @@ public class TypeServiceImpl implements TypeService {
         return typeDao.getType(id);
     }
 
+    public Type getType(String code) {
+        return typeDao.getType(code);
+    }
+
     public Type save(Type type) {
         if (type.getId() == null) {
             int id = this.create(type);

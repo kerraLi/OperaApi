@@ -1,7 +1,7 @@
 package com.ywxt.Dao.Resource.Impl;
 
-import com.ywxt.Dao.Resource.CategoryDao;
-import com.ywxt.Domain.Resource.Category;
+import com.ywxt.Dao.Resource.DataDao;
+import com.ywxt.Domain.Resource.Data;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -16,84 +16,72 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository("categoryDao")
-public class CategoryDaoImpl implements CategoryDao {
+@Repository("dataDao")
+public class DataDaoImpl implements DataDao {
 
     @PersistenceContext
     private EntityManager em;
 
     @Transactional
-    public int create(Category category) {
-        em.persist(category);
-        return category.getId();
+    public int create(Data data) {
+        em.persist(data);
+        return data.getId();
     }
 
     @Transactional
     public boolean delete(int id) {
-        em.remove(this.getCategory(id));
+        em.remove(this.getData(id));
         return true;
     }
 
     @Transactional
-    public boolean delete(Category category) {
-        em.remove(category);
+    public boolean delete(Data data) {
+        em.remove(data);
         return true;
     }
 
     @Transactional
-    public Category update(Category category) {
-        em.merge(category);
-        return category;
+    public Data update(Data data) {
+        em.merge(data);
+        return data;
     }
 
     @Transactional
-    public Category getCategory(int id) {
-        return em.find(Category.class, id);
+    public Data getData(int id) {
+        return em.find(Data.class, id);
     }
 
-    @Transactional
-    public Category getCategory(String path) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Category> criteriaQuery = criteriaBuilder.createQuery(Category.class);
-        Root<Category> from = criteriaQuery.from(Category.class);
-        // 设置查询属性
-        criteriaQuery.select(from).where(from.get("path").in(path));
-        List<Category> list = em.createQuery(criteriaQuery).getResultList();
-        if (list.size() == 0) {
-            return null;
-        }
-        return (Category) list.get(0);
-    }
-
-    public List<Category> getList(HashMap<String, Object> params) {
+    public List<Data> getList(HashMap<String, Object> params, int pageNumber, int pageSize) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Category> query = builder.createQuery(Category.class);
+        CriteriaQuery<Data> query = builder.createQuery(Data.class);
         // 查询条件
-        Root<Category> root = query.from(Category.class);
+        Root<Data> root = query.from(Data.class);
         List<Predicate> predicates = this.filterParam(builder, root, params);
         Predicate[] p = new Predicate[predicates.size()];
         query.where(predicates.toArray(p));
         // 默认按照id倒叙
         query.orderBy(builder.desc(root.get("id")));
         return em.createQuery(query)
+                .setFirstResult((pageNumber - 1) * pageSize)
+                .setMaxResults(pageSize)
                 .getResultList();
     }
 
+    // 数量查询
     public int getListTotal(HashMap<String, Object> params) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         // 查询条件
-        Root<Category> root = query.from(Category.class);
+        Root<Data> root = query.from(Data.class);
         List<Predicate> predicates = this.filterParam(builder, root, params);
         Predicate[] p = new Predicate[predicates.size()];
         query.select(builder.count(root));
         query.where(predicates.toArray(p));
         return em.createQuery(query).getSingleResult().intValue();
-
     }
 
     // 过滤params
-    private List<Predicate> filterParam(CriteriaBuilder builder, Root<Category> root, HashMap<String, Object> params) {
+    private List<Predicate> filterParam(CriteriaBuilder builder, Root<Data> root, HashMap<String, Object> params) {
         List<Predicate> predicates = new ArrayList<Predicate>();
         if (params != null) {
             for (Map.Entry<String, Object> e : params.entrySet()) {
@@ -107,5 +95,4 @@ public class CategoryDaoImpl implements CategoryDao {
         }
         return predicates;
     }
-
 }

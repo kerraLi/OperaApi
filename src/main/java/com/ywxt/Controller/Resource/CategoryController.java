@@ -21,6 +21,12 @@ public class CategoryController extends CommonController {
     @Resource
     private CategoryService categoryService;
 
+    @NotOperationAction
+    @ResponseBody
+    @RequestMapping(value = {"/info/{path}"}, method = RequestMethod.GET)
+    public Category info(@PathVariable String path) throws Exception {
+        return categoryService.getCategory(path);
+    }
 
     @NotOperationAction
     @ResponseBody
