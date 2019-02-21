@@ -37,6 +37,8 @@ public class DataServiceImpl implements DataService {
     }
 
     public int create(Data data) throws Exception {
+        data.setCreateTime(new Date());
+        data.setModifyTime(new Date());
         return dataDao.create(data);
     }
 
@@ -52,6 +54,7 @@ public class DataServiceImpl implements DataService {
     }
 
     public Data update(Data data) {
+        data.setModifyTime(new Date());
         return dataDao.update(data);
     }
 

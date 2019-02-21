@@ -38,7 +38,7 @@ public class DataController extends CommonController {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("categoryId", categoryId);
         if (!(request.getParameter("key") == null) && !(request.getParameter("key").isEmpty())) {
-            params.put("filter", request.getParameter("key"));
+            params.put("data@like", request.getParameter("key"));
         }
         return dataService.getList(params, pageNumber, pageSize);
     }

@@ -8,10 +8,12 @@ public class Type {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Integer id;
     private String name;
     @Column(unique = true)
     private String code;
+    @Column(name = "`column`")
     private String column;
     private String remark;
 
