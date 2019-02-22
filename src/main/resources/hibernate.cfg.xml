@@ -15,8 +15,8 @@
         <!--<property name="hibernate.connection.username">ywxt</property>-->
         <!--<property name="hibernate.connection.password">ywxtywxthahaha</property>-->
         <!-- 输出sql -->
-        <property name="hibernate.show_sql">true</property>
-        <property name="hibernate.format_sql">true</property>
+        <!--<property name="hibernate.show_sql">true</property>-->
+        <!--<property name="hibernate.format_sql">true</property>-->
         <!-- 批量操作时 每100条提交一次 -->
         <property name="hibernate.jdbc.batch_size">100</property>
         <!-- 关闭二级缓存（批量操作） -->
