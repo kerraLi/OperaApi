@@ -32,6 +32,10 @@ public class AliEcsController extends CommonController {
         if (!(request.getParameter("key") == null) && !(request.getParameter("key").isEmpty())) {
             params.put("filter", request.getParameter("key"));
         }
+        if (!(request.getParameter("lockReason") == null) && !(request.getParameter("lockReason").isEmpty())) {
+            String[] lockReasons = request.getParameter("lockReason").split(",");
+            params.put("lockReason@like", lockReasons);
+        }
         if (!(request.getParameter("ifExpired") == null) && !(request.getParameter("ifExpired").isEmpty())) {
             if (request.getParameter("ifExpired").equals("true")) {
                 Calendar calendar = Calendar.getInstance();

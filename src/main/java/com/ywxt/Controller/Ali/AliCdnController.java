@@ -103,7 +103,7 @@ public class AliCdnController extends CommonController {
             params.put("creationTime@lt", sdf.parse(operateDate[1] + " 23:59:59"));
         }
         if (!(request.getParameter("url") == null) && !(request.getParameter("url").isEmpty())) {
-            params.put("objectPath@like", "%" + request.getParameter("url") + "%");
+            params.put("objectPath@like", request.getParameter("url"));
         }
         if (!(request.getParameter("operType") == null) && !(request.getParameter("operType").isEmpty())) {
             String operateType = request.getParameter("operType");

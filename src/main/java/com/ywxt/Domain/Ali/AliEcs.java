@@ -82,9 +82,9 @@ public class AliEcs {
         this.serialNumber = instance.getSerialNumber();
         this.status = instance.getStatus();
         for (DescribeInstancesResponse.Instance.LockReason lock : instance.getOperationLocks()) {
-            this.lockReason = lock.getLockReason() + "|";
+            this.lockReason = this.lockReason.concat(lock.getLockReason() + "|");
         }
-        this.lockReason = this.lockReason.length()>0 ? this.lockReason.substring(0, this.lockReason.length() - 1) : "";
+        this.lockReason = this.lockReason.length() > 0 ? this.lockReason.substring(0, this.lockReason.length() - 1) : "";
     }
 
     public int getId() {

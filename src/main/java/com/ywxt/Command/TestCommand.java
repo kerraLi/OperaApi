@@ -176,6 +176,10 @@ public class TestCommand {
     public static void main(String[] args) throws Exception {
         System.out.println(123);
         System.out.println("发送消息");
+        String test = "a|b|c|";
+        test = test.substring(0, test.length() - 1);
+
+        System.out.println(test);
 //        TestCommand.updateEcs();
 //        TestCommand testCommand = new TestCommand();
 //        testCommand.saveLog();

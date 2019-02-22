@@ -66,7 +66,13 @@ public class CommonDao {
                     } else if (strings[1].equals("ge")) {
                         criteria.add(Restrictions.ge(strings[0], e.getValue()));
                     } else if (strings[1].equals("like")) {
-                        criteria.add(Restrictions.like(strings[0], e.getValue()));
+                        if (e.getValue() instanceof String) {
+                            criteria.add(Restrictions.like(strings[0], "%" + e.getValue() + "%"));
+                        } else if (e.getValue() instanceof String[]) {
+                            for (String s : (String[]) e.getValue()) {
+                                criteria.add(Restrictions.like(strings[0], "%" + s + "%"));
+                            }
+                        }
                     }
                 }
             }
