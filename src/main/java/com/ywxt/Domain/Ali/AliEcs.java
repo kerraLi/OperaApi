@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 @Entity
@@ -46,6 +47,8 @@ public class AliEcs {
     // 安全组 '|'分离
     private String securityGroupIds;
     private String serialNumber;
+    // 服务器锁定状态'|'分隔；若未锁定未''
+    private String lockReason = "";
     // 状态
     private String status;
 
@@ -78,6 +81,10 @@ public class AliEcs {
         this.securityGroupIds = String.join("|", instance.getSecurityGroupIds());
         this.serialNumber = instance.getSerialNumber();
         this.status = instance.getStatus();
+        for (DescribeInstancesResponse.Instance.LockReason lock : instance.getOperationLocks()) {
+            this.lockReason = lock.getLockReason() + "|";
+        }
+        this.lockReason = this.lockReason.length()>0 ? this.lockReason.substring(0, this.lockReason.length() - 1) : "";
     }
 
     public int getId() {
@@ -263,5 +270,13 @@ public class AliEcs {
 
     public void setStoppedMode(String stoppedMode) {
         this.stoppedMode = stoppedMode;
+    }
+
+    public String getLockReason() {
+        return lockReason;
+    }
+
+    public void setLockReason(String lockReason) {
+        this.lockReason = lockReason;
     }
 }
