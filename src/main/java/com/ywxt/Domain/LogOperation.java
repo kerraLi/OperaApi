@@ -18,7 +18,9 @@ public class LogOperation {
     private Date time;
     private long userId;
     private String path;
+    @Column(columnDefinition = "text")
     private String inParam;
+    @Column(columnDefinition = "text")
     private String outParam;
     private String ip;
     // unfinished未完成 / normal正常 / error异常
