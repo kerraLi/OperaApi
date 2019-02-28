@@ -26,8 +26,10 @@ public class Parameter {
     public static String redisName = "master";
     // redis-key
     public static String redisKeyUserToken = "USER_TOKEN_{token}";
+    public static String redisKeyMonitorSpeed = "MONITOR_SPEED_{code}";
     // redis-time(s)
     public static int redisTllUserToken = 60 * 60 * 2;
+    public static int redisTllMonitorSpeed = 60 * 60;
 
     // 登陆有效时间（ms）
     public static int loginTtlMs = 60 * 60 * 1000 * 2;
@@ -64,6 +66,7 @@ public class Parameter {
         }
         return "";
     }
+
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     public static Map<String, String> MessageActions = new HashMap<String, String>() {{
         put("ERROR", df.format(new Date()) + "\r\n错误类：{class}\r\n错误信息{message}");

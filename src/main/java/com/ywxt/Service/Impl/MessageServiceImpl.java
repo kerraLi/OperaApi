@@ -127,6 +127,7 @@ public class MessageServiceImpl {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("timestamp", System.currentTimeMillis());
             jsonObject.put("title", message.getTitle());
+            jsonObject.put("action", "message");
             jsonObject.put("status", message.getStatus());
             jsonObject.put("id", message.getId());
             jsonObject.put("themeId", message.getThemeId());
