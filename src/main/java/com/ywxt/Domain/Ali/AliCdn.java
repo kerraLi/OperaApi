@@ -3,7 +3,7 @@ package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;
 import com.ywxt.Annotation.MarkCloumn;
-import com.ywxt.Annotation.NotFilterCloumn;
+import com.ywxt.Annotation.NotFilterColumn;
 
 import javax.persistence.Entity;
 import java.text.DateFormat;
@@ -15,7 +15,7 @@ import java.util.TimeZone;
 public class AliCdn {
 
     private int id;
-    @NotFilterCloumn
+    @NotFilterColumn
     private String userName;
     private String accessKeyId;
     private String cdnType;

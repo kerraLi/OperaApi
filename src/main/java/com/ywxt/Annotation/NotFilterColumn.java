@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NotFilterCloumn {
+public @interface NotFilterColumn {
     boolean notFilter() default true;
 }

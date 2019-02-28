@@ -1,8 +1,7 @@
 package com.ywxt.Domain;
 
-import com.ywxt.Annotation.NotFilterCloumn;
+import com.ywxt.Annotation.NotFilterColumn;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 public class Message {
@@ -15,9 +14,9 @@ public class Message {
     private String themeId;
     private String message;
     private String status;
-    @NotFilterCloumn
+    @NotFilterColumn
     private String imageUrl;
-    @NotFilterCloumn
+    @NotFilterColumn
     private String evalMatches;
 
     public int getId() {

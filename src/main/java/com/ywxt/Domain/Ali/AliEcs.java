@@ -2,20 +2,19 @@ package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
 import com.ywxt.Annotation.MarkCloumn;
-import com.ywxt.Annotation.NotFilterCloumn;
+import com.ywxt.Annotation.NotFilterColumn;
 
 import javax.persistence.Entity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 @Entity
 public class AliEcs {
     private int id;
     // 账号
-    @NotFilterCloumn
+    @NotFilterColumn
     private String userName;
     private String accessKeyId;
     // 标记是否即将过期

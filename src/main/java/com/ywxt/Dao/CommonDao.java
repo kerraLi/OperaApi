@@ -1,6 +1,6 @@
 package com.ywxt.Dao;
 
-import com.ywxt.Annotation.NotFilterCloumn;
+import com.ywxt.Annotation.NotFilterColumn;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,7 +44,7 @@ public class CommonDao /*extends BaseDaoImpl*/{
                             // 多个or条件 使用Disjunction
                             Disjunction dis = Restrictions.disjunction();
                             for (Field f : fields) {
-                                if (f.getType() == String.class && !f.isAnnotationPresent(NotFilterCloumn.class)) {
+                                if (f.getType() == String.class && !f.isAnnotationPresent(NotFilterColumn.class)) {
                                     dis.add(Restrictions.like(f.getName(), filter));
                                 }
                             }

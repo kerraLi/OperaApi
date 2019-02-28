@@ -1,7 +1,7 @@
 package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
-import com.ywxt.Annotation.NotFilterCloumn;
+import com.ywxt.Annotation.NotFilterColumn;
 
 import javax.persistence.Entity;
 import java.text.DateFormat;
@@ -13,7 +13,7 @@ import java.util.TimeZone;
 public class AliCdnTask {
 
     private int id;
-    @NotFilterCloumn
+    @NotFilterColumn
     private String userName;
     private String accessKeyId;
     private String taskId;

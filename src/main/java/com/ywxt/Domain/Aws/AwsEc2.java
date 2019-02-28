@@ -1,9 +1,8 @@
 package com.ywxt.Domain.Aws;
 
 import com.ywxt.Annotation.MarkCloumn;
-import com.ywxt.Annotation.NotFilterCloumn;
+import com.ywxt.Annotation.NotFilterColumn;
 import software.amazon.awssdk.services.ec2.model.Instance;
-import software.amazon.awssdk.services.ec2.model.PlatformValues;
 
 import javax.persistence.Entity;
 import java.text.DateFormat;
@@ -15,7 +14,7 @@ import java.util.TimeZone;
 public class AwsEc2 {
     private int id;
     // 账号
-    @NotFilterCloumn
+    @NotFilterColumn
     private String userName;
     private String accessKeyId;
     private String region;
