@@ -4,6 +4,7 @@ import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.Godaddy.GodaddyDomainDao;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 
 import java.util.HashMap;
@@ -26,6 +27,37 @@ public class GodaddyDomainDaoImpl extends CommonDao implements GodaddyDomainDao 
             this.closeSession();
         }
     }
+
+    // group by 查找个数&account
+    public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(GodaddyDomain.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.groupProperty("status"));
+        projectionList.add(Projections.groupProperty("accessKeyId"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
+    }
+
+    // group by 查找个数&account
+    public List<Object[]> getDomainTotalByAccount(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(GodaddyDomain.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("accessKeyId"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
+    }
+
 
     // 获取数量
     public int getDomainTotal(HashMap<String, Object> params) throws Exception {
@@ -54,7 +86,7 @@ public class GodaddyDomainDaoImpl extends CommonDao implements GodaddyDomainDao 
         return list;
     }
 
-    // 批量保存
+    // 批量新增
     public void saveDomains(List<GodaddyDomain> list) {
         for (GodaddyDomain godaddyDomain : list) {
             session.save(godaddyDomain);
@@ -63,10 +95,24 @@ public class GodaddyDomainDaoImpl extends CommonDao implements GodaddyDomainDao 
     }
 
     // 保存更新
-    public int saveDomain(GodaddyDomain godaddyDomain) {
-        int id = (int) session.save(godaddyDomain);
-        this.closeSession();
-        return id;
+    public int saveDomain(GodaddyDomain godaddyDomain) throws Exception {
+        try {
+            session.beginTransaction();
+            if (godaddyDomain.getId() == 0) {
+                int id = (Integer) session.save(godaddyDomain);
+                session.getTransaction().commit();
+                return id;
+            } else {
+                session.update(godaddyDomain);
+                session.getTransaction().commit();
+                return godaddyDomain.getId();
+            }
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
     }
 
     // 删除

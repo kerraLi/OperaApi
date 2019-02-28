@@ -1,10 +1,11 @@
 package com.ywxt.Controller.Godaddy;
 
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
-import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
+import com.ywxt.Service.Godaddy.Impl.GodaddyDomainServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Utils.Parameter;
+import com.ywxt.Service.Impl.ParameterServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import java.util.*;
 public class GodaddyDomainController extends CommonController {
 
     // domain 列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public Map<String, Object> domainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -41,7 +43,7 @@ public class GodaddyDomainController extends CommonController {
         if (!(request.getParameter("ifExpired") == null) && !(request.getParameter("ifExpired").isEmpty())) {
             if (request.getParameter("ifExpired").equals("true")) {
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
+                calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_DOMAIN_EXPIRED_DAY")));
                 Date thresholdDate = calendar.getTime();
                 params.put("orderAsc", "expires");
                 params.put("status", "ACTIVE");
@@ -51,7 +53,7 @@ public class GodaddyDomainController extends CommonController {
         if (!(request.getParameter("ifMarked") == null) && !(request.getParameter("ifMarked").isEmpty())) {
             params.put("ifMarked", request.getParameter("ifMarked"));
         }
-        return new GodaddyServiceImpl().getDomainList(params, pageNumber, pageSize);
+        return new GodaddyDomainServiceImpl().getDomainList(params, pageNumber, pageSize);
     }
 
     // domain 批量保存标记
@@ -61,12 +63,12 @@ public class GodaddyDomainController extends CommonController {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
             for (Integer i : list) {
-                GodaddyDomain godaddyDomain = new GodaddyServiceImpl().getDomain(i);
+                GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(i);
                 new ParameterIgnoreServiceImpl().saveMarked(godaddyDomain);
             }
         } else if (status.equals("unmark")) {
             for (Integer i : list) {
-                GodaddyDomain godaddyDomain = new GodaddyServiceImpl().getDomain(i);
+                GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(i);
                 new ParameterIgnoreServiceImpl().deleteMarked(godaddyDomain);
             }
         }
@@ -78,7 +80,7 @@ public class GodaddyDomainController extends CommonController {
     @ResponseBody
     @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
     public com.alibaba.fastjson.JSONObject domainParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
-        GodaddyDomain godaddyDomain = new GodaddyServiceImpl().getDomain(id);
+        GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(id);
         if (status.equals("mark")) {
             new ParameterIgnoreServiceImpl().saveMarked(godaddyDomain);
         } else if (status.equals("unmark")) {

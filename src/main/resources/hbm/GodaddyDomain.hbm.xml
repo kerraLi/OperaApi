@@ -22,6 +22,6 @@
         <property name="holdRegistrar" type="java.lang.Boolean" length="10"/>
         <property name="locked" type="java.lang.Boolean" length="50"/>
         <property name="privacy" type="java.lang.Boolean" length="50"/>
-        <property name="status" type="java.lang.String" length="20"/>
+        <property name="status" type="java.lang.String" length="30"/>
     </class>
 </hibernate-mapping>

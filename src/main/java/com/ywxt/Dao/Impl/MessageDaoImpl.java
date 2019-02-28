@@ -4,7 +4,10 @@ import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.MessageDao;
 import com.ywxt.Domain.Message;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.Type;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +19,15 @@ public class MessageDaoImpl extends CommonDao implements MessageDao {
     public int save(Message message) {
         try {
             session.beginTransaction();
-            int id = (Integer) session.save(message);
-            session.getTransaction().commit();
-            return id;
+            if (message.getId() == 0) {
+                int id = (Integer) session.save(message);
+                session.getTransaction().commit();
+                return id;
+            } else {
+                session.update(message);
+                session.getTransaction().commit();
+                return message.getId();
+            }
         } catch (Exception e) {
             session.getTransaction().rollback();
             throw e;
@@ -28,7 +37,7 @@ public class MessageDaoImpl extends CommonDao implements MessageDao {
     }
 
     // 批量保存状态
-    public void saveAliEcses(List<Integer> ids, String status) throws Exception {
+    public void setAllStatus(List<Integer> ids, String status) throws Exception {
         try {
             session.beginTransaction();
             String hql = "update Message set status = :status, modifyTime = current_time() where id in (:ids) and status != :status2";
@@ -77,6 +86,25 @@ public class MessageDaoImpl extends CommonDao implements MessageDao {
         List<Message> list = criteria.list();
         this.closeSession();
         return list;
+    }
+
+    // group by 查找个数
+    public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(Message.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("theme"));
+        // group by title
+        projectionList.add(Projections.groupProperty("title"));
+        // group by time && 格式化成每天
+        projectionList.add(Projections.sqlGroupProjection("date(createdTime) as createdDate", "createdDate", new String[]{"createdDate"}, new Type[]{StandardBasicTypes.DATE}));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
     }
 
 }

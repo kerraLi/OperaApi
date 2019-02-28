@@ -14,7 +14,7 @@ public interface GodaddyDomainDao {
 
     public abstract void saveDomains(List<GodaddyDomain> list);
 
-    public abstract int saveDomain(GodaddyDomain godaddyDomain);
+    public abstract int saveDomain(GodaddyDomain godaddyDomain) throws Exception;
 
     public abstract void deleteDomainByAccessId(String accessId);
 }

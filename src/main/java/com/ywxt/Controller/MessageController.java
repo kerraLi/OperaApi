@@ -2,6 +2,7 @@ package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Annotation.PassToken;
 import com.ywxt.Command.Websocket;
 import com.ywxt.Service.Impl.MessageServiceImpl;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.util.*;
 
 
@@ -19,7 +19,21 @@ import java.util.*;
 @RequestMapping("/message")
 public class MessageController extends CommonController {
 
+    // 获取消息数量
+    @NotOperationAction
+    @ResponseBody
+    @RequestMapping(value = {"/number/{status}"}, method = RequestMethod.GET)
+    public JSONObject number(@PathVariable String status) throws Exception {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("status", status);
+        int number = new MessageServiceImpl().getTotal(params);
+        return this.returnObject(new HashMap<String, Object>() {{
+            put("number", number);
+        }});
+    }
+
     // 消息列表
+    @NotOperationAction
     @ResponseBody
     @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -39,6 +53,9 @@ public class MessageController extends CommonController {
     @RequestMapping(value = {"/status/{status}"}, method = RequestMethod.POST)
     @ResponseBody
     public JSONObject statusAll(Integer[] ids, @PathVariable String status) throws Exception {
+        if (ids.length == 0) {
+            throw new Exception("请先选择后再设置。");
+        }
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         new MessageServiceImpl().setAllStatus(list, status);
         return this.returnObject(new HashMap<String, Object>() {{
@@ -57,6 +74,7 @@ public class MessageController extends CommonController {
 
     // webhook接收
     @PassToken
+    @NotOperationAction
     @RequestMapping(value = {"/webhook"}, method = RequestMethod.POST)
     @ResponseBody
     public String getWebhookMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -80,16 +98,12 @@ public class MessageController extends CommonController {
         otherParam.put("imageUrl", String.valueOf(requestMap.get("imageUrl")));
         otherParam.put("evalMatches", requestMap.get("evalMatches").toString());
         new MessageServiceImpl().create("WEBHOOK_MESSAGE", String.valueOf(requestMap.get("ruleId")) + "-" + requestMap.get("state"), msgParam, otherParam);
-        PrintWriter out = null;
-        out = response.getWriter();
-        out.print("success");
-        out.flush();
-        out.close();
         return "success";
     }
 
     // 发送websocket消息
     @PassToken
+    @NotOperationAction
     @RequestMapping(value = {"/websocket"}, method = RequestMethod.POST)
     @ResponseBody
     public String sendWebsocketMessage(String message) {

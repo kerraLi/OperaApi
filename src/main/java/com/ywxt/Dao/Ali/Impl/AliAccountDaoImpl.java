@@ -3,15 +3,27 @@ package com.ywxt.Dao.Ali.Impl;
 import com.ywxt.Dao.Ali.AliAccountDao;
 import com.ywxt.Dao.CommonDao;
 import com.ywxt.Domain.Ali.AliAccount;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
 
 import javax.persistence.criteria.*;
+import java.util.HashMap;
 import java.util.List;
 
 public class AliAccountDaoImpl extends CommonDao implements AliAccountDao {
 
     protected String domain = "AliAccount";
+
+    // 个数
+    public int getListTotal(HashMap<String, Object> params) throws Exception {
+        Criteria criteria = this.getCriteria(AliAccount.class, params);
+        criteria.setProjection(Projections.rowCount());
+        int total = Integer.parseInt(criteria.uniqueResult().toString());
+        this.closeSession();
+        return total;
+    }
 
     // 根据id查找账号
     public AliAccount getAliAccount(int id) {

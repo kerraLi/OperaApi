@@ -3,29 +3,44 @@ package com.ywxt.Command;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
+import com.ywxt.Dao.Impl.ParameterDaoImpl;
 import com.ywxt.Dao.Impl.UserDaoImpl;
+import com.ywxt.Dao.LogOperationDao;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Role;
+import com.ywxt.Domain.LogOperation;
+import com.ywxt.Domain.Resource.Hardware;
 import com.ywxt.Domain.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
+import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
+import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.UserServiceImpl;
+import com.ywxt.Service.Resource.Impl.HardwareServiceImpl;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class TestCommand {
+
+    @Resource
+    private LogOperationDao logOperationDao;
+    @Resource
+    private TestCommand testCommand;
 
     private static void saveAliAccount() throws Exception {
         AliAccount aa = new AliAccount();
@@ -34,6 +49,29 @@ public class TestCommand {
         aa.setAccessKeySecret("154");
         aa.setStatus("normal");
         new AliAccountServiceImpl().saveAliAccount(aa);
+    }
+
+    private static void saveParameter() throws Exception {
+        com.ywxt.Domain.Parameter parameter = new com.ywxt.Domain.Parameter();
+        parameter.setKey("ALI_ACCOUNT_BALANCE");
+        parameter.setValue("3000.00");
+        parameter.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter);
+        com.ywxt.Domain.Parameter parameter2 = new com.ywxt.Domain.Parameter();
+        parameter2.setKey("ALI_ECS_EXPIRED_DAY");
+        parameter2.setValue("3");
+        parameter2.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter2);
+        com.ywxt.Domain.Parameter parameter3 = new com.ywxt.Domain.Parameter();
+        parameter3.setKey("GODADDY_DOMAIN_EXPIRED_DAY");
+        parameter3.setValue("30");
+        parameter3.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter3);
+        com.ywxt.Domain.Parameter parameter4 = new com.ywxt.Domain.Parameter();
+        parameter4.setKey("GODADDY_CERTIFICATE_EXPIRED_DAY");
+        parameter4.setValue("30");
+        parameter4.setStatus("fixed");
+        new ParameterDaoImpl().save(parameter4);
     }
 
     private static void saveAdmin() {
@@ -121,42 +159,32 @@ public class TestCommand {
 //        System.out.println(a);
     }
 
+    private static void checkAws() throws Exception {
+        //new AwsAccountServiceImpl().checkAccount("AKIAJB2HURSIKSOB67ZQ", "No4K6AlQvR+V43j732g+UQ7QygRyOXWSCxb7qVP6");
+        new AwsServiceImpl("AKIAJB2HURSIKSOB67ZQ", "No4K6AlQvR+V43j732g+UQ7QygRyOXWSCxb7qVP6").freshEc2();
+    }
+
+    // 更新单个ecs
+    private static void updateEcs() throws Exception {
+        new AliEcsServiceImpl().updateEcs("i-j6c56n9npzzm3mnq6a3d");
+    }
+
+    // log operation jpa方式
+    private void saveLog() throws Exception {
+        LogOperation logOperation = new LogOperation();
+        logOperation.setRequestId("test123");
+        logOperationDao.create(logOperation);
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println(123);
         System.out.println("发送消息");
-//        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("timestamp", System.currentTimeMillis());
-//        jsonObject.put("id", 1);
-//        jsonObject.put("themeId", "2");
-//        jsonObject.put("message", "message");
-//        new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
-        // 发送消息
-        Map<String, String> param = new HashMap<String, String>();
-        param.put("accountName", "account");
-        param.put("ecsId", "ecsId");
-        param.put("ecsName", "ecsTime");
-        param.put("expiredTime", "时间");
-        new MessageServiceImpl().create("ALI_ECS_EXPIRED", "aaaaaaaa", new HashMap<String, String>(), new HashMap<String, String>());
-//        try {
-//            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-//        } catch (NullPointerException e) {
-//            System.out.println(11111111);
-//            System.out.println(e.getClass());
-//        }
+        String test = "a|b|c|";
+        test = test.substring(0, test.length() - 1);
 
-
-//        TestCommand.setIgnore();
-//        TestCommand.checkGodaddyAccount();
-//        TestCommand.setGodaddyAccount();
-//        TestCommand.checkGodaddyAccount();
-
-//        TestCommand.saveAliAccount();
-//        TestCommand.getNormalAccount();
-//        TestCommand.getAliEcs();
-//        TestCommand.refreshAli();
-//        System.out.println(TestCommand.checkAccount());
-//        TestCommand.saveAdmin();
-//        TestCommand.saveAliAccount();
-
+        System.out.println(test);
+//        TestCommand.updateEcs();
+//        TestCommand testCommand = new TestCommand();
+//        testCommand.saveLog();
     }
 }

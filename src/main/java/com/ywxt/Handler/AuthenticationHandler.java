@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -92,8 +93,12 @@ public class AuthenticationHandler implements HandlerInterceptor {
             throw new RuntimeException("401");
         }
         // check token
-        if (!AuthUtils.isVerify(authToken, user)) {
-            // 非法访问
+        try {
+            if (!AuthUtils.isVerify(authToken, user)) {
+                // 非法访问
+                throw new RuntimeException("401");
+            }
+        } catch (SignatureException e) {
             throw new RuntimeException("401");
         }
 

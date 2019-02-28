@@ -5,8 +5,12 @@ import com.ywxt.Dao.CommonDao;
 import com.ywxt.Domain.Ali.AliEcs;
 import org.hibernate.*;
 
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,6 +30,52 @@ public class AliEcsDaoImpl extends CommonDao implements AliEcsDao {
         } finally {
             this.closeSession();
         }
+    }
+
+    public AliEcs getEcs(String instanceId) throws Exception {
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<AliEcs> criteriaQuery = criteriaBuilder.createQuery(AliEcs.class);
+        Root<AliEcs> from = criteriaQuery.from(AliEcs.class);
+        // 设置查询属性
+        criteriaQuery.select(from).where(from.get("instanceId").in(instanceId));
+        List<AliEcs> list = session.createQuery(criteriaQuery).getResultList();
+        if (list.size() == 0) {
+            throw new Exception("无该服务器");
+        }
+        AliEcs aliEcs = (AliEcs) list.get(0);
+        this.closeSession();
+        return aliEcs;
+    }
+
+    // group by 查找个数&account
+    public List<Object[]> getCountGroup(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(AliEcs.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("status"));
+        projectionList.add(Projections.groupProperty("accessKeyId"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
+    }
+
+    // group by 查找个数&account
+    public List<Object[]> getAliEcsesTotalByAccount(HashMap<String, Object> params) throws Exception {
+        // 数据库限制 group时无法使用order
+        params.put("NO_ORDER", true);
+        Criteria criteria = this.getCriteria(AliEcs.class, params);
+        ProjectionList projectionList = Projections.projectionList();
+        // group by theme
+        projectionList.add(Projections.groupProperty("accessKeyId"));
+        projectionList.add(Projections.count("id"));
+        criteria.setProjection(projectionList);
+        List<Object[]> results = criteria.list();
+        this.closeSession();
+        return results;
     }
 
     // 获取数量
@@ -64,10 +114,24 @@ public class AliEcsDaoImpl extends CommonDao implements AliEcsDao {
     }
 
     // 保存更新
-    public int saveAliEcs(AliEcs aliEcs) {
-        int id = (int) session.save(aliEcs);
-        this.closeSession();
-        return id;
+    public int saveAliEcs(AliEcs aliEcs) throws Exception {
+        try {
+            session.beginTransaction();
+            if (aliEcs.getId() == 0) {
+                int id = (Integer) session.save(aliEcs);
+                session.getTransaction().commit();
+                return id;
+            } else {
+                session.update(aliEcs);
+                session.getTransaction().commit();
+                return aliEcs.getId();
+            }
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
+            this.closeSession();
+        }
     }
 
     // 删除

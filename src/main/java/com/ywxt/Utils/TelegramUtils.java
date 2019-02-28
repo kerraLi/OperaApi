@@ -21,7 +21,9 @@ public class TelegramUtils {
             context = context.replace("{" + e.getKey() + "}", value);
         }
         String param = "chat_id=" + Parameter.telegramChatId + "&text=" + URLEncoder.encode(context, StandardCharsets.UTF_8);
-        HttpUtils.sendConnGet(Parameter.telegramBotUrl + Parameter.telegramBotActions.get("SEND_MESSAGE"), param, new HashMap<String, String>());
+        if (!Parameter.telegramBotUrl.isEmpty()) {
+            HttpUtils.sendConnGet(Parameter.telegramBotUrl + Parameter.telegramBotActions.get("SEND_MESSAGE"), param, new HashMap<String, String>());
+        }
     }
 
     //主函数调用测试

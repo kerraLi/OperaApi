@@ -12,11 +12,66 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MessageServiceImpl {
 
     public MessageServiceImpl() {
+    }
+
+    // message 线性图表数据
+    public JSONObject getLineChartData(int limitDay) throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        String[] dateData = new String[limitDay];
+        Long[] aliMoney = new Long[limitDay];
+        Long[] aliExpired = new Long[limitDay];
+        Long[] godaddyExpired = new Long[limitDay];
+        Long[] webhookAlert = new Long[limitDay];
+        // line chart（10天）
+        Calendar startDate = Calendar.getInstance();
+        // 不计算当天
+        startDate.setTime(new Date());
+        startDate.add(Calendar.DATE, -limitDay);
+        startDate.set(Calendar.HOUR_OF_DAY, 0);
+        startDate.set(Calendar.MINUTE, 0);
+        startDate.set(Calendar.SECOND, 0);
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(new Date());
+        endDate.set(Calendar.HOUR_OF_DAY, 0);
+        endDate.set(Calendar.MINUTE, 0);
+        endDate.set(Calendar.SECOND, 0);
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        // >=
+        params.put("createdTime@ge", startDate.getTime());
+        // <
+        params.put("createdTime@lt", endDate.getTime());
+        List<Object[]> list = new MessageDaoImpl().getCountGroup(params);
+        HashMap<String, Object> resultParams = new HashMap<String, Object>();
+        for (Object[] os : list) {
+            resultParams.put((String) os[0] + os[1] + os[2], os[3]);
+        }
+        SimpleDateFormat dfOut = new SimpleDateFormat("M/d");
+        SimpleDateFormat dfGroup = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 0; i < limitDay; i++) {
+            dateData[i] = dfOut.format(startDate.getTime());
+            aliMoney[i] = resultParams.get("ALI续费" + dfGroup.format(startDate.getTime())) == null ? 0 : (Long) (resultParams.get("ALI续费" + dfGroup.format(startDate.getTime())));
+            aliExpired[i] = resultParams.get("ALI过期" + dfGroup.format(startDate.getTime())) == null ? 0 : (Long) (resultParams.get("ALI过期" + dfGroup.format(startDate.getTime())));
+            godaddyExpired[i] = resultParams.get("GODADDY过期" + dfGroup.format(startDate.getTime())) == null ? 0 : (Long) (resultParams.get("GODADDY过期" + dfGroup.format(startDate.getTime())));
+            webhookAlert[i] = resultParams.get("WEBHOOK报警" + dfGroup.format(startDate.getTime())) == null ? 0 : (Long) (resultParams.get("WEBHOOK报警" + dfGroup.format(startDate.getTime())));
+            startDate.add(Calendar.DATE, +1);
+        }
+        jsonObject.put("dateData", dateData);
+        jsonObject.put("aliMoney", aliMoney);
+        jsonObject.put("aliExpired", aliExpired);
+        jsonObject.put("godaddyExpired", godaddyExpired);
+        jsonObject.put("webhookAlert", webhookAlert);
+        return jsonObject;
+    }
+
+    // 获取总数
+    public int getTotal(HashMap<String, Object> params) throws Exception {
+        return new MessageDaoImpl().getListTotal(params);
     }
 
     // 查询所有&分页
@@ -32,7 +87,7 @@ public class MessageServiceImpl {
 
     // 批量设置状态
     public void setAllStatus(List<Integer> ids, String status) throws Exception {
-        new MessageDaoImpl().saveAliEcses(ids, status);
+        new MessageDaoImpl().setAllStatus(ids, status);
     }
 
     // 设置状态
@@ -72,6 +127,7 @@ public class MessageServiceImpl {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("timestamp", System.currentTimeMillis());
             jsonObject.put("title", message.getTitle());
+            jsonObject.put("action", "message");
             jsonObject.put("status", message.getStatus());
             jsonObject.put("id", message.getId());
             jsonObject.put("themeId", message.getThemeId());

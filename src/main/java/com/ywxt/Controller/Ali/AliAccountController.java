@@ -1,9 +1,11 @@
 package com.ywxt.Controller.Ali;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
+import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @RequestMapping("/ali/account")
 public class AliAccountController extends CommonController {
 
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
     @ResponseBody
     public List<AliAccount> list(HttpServletRequest request) throws Exception {
@@ -37,5 +40,19 @@ public class AliAccountController extends CommonController {
             }});
         }
         throw new Exception("删除失败。");
+    }
+
+    // 设置mark
+    @ResponseBody
+    @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
+    public JSONObject ecsParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
+        AliAccount aliAccount = new AliAccountServiceImpl().getAliAccount(id);
+        if (status.equals("mark")) {
+            new ParameterIgnoreServiceImpl().saveMarked(aliAccount);
+        } else if (status.equals("unmark")) {
+            new ParameterIgnoreServiceImpl().deleteMarked(aliAccount);
+        }
+        return this.returnObject(new HashMap<String, Object>() {{
+        }});
     }
 }

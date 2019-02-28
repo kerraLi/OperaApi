@@ -17,12 +17,4 @@ public interface GodaddyService {
 
     public abstract void freshCertificate() throws Exception;
 
-    public abstract List<GodaddyDomain> getDomainList(HashMap<String, Object> params) throws Exception;
-
-    public abstract Map<String, Object> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
-
-    public abstract List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception;
-
-    public abstract Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
-
 }

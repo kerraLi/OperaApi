@@ -14,24 +14,24 @@ public class ParameterIgnoreDaoImpl extends CommonDao implements ParameterIgnore
     private String domain = "ParameterIgnore";
 
     // 新增/修改
-    public int save(ParameterIgnore parameterIgnore) {
-        int id;
-        if (parameterIgnore.getId() != 0) {
-            id = parameterIgnore.getId();
-            try {
-                session.beginTransaction();
+    public int save(ParameterIgnore parameterIgnore) throws Exception {
+        try {
+            session.beginTransaction();
+            if (parameterIgnore.getId() == 0) {
+                int id = (Integer) session.save(parameterIgnore);
+                session.getTransaction().commit();
+                return id;
+            } else {
                 session.update(parameterIgnore);
                 session.getTransaction().commit();
-            } catch (Exception e) {
-                session.getTransaction().rollback();
-            } finally {
-                this.closeSession();
+                return parameterIgnore.getId();
             }
-        } else {
-            id = (int) session.save(parameterIgnore);
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            throw e;
+        } finally {
             this.closeSession();
         }
-        return id;
     }
 
 

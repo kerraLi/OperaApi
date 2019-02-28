@@ -1,20 +1,13 @@
 package com.ywxt.Service.Godaddy.Impl;
 
-import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
-import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
-import com.ywxt.Dao.Godaddy.GodaddyCertificateDao;
-import com.ywxt.Dao.Godaddy.GodaddyDomainDao;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
 import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
-import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Handler.PropertyStrategyHandler;
 import com.ywxt.Service.Godaddy.GodaddyService;
-import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import net.sf.ezmorph.object.DateMorpher;
@@ -98,8 +91,8 @@ public class GodaddyServiceImpl implements GodaddyService {
     }
 
     // 更新证书
+    // ***更新证书特殊处理：获取数据正常才更新；否则：使用上一次数据***
     public void freshCertificate() throws Exception {
-        new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(this.accessKeyId);
         String paramContext = "";
         List<GodaddyCertificate> gcList = new ArrayList<>();
         JSONArray result = JSONArray.fromObject(this.getData("GET_CERTIFICATE_LIST", paramContext));
@@ -116,117 +109,14 @@ public class GodaddyServiceImpl implements GodaddyService {
             JSONUtils.getMorpherRegistry().registerMorpher(new DateMorpher(new String[]{"yyyy-MM-dd HH:mm:ss"}));
             gcList.add((GodaddyCertificate) JSONObject.toBean(object, config));
         }
+        // 不报错=》更新数据
+        new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(this.accessKeyId);
         new GodaddyCertificateDaoImpl().saveCertificates(gcList);
     }
 
 
-    // domain
-    public GodaddyDomain getDomain(int id) {
-        return new GodaddyDomainDaoImpl().getDomain(id);
-    }
-
-    // domain-查询所有域名
-    public List<GodaddyDomain> getDomainList(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (GodaddyDomain gd : list) {
-            if (gd.getStatus().equals("ACTIVE")) {
-                gd.setAlertExpired(gd.getExpires().before(thresholdDate));
-            }
-            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
-                gd.setAlertMarked(true);
-            }
-            gd.setUserName(this.getUserName(gd.getAccessKeyId()));
-        }
-        return list;
-    }
-
-    // domain-查询所有域名&分页
-    public Map<String, Object> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams, pageNumber, pageSize);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_DOMAIN_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (GodaddyDomain gd : list) {
-            if (gd.getStatus().equals("ACTIVE")) {
-                gd.setAlertExpired(gd.getExpires().before(thresholdDate));
-            }
-            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
-                gd.setAlertMarked(true);
-            }
-            gd.setUserName(this.getUserName(gd.getAccessKeyId()));
-        }
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", new GodaddyDomainDaoImpl().getDomainTotal(filterParams));
-        result.put("items", list);
-        return result;
-    }
-
-    // domain
-    public GodaddyCertificate getCertificate(int id) {
-        return new GodaddyCertificateDaoImpl().getCertificate(id);
-    }
-
-    // certificates-查询所有证书
-    public List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (GodaddyCertificate gc : list) {
-            if (gc.getCertificateStatus().equals("ISSUED")) {
-                gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
-            }
-            if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
-                gc.setAlertMarked(true);
-            }
-            gc.setUserName(this.getUserName(gc.getAccessKeyId()));
-        }
-        return list;
-    }
-
-    // certificates-查询所有证书&分页
-    public Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams, pageNumber, pageSize);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(Parameter.alertThresholds.get("GODADDY_CERTIFICATE_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (GodaddyCertificate gc : list) {
-            if (gc.getCertificateStatus().equals("ISSUED")) {
-                gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
-            }
-            if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
-                gc.setAlertMarked(true);
-            }
-            gc.setUserName(this.getUserName(gc.getAccessKeyId()));
-        }
-        // DATE为空转换失败所以用map
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", new GodaddyCertificateDaoImpl().getCertificateTotal(filterParams));
-        result.put("items", list);
-        return result;
-    }
-
     // 过滤弃用param
-    private HashMap<String, Object> filterParamMarked(HashMap<String, Object> params, String coulmn, String[] markeValues) {
+    protected HashMap<String, Object> filterParamMarked(HashMap<String, Object> params, String coulmn, String[] markeValues) {
         boolean ifMarked = (params.get("ifMarked") != null) && (params.get("ifMarked").equals("true"));
         if (ifMarked) {
             if (markeValues.length > 0) {
@@ -244,7 +134,7 @@ public class GodaddyServiceImpl implements GodaddyService {
     }
 
     // 获取userName
-    private String getUserName(String accessKeyId) throws Exception {
+    public String getUserName(String accessKeyId) throws Exception {
         if (this.userNameMap.get(accessKeyId) == null) {
             GodaddyAccount godaddyAccount = new GodaddyAccountDaoImpl().getAccount(accessKeyId);
             this.userNameMap.put(accessKeyId, godaddyAccount.getUserName());

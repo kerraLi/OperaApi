@@ -1,6 +1,7 @@
 package com.ywxt.Controller.Godaddy;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequestMapping("/go/account")
 public class GodaddyAccountController extends CommonController {
 
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
     @ResponseBody
     public List<GodaddyAccount> list(HttpServletRequest request) throws Exception {

@@ -3,16 +3,28 @@ package com.ywxt.Dao.Godaddy.Impl;
 import com.ywxt.Dao.CommonDao;
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.HashMap;
 import java.util.List;
 
 public class GodaddyAccountDaoImpl extends CommonDao implements GodaddyAccountDao {
 
     protected String domain = "GodaddyAccount";
+
+    // 个数
+    public int getListTotal(HashMap<String, Object> params) throws Exception {
+        Criteria criteria = this.getCriteria(GodaddyAccount.class, params);
+        criteria.setProjection(Projections.rowCount());
+        int total = Integer.parseInt(criteria.uniqueResult().toString());
+        this.closeSession();
+        return total;
+    }
 
     // 根据id查找账号
     public GodaddyAccount getAccount(int id) {
