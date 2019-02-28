@@ -125,33 +125,33 @@ public class AuthenticationHandler implements HandlerInterceptor {
         }*/
 
 
-        List<String> allUrl = permissionService.findAllUrl();        //数据库里的所有url集合
-      if (CollectionUtils.isNotEmpty(allUrl)){
-          for (String resURL : allUrl) {
-                if (StringUtils.startsWith(url,resURL)){
-                    Set<Role> roleSets = permissionService.findByUrl(resURL).getRoles();    //通过数据库的url找url对应的角色，
-                    if (CollectionUtils.isNotEmpty(roleSets)){
-                        Iterator<Role> iterator = roleSets.iterator();
-                        while (iterator.hasNext()){
-                            Role next = iterator.next();
-                            String roleName = next.getRoleName();
-                            for (Role role : user.getRoles()) {
-                                String roleName1 = role.getRoleName();
-                                if (StringUtils.equals(roleName,roleName1)){
-                                    return true;
-                                }
-                            }
-                        }
-                        response.getWriter().print("没有访问权限");                  //无对URL权限
-                        return false;
-                    } else {
-                        return true;               //url没有宿主（都可以访问）
-                    }
-                }
-          }
-          return  true;
-      }
-
+//        List<String> allUrl = permissionService.findAllUrl();        //数据库里的所有url集合
+//      if (CollectionUtils.isNotEmpty(allUrl)){
+//          for (String resURL : allUrl) {
+//                if (StringUtils.startsWith(url,resURL)){
+//                    Set<Role> roleSets = permissionService.findByUrl(resURL).getRoles();    //通过数据库的url找url对应的角色，
+//                    if (CollectionUtils.isNotEmpty(roleSets)){
+//                        Iterator<Role> iterator = roleSets.iterator();
+//                        while (iterator.hasNext()){
+//                            Role next = iterator.next();
+//                            String roleName = next.getRoleName();
+//                            for (Role role : user.getRoles()) {
+//                                String roleName1 = role.getRoleName();
+//                                if (StringUtils.equals(roleName,roleName1)){
+//                                    return true;
+//                                }
+//                            }
+//                        }
+//                        response.getWriter().print("没有访问权限");                  //无对URL权限
+//                        return false;
+//                    } else {
+//                        return true;               //url没有宿主（都可以访问）
+//                    }
+//                }
+//          }
+//          return  true;
+//      }
+//
 
       /*  Permission byUrl = permissionService.findByUrl(url);
         Set<Role> roles1 = byUrl.getRoles();*/

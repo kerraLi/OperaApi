@@ -93,9 +93,9 @@ public class TestCommand {
         // 读取用户
         User user = new UserServiceImpl().getUserById(1);
 
-        for (Role s : user.getRoles()) {
-            System.out.println(s);
-        }
+//        for (Role s : user.getRoles()) {
+//            System.out.println(s);
+//        }
         System.out.println();
         System.out.println(user.getUsername());
     }

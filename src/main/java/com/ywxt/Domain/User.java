@@ -1,21 +1,11 @@
 package com.ywxt.Domain;
 
-
-
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-/*@JsonIgnoreProperties()
-   @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "id")*/
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
+
+@Entity
+@Table(name = "users")
 public class User implements Serializable {
 
     private long id;
@@ -24,28 +14,7 @@ public class User implements Serializable {
     private String nickname;
     private String introduction;
     private String avatar;
-    private Set<Role> roles=new HashSet<>(0);
-//    private String[] roles;
-
-
-    public User() {
-    }
-
-    public User(long id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-    }
-
-    public User(long id, String username, String password, String nickname, String introduction, String avatar, Set<Role> roles) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.introduction = introduction;
-        this.avatar = avatar;
-        this.roles = roles;
-    }
+    private String[] roles;
 
     public long getId() {
         return id;
@@ -95,24 +64,12 @@ public class User implements Serializable {
         this.avatar = avatar;
     }
 
-    public Set<Role> getRoles() {
+
+    public String[] getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(String[] roles) {
         this.roles = roles;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", introduction='" + introduction + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", roles=" + roles +
-                '}';
     }
 }
