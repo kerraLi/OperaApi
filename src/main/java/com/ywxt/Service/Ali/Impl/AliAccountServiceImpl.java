@@ -17,7 +17,6 @@ import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import com.ywxt.Service.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.AsyncUtils;
-import com.ywxt.Utils.Parameter;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

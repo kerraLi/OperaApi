@@ -47,6 +47,7 @@ public class Websocket {
     public void onClose() {
         //移除当前用户终端登录的websocket信息,如果该用户的所有终端都下线了，则删除该用户的记录
         userSocket.remove(this.userId);
+        this.unSubscription("message");
         logger.debug("当前在线用户数为：{}", userSocket.size());
     }
 
@@ -58,13 +59,13 @@ public class Websocket {
         // 订阅message
         if (action.equals("message")) {
             this.subscription("message");
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription"));
+            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription:" + action));
         }
         // 订阅speed
         if (action.equals("speed-test")) {
-            this.subscription("speed-test");
             String code = (String) jsonObject.get("code");
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription"));
+            this.subscription("speed-test-" + code);
+            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription:" + action));
             this.speedTest(code);
         }
         if (session == null) logger.debug("session null");
@@ -87,6 +88,16 @@ public class Websocket {
         }
     }
 
+    // 取消订阅
+    private void unSubscription(String action) {
+        if (featureSocket.containsKey(action)) {
+            featureSocket.get(action).remove(userId);
+            if (featureSocket.size() == 0) {
+                featureSocket.remove(action);
+            }
+        }
+    }
+
     // message订阅-发送给所有用户
     public void sendMessageToAllUser(String message) {
         Map<Long, Websocket> map = featureSocket.get("message");
@@ -102,39 +113,35 @@ public class Websocket {
         }
     }
 
-    // speed-test
+    // speed-test订阅
     private void speedTest(String code) throws IOException {
         // speed test
         String speedInfo = new RedisUtils().getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
         if (speedInfo == null) {
             this.session.getBasicRemote().sendText(this.getSpeedJsonInfo(0, "end", ""));
-            logger.debug("no speed info");
             return;
         }
-        logger.debug("speed info:{}", speedInfo);
         JSONObject infoJson = JSONObject.parseObject(speedInfo);
         String url = (String) infoJson.get("url");
         JSONArray points = (JSONArray) infoJson.get("points");
-        String[] out = new String[points.size()];
         HashMap<String, Object> totalData = new HashMap<String, Object>();
-        int i = 0;
         for (Object object : points) {
             MonitorPoint point = JSONObject.toJavaObject((JSONObject) object, MonitorPoint.class);
             String params = HttpUtils.getParamContext(new HashMap<String, String>() {{
                 put("url", url);
             }});
+            String msg = "";
             try {
-                out[i] = HttpUtils.sendConnPost(point.getPath(), params);
-                JSONObject temp = JSONObject.parseObject(out[i]);
+                msg = HttpUtils.sendConnPost(point.getPath(), params);
             } catch (Exception e) {
                 // 监控点未响应
-                out[i] = "error";
+                msg = "error";
             }
-            logger.debug("speed out:{}", out[i]);
-            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo(point.getId(), "new", out[i]));
-            i++;
+            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo(point.getId(), "new", msg));
         }
         this.session.getBasicRemote().sendText(this.getSpeedJsonInfo(0, "end", ""));
+        // 取消订阅
+        this.unSubscription("speed-test-" + code);
     }
 
     // json-通用

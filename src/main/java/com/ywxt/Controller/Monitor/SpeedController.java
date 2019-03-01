@@ -1,6 +1,7 @@
 package com.ywxt.Controller.Monitor;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Domain.Monitor.MonitorPoint;
 import com.ywxt.Service.Monitor.MonitorPointService;
 import com.ywxt.Service.Monitor.MonitorSpeedService;
@@ -23,6 +24,7 @@ public class SpeedController {
     private MonitorSpeedService monitorSpeedService;
 
     @ResponseBody
+    @NotOperationAction
     @RequestMapping(value = {"/test"}, method = RequestMethod.POST)
     public JSONObject connPoint(HttpServletRequest request) throws Exception {
         if (request.getParameter("url") == null) {
