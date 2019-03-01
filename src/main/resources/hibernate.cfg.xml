@@ -31,9 +31,6 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- 开启绑定本地的session -->
         <property name="hibernate.current_session_context_class">thread</property>
-        <mapping resource="hbm/User.hbm.xml"/>
-        <mapping resource="hbm/Role.hbm.xml"/>
-        <mapping resource="hbm/Permission.hbm.xml"/>
         <mapping resource="hbm/AliAccount.hbm.xml"/>
         <mapping resource="hbm/AliEcs.hbm.xml"/>
         <mapping resource="hbm/AliCdn.hbm.xml"/>

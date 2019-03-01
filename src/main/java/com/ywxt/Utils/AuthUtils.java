@@ -1,7 +1,7 @@
 package com.ywxt.Utils;
 
 import com.auth0.jwt.JWT;
-import com.ywxt.Domain.User;
+import com.ywxt.Domain.User.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;

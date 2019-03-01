@@ -1,20 +1,27 @@
-package com.ywxt.Domain;
+package com.ywxt.Domain.User;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.io.Serializable;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private long id;
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String nickname;
     private String introduction;
     private String avatar;
+    @Transient
     private String[] roles;
+    @Transient
+    private String[] menus;
 
     public long getId() {
         return id;
@@ -64,12 +71,19 @@ public class User implements Serializable {
         this.avatar = avatar;
     }
 
-
     public String[] getRoles() {
         return roles;
     }
 
     public void setRoles(String[] roles) {
         this.roles = roles;
+    }
+
+    public String[] getMenus() {
+        return menus;
+    }
+
+    public void setMenus(String[] menus) {
+        this.menus = menus;
     }
 }

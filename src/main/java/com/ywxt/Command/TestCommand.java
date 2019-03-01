@@ -1,38 +1,22 @@
 package com.ywxt.Command;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
-import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
 import com.ywxt.Dao.Impl.ParameterDaoImpl;
-import com.ywxt.Dao.Impl.UserDaoImpl;
 import com.ywxt.Dao.LogOperationDao;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
-import com.ywxt.Domain.Godaddy.GodaddyCertificate;
-import com.ywxt.Domain.Role;
 import com.ywxt.Domain.LogOperation;
-import com.ywxt.Domain.Resource.Hardware;
-import com.ywxt.Domain.User;
+import com.ywxt.Domain.User.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
-import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
 import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
-import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
-import com.ywxt.Service.Impl.MessageServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Service.Impl.UserServiceImpl;
-import com.ywxt.Service.Resource.Impl.HardwareServiceImpl;
-import com.ywxt.Utils.MD5Utils;
-import com.ywxt.Utils.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import com.ywxt.Service.User.Impl.UserServiceImpl;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class TestCommand {
@@ -74,26 +58,26 @@ public class TestCommand {
         new ParameterDaoImpl().save(parameter4);
     }
 
-    private static void saveAdmin() {
-        UserDaoImpl userDao = new UserDaoImpl();
-        // 创建用户
-        User u = new User();
-        u.setUsername("admin");
-        u.setPassword(MD5Utils.md5("123456"));
-        u.setNickname("超级管理员");
-        u.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
-        u.setIntroduction("我是超级管理员");
-        Role role = new Role();
-       /* String[] roles = {"admin"};
-        u.setRoles(roles);*/
-        userDao.saveUser(u);
-    }
+//    private static void saveAdmin() {
+//        UserDaoImpl userDao = new UserDaoImpl();
+//        // 创建用户
+//        User u = new User();
+//        u.setUsername("admin");
+//        u.setPassword(MD5Utils.md5("123456"));
+//        u.setNickname("超级管理员");
+//        u.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+//        u.setIntroduction("我是超级管理员");
+//        UserRole userRole = new UserRole();
+//       /* String[] roles = {"admin"};
+//        u.setUserRoles(roles);*/
+//        userDao.saveUser(u);
+//    }
 
     private static void readUser() {
         // 读取用户
-        User user = new UserServiceImpl().getUserById(1);
+        User user = new UserServiceImpl().getUser(1L);
 
-//        for (Role s : user.getRoles()) {
+//        for (UserRole s : user.getUserRoles()) {
 //            System.out.println(s);
 //        }
         System.out.println();

@@ -2,9 +2,10 @@ package com.ywxt.Controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
-import com.ywxt.Domain.User;
-import com.ywxt.Service.Impl.UserServiceImpl;
+import com.ywxt.Domain.User.User;
+import com.ywxt.Service.User.Impl.UserServiceImpl;
 import com.ywxt.Service.LogOperationService;
+import com.ywxt.Service.User.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +21,8 @@ public class LogController {
 
     @Resource
     private LogOperationService logOperationService;
+    @Resource
+    private UserService userService;
 
     @NotOperationAction
     @ResponseBody
@@ -29,7 +32,7 @@ public class LogController {
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         HashMap<String, Object> params = new HashMap<String, Object>();
         if (!(request.getParameter("username") == null) && !request.getParameter("username").isEmpty()) {
-            User u = new UserServiceImpl().getUserByUsername(request.getParameter("username"));
+            User u = userService.getUser(request.getParameter("username"));
             params.put("userId", u.getId());
         }
         if (!(request.getParameter("userId") == null) && !request.getParameter("userId").isEmpty()) {

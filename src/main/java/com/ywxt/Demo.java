@@ -1,6 +1,6 @@
 package com.ywxt;
 
-import com.ywxt.Domain.User;
+import com.ywxt.Domain.User.User;
 import com.ywxt.Utils.MD5Utils;
 
 public class Demo  {
