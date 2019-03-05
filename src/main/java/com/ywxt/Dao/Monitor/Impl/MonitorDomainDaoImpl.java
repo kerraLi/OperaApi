@@ -24,6 +24,7 @@ public class MonitorDomainDaoImpl implements MonitorDomainDao {
 
     @Transactional
     public int create(MonitorDomain monitorDomain) {
+        em.persist(monitorDomain);
         return monitorDomain.getId();
     }
 
@@ -65,6 +66,21 @@ public class MonitorDomainDaoImpl implements MonitorDomainDao {
             return null;
         }
         return (MonitorDomain) list.get(0);
+    }
+
+    // 列表查询
+    public List<MonitorDomain> getList(HashMap<String, Object> params) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<MonitorDomain> query = builder.createQuery(MonitorDomain.class);
+        // 查询条件
+        Root<MonitorDomain> root = query.from(MonitorDomain.class);
+        List<Predicate> predicates = this.filterParam(builder, root, params);
+        Predicate[] p = new Predicate[predicates.size()];
+        query.where(predicates.toArray(p));
+        // 默认按照id倒叙
+        query.orderBy(builder.desc(root.get("id")));
+        return em.createQuery(query)
+                .getResultList();
     }
 
     // 列表查询

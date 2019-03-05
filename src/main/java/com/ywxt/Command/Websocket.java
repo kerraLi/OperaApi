@@ -68,6 +68,13 @@ public class Websocket {
             this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription:" + action));
             this.speedTest(code);
         }
+        // 订阅speed-monitor
+        if (action.equals("speed-monitor")) {
+            String code = (String) jsonObject.get("code");
+            this.subscription("speed-monitor-" + code);
+            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription:" + action));
+            this.speedMonitor(code);
+        }
         if (session == null) logger.debug("session null");
     }
 
@@ -118,7 +125,7 @@ public class Websocket {
         // speed test
         String speedInfo = new RedisUtils().getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
         if (speedInfo == null) {
-            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo(0, "end", ""));
+            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-test", 0, "end", ""));
             return;
         }
         JSONObject infoJson = JSONObject.parseObject(speedInfo);
@@ -129,6 +136,7 @@ public class Websocket {
             MonitorPoint point = JSONObject.toJavaObject((JSONObject) object, MonitorPoint.class);
             String params = HttpUtils.getParamContext(new HashMap<String, String>() {{
                 put("url", url);
+                put("action", "speed_test");
             }});
             String msg = "";
             try {
@@ -137,12 +145,46 @@ public class Websocket {
                 // 监控点未响应
                 msg = "error";
             }
-            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo(point.getId(), "new", msg));
+            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-test", point.getId(), "new", msg));
         }
-        this.session.getBasicRemote().sendText(this.getSpeedJsonInfo(0, "end", ""));
+        this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-test", 0, "end", ""));
         // 取消订阅
         this.unSubscription("speed-test-" + code);
     }
+
+    // speed-monitor订阅
+    private void speedMonitor(String code) throws IOException {
+        // speed test
+        String speedInfo = new RedisUtils().getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
+        if (speedInfo == null) {
+            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-monitor", 0, "end", ""));
+            return;
+        }
+        JSONObject infoJson = JSONObject.parseObject(speedInfo);
+//        List<String> urls = JSONObject.parseArray((String) infoJson.get("urls"), String.class);
+        JSONArray urls = (JSONArray) infoJson.get("urls");
+        JSONArray points = (JSONArray) infoJson.get("points");
+        HashMap<String, Object> totalData = new HashMap<String, Object>();
+        for (Object object : points) {
+            MonitorPoint point = JSONObject.toJavaObject((JSONObject) object, MonitorPoint.class);
+            String params = HttpUtils.getParamContext(new HashMap<String, String>() {{
+                put("url", String.join(",", urls.toJavaList(String.class)));
+                put("action", "speed_monitor");
+            }});
+            String msg = "";
+            try {
+                msg = HttpUtils.sendConnPost(point.getPath(), params);
+            } catch (Exception e) {
+                // 监控点未响应
+                msg = "error";
+            }
+            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-monitor", point.getId(), "new", msg));
+        }
+        this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-monitor", 0, "end", ""));
+        // 取消订阅
+        this.unSubscription("speed-monitor-" + code);
+    }
+
 
     // json-通用
     private String getJsonInfo(String action, String msg) {
@@ -153,10 +195,10 @@ public class Websocket {
     }
 
     // json-speed-test
-    private String getSpeedJsonInfo(int pointId, String type, String out) {
+    private String getSpeedJsonInfo(String action, int pointId, String type, String out) {
         return new JSONObject() {{
             put("time", new Date().getTime());
-            put("action", "speed-test");
+            put("action", action);
             put("pointId", pointId);
             put("type", type);
             put("result", out);

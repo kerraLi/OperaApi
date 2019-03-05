@@ -3,6 +3,7 @@ package com.ywxt.Controller.Monitor;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Domain.Monitor.MonitorPoint;
+import com.ywxt.Service.Monitor.MonitorDomainService;
 import com.ywxt.Service.Monitor.MonitorPointService;
 import com.ywxt.Service.Monitor.MonitorSpeedService;
 import org.springframework.stereotype.Controller;
@@ -19,18 +20,23 @@ import java.util.List;
 public class SpeedController {
 
     @Resource
-    private MonitorPointService monitorPointService;
-    @Resource
     private MonitorSpeedService monitorSpeedService;
 
     @ResponseBody
     @NotOperationAction
     @RequestMapping(value = {"/test"}, method = RequestMethod.POST)
-    public JSONObject connPoint(HttpServletRequest request) throws Exception {
+    public JSONObject speedTest(HttpServletRequest request) throws Exception {
         if (request.getParameter("url") == null) {
             throw new Exception("请传入正确测速地址。");
         }
         String url = request.getParameter("url");
-        return monitorSpeedService.connPoints(url);
+        return monitorSpeedService.speedTest(url);
+    }
+
+    @ResponseBody
+    @NotOperationAction
+    @RequestMapping(value = {"/monitor"}, method = RequestMethod.POST)
+    public JSONObject speedMonitor() throws Exception {
+        return monitorSpeedService.speedMonitor();
     }
 }

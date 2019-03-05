@@ -19,6 +19,8 @@ public interface MonitorDomainDao {
 
     public MonitorDomain getMonitorDomain(String path);
 
+    public List<MonitorDomain> getList(HashMap<String, Object> params);
+
     public List<MonitorDomain> getList(HashMap<String, Object> params, int pageNumber, int pageSize);
 
     public int getListTotal(HashMap<String, Object> params);
