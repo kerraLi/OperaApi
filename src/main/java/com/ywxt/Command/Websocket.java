@@ -59,20 +59,20 @@ public class Websocket {
         // 订阅message
         if (action.equals("message")) {
             this.subscription("message");
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription:" + action));
+            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "start", "subscription:" + action));
         }
         // 订阅speed
         if (action.equals("speed-test")) {
             String code = (String) jsonObject.get("code");
             this.subscription("speed-test-" + code);
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription:" + action));
+            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "start", "subscription:" + action));
             this.speedTest(code);
         }
         // 订阅speed-monitor
         if (action.equals("speed-monitor")) {
             String code = (String) jsonObject.get("code");
             this.subscription("speed-monitor-" + code);
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "subscription:" + action));
+            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "start", "subscription:" + action));
             this.speedMonitor(code);
         }
         if (session == null) logger.debug("session null");
@@ -187,9 +187,11 @@ public class Websocket {
 
 
     // json-通用
-    private String getJsonInfo(String action, String msg) {
+    private String getJsonInfo(String action, String type, String msg) {
         return new JSONObject() {{
             put("time", new Date().getTime());
+            put("action", action);
+            put("type", type);
             put("msg", msg);
         }}.toJSONString();
     }
