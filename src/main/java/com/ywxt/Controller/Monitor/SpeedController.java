@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-@RequestMapping("/monitor/speed")
+@RequestMapping(value = "/monitor/speed", name = "监控测速")
 public class SpeedController {
 
     @Resource
@@ -24,7 +24,7 @@ public class SpeedController {
 
     @ResponseBody
     @NotOperationAction
-    @RequestMapping(value = {"/test"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/test"}, name = "单域名测速", method = RequestMethod.POST)
     public JSONObject speedTest(HttpServletRequest request) throws Exception {
         if (request.getParameter("url") == null) {
             throw new Exception("请传入正确测速地址。");
@@ -35,7 +35,7 @@ public class SpeedController {
 
     @ResponseBody
     @NotOperationAction
-    @RequestMapping(value = {"/monitor"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/monitor"}, name = "多域名监控", method = RequestMethod.POST)
     public JSONObject speedMonitor() throws Exception {
         return monitorSpeedService.speedMonitor();
     }

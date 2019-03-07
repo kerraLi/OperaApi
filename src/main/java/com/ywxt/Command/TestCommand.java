@@ -1,12 +1,13 @@
 package com.ywxt.Command;
 
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
-import com.ywxt.Dao.Impl.ParameterDaoImpl;
-import com.ywxt.Dao.LogOperationDao;
+import com.ywxt.Dao.System.Impl.ParameterDaoImpl;
+import com.ywxt.Dao.Log.LogOperationDao;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
-import com.ywxt.Domain.LogOperation;
+import com.ywxt.Domain.Log.LogOperation;
+import com.ywxt.Domain.System.Parameter;
 import com.ywxt.Domain.User.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
@@ -36,22 +37,22 @@ public class TestCommand {
     }
 
     private static void saveParameter() throws Exception {
-        com.ywxt.Domain.Parameter parameter = new com.ywxt.Domain.Parameter();
+        Parameter parameter = new Parameter();
         parameter.setKey("ALI_ACCOUNT_BALANCE");
         parameter.setValue("3000.00");
         parameter.setStatus("fixed");
         new ParameterDaoImpl().save(parameter);
-        com.ywxt.Domain.Parameter parameter2 = new com.ywxt.Domain.Parameter();
+        Parameter parameter2 = new Parameter();
         parameter2.setKey("ALI_ECS_EXPIRED_DAY");
         parameter2.setValue("3");
         parameter2.setStatus("fixed");
         new ParameterDaoImpl().save(parameter2);
-        com.ywxt.Domain.Parameter parameter3 = new com.ywxt.Domain.Parameter();
+        Parameter parameter3 = new Parameter();
         parameter3.setKey("GODADDY_DOMAIN_EXPIRED_DAY");
         parameter3.setValue("30");
         parameter3.setStatus("fixed");
         new ParameterDaoImpl().save(parameter3);
-        com.ywxt.Domain.Parameter parameter4 = new com.ywxt.Domain.Parameter();
+        Parameter parameter4 = new Parameter();
         parameter4.setKey("GODADDY_CERTIFICATE_EXPIRED_DAY");
         parameter4.setValue("30");
         parameter4.setStatus("fixed");

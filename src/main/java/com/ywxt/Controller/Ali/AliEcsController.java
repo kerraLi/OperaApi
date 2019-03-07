@@ -6,7 +6,7 @@ import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Service.Impl.ParameterServiceImpl;
+import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Controller
-@RequestMapping("/ali/ecs")
+@RequestMapping(value = "/ali/ecs", name = "阿里云ECS")
 public class AliEcsController extends CommonController {
 
     // ecs:服务器列表
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public JSONObject ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -54,7 +54,7 @@ public class AliEcsController extends CommonController {
 
     // 批量设置mark
     @ResponseBody
-    @RequestMapping(value = {"/param/{status}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/param/{status}"}, name = "批量标记", method = RequestMethod.POST)
     public JSONObject ecsParamSetAll(Integer[] ids, @PathVariable String status) throws Exception {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
@@ -74,7 +74,7 @@ public class AliEcsController extends CommonController {
 
     // 设置mark
     @ResponseBody
-    @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/param/{status}/{id}"}, name = "标记", method = RequestMethod.POST)
     public JSONObject ecsParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
         AliEcs aliEcs = new AliEcsServiceImpl().getEcs(id);
         if (status.equals("mark")) {
@@ -88,7 +88,7 @@ public class AliEcsController extends CommonController {
 
     // ecs:状态更新
     @ResponseBody
-    @RequestMapping(value = {"/status/update/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/status/update/{id}"}, name = "更新状态", method = RequestMethod.GET)
     public AliEcs updateCdnRefreshTask(@PathVariable Integer id) throws Exception {
         AliEcs aliEcs = new AliEcsServiceImpl().getEcs(id);
         return new AliEcsServiceImpl().updateEcsStatus(aliEcs);
@@ -96,7 +96,7 @@ public class AliEcsController extends CommonController {
 
     // ecs:操作服务器状态
     @ResponseBody
-    @RequestMapping(value = {"/status/{action}/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/status/{action}/{id}"}, name = "操作状态", method = RequestMethod.GET)
     public JSONObject ecsStatusAction(@PathVariable String action, @PathVariable Integer id) throws Exception {
         new AliEcsServiceImpl().actionEcs(action, id);
         return this.returnObject(new HashMap<String, Object>() {{
@@ -105,7 +105,7 @@ public class AliEcsController extends CommonController {
 
     // 预付费服务器
     @ResponseBody
-    @RequestMapping(value = {"/perpay"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/perpay"}, name = "预付费", method = RequestMethod.POST)
     public AliEcs ecsPerPay(@RequestBody JSONObject jsonObject) throws Exception {
         String instanceId = (String) jsonObject.get("instanceId");
         String periodUnit = (String) jsonObject.get("periodUnit");

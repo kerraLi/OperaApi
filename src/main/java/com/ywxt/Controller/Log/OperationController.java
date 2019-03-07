@@ -1,10 +1,9 @@
-package com.ywxt.Controller;
+package com.ywxt.Controller.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Domain.User.User;
-import com.ywxt.Service.User.Impl.UserServiceImpl;
-import com.ywxt.Service.LogOperationService;
+import com.ywxt.Service.Log.LogOperationService;
 import com.ywxt.Service.User.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 @Controller
-@RequestMapping("/log")
-public class LogController {
+@RequestMapping(value = "/log/handle", name = "操作日志")
+public class OperationController {
 
     @Resource
     private LogOperationService logOperationService;
@@ -26,7 +25,7 @@ public class LogController {
 
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/handle/list"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.GET)
     public JSONObject list(HttpServletRequest request) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));

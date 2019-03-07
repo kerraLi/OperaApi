@@ -1,4 +1,4 @@
-package com.ywxt.Service;
+package com.ywxt.Service.System;
 
 public interface ParameterService {
 }

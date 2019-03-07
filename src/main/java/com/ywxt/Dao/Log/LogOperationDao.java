@@ -1,6 +1,6 @@
-package com.ywxt.Dao;
+package com.ywxt.Dao.Log;
 
-import com.ywxt.Domain.LogOperation;
+import com.ywxt.Domain.Log.LogOperation;
 
 import java.util.HashMap;
 import java.util.List;

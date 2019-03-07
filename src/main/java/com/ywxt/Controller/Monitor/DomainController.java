@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 @Controller
-@RequestMapping("/monitor/domain")
+@RequestMapping(value = "/monitor/domain", name = "监控域名")
 public class DomainController extends CommonController {
 
     @Resource
@@ -21,7 +21,7 @@ public class DomainController extends CommonController {
 
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -34,7 +34,7 @@ public class DomainController extends CommonController {
 
 
     @ResponseBody
-    @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     public JSONObject save(@RequestBody MonitorDomain monitorDomain) throws Exception {
         if (monitorDomain.getPath().isEmpty()) {
             throw new Exception("域名路径不能为空");
@@ -45,7 +45,7 @@ public class DomainController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/remove/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/remove/{id}"}, name = "删除", method = RequestMethod.GET)
     public JSONObject remove(@PathVariable Integer id) throws Exception {
         monitorDomainService.remove(id);
         return this.returnObject(new HashMap<>() {{
@@ -53,7 +53,7 @@ public class DomainController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/remove"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/remove"}, name = "批量删除", method = RequestMethod.POST)
     public JSONObject removeAll(Integer[] ids) throws Exception {
         monitorDomainService.removeAll(ids);
         return this.returnObject(new HashMap<>() {{

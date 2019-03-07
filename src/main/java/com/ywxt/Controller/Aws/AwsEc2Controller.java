@@ -13,13 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 @Controller
-@RequestMapping("/aws/ec2")
+@RequestMapping(value = "/aws/ec2", name = "亚马逊EC2")
 public class AwsEc2Controller {
 
     // ec2:服务器列表
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public JSONObject ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));

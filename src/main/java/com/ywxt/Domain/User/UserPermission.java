@@ -11,9 +11,9 @@ public class UserPermission {
     @Column(name = "id", nullable = false)
     private Long id;
     private Long parentId = 0L;
-    private String name;
+    private String name = "";
     private String action = "";
-    // type:menu || url
+    // type:menu || api
     private String type;
 
     public Long getId() {

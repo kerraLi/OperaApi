@@ -1,6 +1,6 @@
 package com.ywxt.Utils;
 
-import com.ywxt.Service.Impl.ParameterServiceImpl;
+import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

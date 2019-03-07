@@ -1,8 +1,8 @@
-package com.ywxt.Dao.Impl;
+package com.ywxt.Dao.System.Impl;
 
 import com.ywxt.Dao.CommonDao;
-import com.ywxt.Dao.ParameterDao;
-import com.ywxt.Domain.Parameter;
+import com.ywxt.Dao.System.ParameterDao;
+import com.ywxt.Domain.System.Parameter;
 import org.hibernate.Criteria;
 
 import javax.persistence.criteria.CriteriaBuilder;

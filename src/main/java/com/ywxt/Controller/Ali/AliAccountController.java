@@ -14,17 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 
 @Controller
-@RequestMapping("/ali/account")
+@RequestMapping(value = "/ali/account", name = "阿里云账号")
 public class AliAccountController extends CommonController {
 
     @NotOperationAction
-    @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.GET)
     @ResponseBody
     public List<AliAccount> list(HttpServletRequest request) throws Exception {
         return new AliAccountServiceImpl().getList(true);
     }
 
-    @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject save(@ModelAttribute AliAccount aliAccount) throws Exception {
         new AliAccountServiceImpl().saveAliAccount(aliAccount);
@@ -32,7 +32,7 @@ public class AliAccountController extends CommonController {
         }});
     }
 
-    @RequestMapping(value = {"/delete/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/delete/{id}"}, name = "删除", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject delete(HttpServletRequest request, @PathVariable Integer id) throws Exception {
         if (new AliAccountServiceImpl().deleteAccount(id)) {
@@ -44,7 +44,7 @@ public class AliAccountController extends CommonController {
 
     // 设置mark
     @ResponseBody
-    @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/param/{status}/{id}"}, name = "标记", method = RequestMethod.POST)
     public JSONObject ecsParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
         AliAccount aliAccount = new AliAccountServiceImpl().getAliAccount(id);
         if (status.equals("mark")) {

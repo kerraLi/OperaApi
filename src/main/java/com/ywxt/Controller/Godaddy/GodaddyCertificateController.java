@@ -5,8 +5,7 @@ import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Service.Godaddy.Impl.GodaddyCertificateServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Service.Impl.ParameterServiceImpl;
-import com.ywxt.Utils.Parameter;
+import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Controller
-@RequestMapping("/go/certificate")
+@RequestMapping(value = "/go/certificate", name = "GO证书")
 public class GodaddyCertificateController extends CommonController {
 
     // certificate 列表
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public Map<String, Object> certificateList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -59,7 +58,7 @@ public class GodaddyCertificateController extends CommonController {
 
     // certificate 批量保存标记
     @ResponseBody
-    @RequestMapping(value = {"/param/{status}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/param/{status}"}, name = "批量标记", method = RequestMethod.POST)
     public com.alibaba.fastjson.JSONObject domainParamSetAll(Integer[] ids, @PathVariable String status) throws Exception {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
@@ -79,7 +78,7 @@ public class GodaddyCertificateController extends CommonController {
 
     // certificate 保存标记
     @ResponseBody
-    @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/param/{status}/{id}"}, name = "标记", method = RequestMethod.POST)
     public com.alibaba.fastjson.JSONObject certificateParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
         GodaddyCertificate godaddyCertificate = new GodaddyCertificateServiceImpl().getCertificate(id);
         if (status.equals("mark")) {

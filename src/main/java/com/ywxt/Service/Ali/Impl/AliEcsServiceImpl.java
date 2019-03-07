@@ -12,9 +12,8 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.AliEcsService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Service.Impl.ParameterServiceImpl;
+import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
-import com.ywxt.Utils.Parameter;
 
 import java.util.*;
 

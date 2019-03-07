@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Controller
-@RequestMapping("/resource/data")
+@RequestMapping(value = "/resource/data", name = "资源数据")
 public class DataController extends CommonController {
 
     @Resource
     private DataService dataService;
 
     @ResponseBody
-    @RequestMapping(value = {"/upload/{categoryId}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/upload/{categoryId}"}, name = "上传", method = RequestMethod.POST)
     public JSONObject upload(@PathVariable Integer categoryId, @RequestBody ArrayList<JSONArray> list) throws Exception {
         dataService.upload(categoryId, list);
         return this.returnObject(new HashMap<String, Object>() {{
@@ -31,7 +31,7 @@ public class DataController extends CommonController {
 
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list/{categoryId}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list/{categoryId}"}, name = "列表", method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request, @PathVariable Integer categoryId) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -44,7 +44,7 @@ public class DataController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     public JSONObject save(@RequestBody Data data) throws Exception {
         dataService.save(data);
         return this.returnObject(new HashMap<>() {{
@@ -52,7 +52,7 @@ public class DataController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/remove/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/remove/{id}"}, name = "删除", method = RequestMethod.GET)
     public JSONObject remove(@PathVariable Integer id) throws Exception {
         dataService.remove(id);
         return this.returnObject(new HashMap<>() {{
@@ -60,7 +60,7 @@ public class DataController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/remove"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/remove"}, name = "批量删除", method = RequestMethod.POST)
     public JSONObject removeAll(Integer[] ids) throws Exception {
         dataService.removeAll(ids);
         return this.returnObject(new HashMap<>() {{

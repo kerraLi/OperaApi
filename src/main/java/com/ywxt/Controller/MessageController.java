@@ -16,13 +16,13 @@ import java.util.*;
 
 
 @Controller
-@RequestMapping("/message")
+@RequestMapping(value = "/message", name = "消息中心")
 public class MessageController extends CommonController {
 
     // 获取消息数量
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/number/{status}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/number/{status}"}, name = "获取数量", method = RequestMethod.GET)
     public JSONObject number(@PathVariable String status) throws Exception {
         HashMap<String, Object> params = new HashMap<>();
         params.put("status", status);
@@ -35,7 +35,7 @@ public class MessageController extends CommonController {
     // 消息列表
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -50,7 +50,7 @@ public class MessageController extends CommonController {
     }
 
     // 批量设置
-    @RequestMapping(value = {"/status/{status}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/status/{status}"}, name = "批量设置状态", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject statusAll(Integer[] ids, @PathVariable String status) throws Exception {
         if (ids.length == 0) {
@@ -63,7 +63,7 @@ public class MessageController extends CommonController {
     }
 
     // 设置状态
-    @RequestMapping(value = {"/status/{status}/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/status/{status}/{id}"}, name = "设置状态", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject statusById(@PathVariable String status, @PathVariable Integer id) throws Exception {
         new MessageServiceImpl().setStatus(id, status);
