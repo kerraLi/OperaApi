@@ -38,7 +38,7 @@ public class ConfigManageService {
     private ServerInfoService serverInfoService;
 
     /**
-     * 通过服务器id过去文件上传记录
+     * 通过服务器id获取上传记录
      * @param serverId
      * @return
      */
@@ -84,19 +84,20 @@ public class ConfigManageService {
         configManage.setContent(content);
         configManage.setUpdateTime(new Date());
         configManage.setCreateTime(new Date());
-        ConfigManage configManage1 = configManageRepository.save(configManage);
 
-        String result = sendPost(serverAddress,excelFile,fileType,configManage1.getId(),fileName);
+        JSONObject jsonObject = sendPost(serverAddress,excelFile,fileType,fileName);
+        ExceptionUtil.isTrue(jsonObject==null,"文件发送错误");
         //删除临时文件
         if (excelFile.exists()) {
             excelFile.delete();
         }
-        if(result.equals("success")){
-            configManage1.setState(1);
+        if(jsonObject.get("status").equals("success")){
+            configManage.setState(1);
         }
-        configManageRepository.saveAndFlush(configManage1);
+        configManage.setId(jsonObject.getString("code"));
+        configManageRepository.saveAndFlush(configManage);
 
-        //保存上传历史50条，超过50条删除
+        //保存上传历史20条，超过20条删除
         List<ConfigManage> list = configManageRepository.findByServerIdOrderByCreateTimeDesc(id);
 
         List<Long> longs = new ArrayList<>();
@@ -109,8 +110,8 @@ public class ConfigManageService {
     }
 
     //上传到服务器
-    private String sendPost(String serverAddress, File file, String fileType, Long id, String name) {
-        String code = "500";
+    private JSONObject sendPost(String serverAddress, File file, String fileType, String name) {
+        JSONObject jsonObject = null;
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost uploadFile = new HttpPost(serverAddress);
@@ -125,7 +126,7 @@ public class ConfigManageService {
                     name
             );
             builder.addTextBody("fileType",fileType);
-            builder.addTextBody("id",id+"");
+//            builder.addTextBody("id",id+"");
 
             HttpEntity multipart = builder.build();
             uploadFile.setEntity(multipart);
@@ -133,13 +134,11 @@ public class ConfigManageService {
             HttpEntity responseEntity = response.getEntity();
             String sResponse= EntityUtils.toString(responseEntity, "UTF-8");
             System.out.println("Post 返回结果"+sResponse);
-            JSONObject jsonObject = JSON.parseObject(sResponse);
-            code = jsonObject.get("status")+"";
-
+            jsonObject = JSON.parseObject(sResponse);
         }catch (Exception e){
             log.error("文件发送错误+{}" +e.getMessage());
         }
-        return code;
+        return jsonObject;
     }
 
 //    //上传文件到服务器
@@ -210,7 +209,7 @@ public class ConfigManageService {
 
     //更新配置文件运行结果
     @Transactional
-    public void updateState(Integer runResult,Long id) {
+    public void updateState(Integer runResult,String id) {
         ConfigManage configManage = configManageRepository.getOne(id);
         ExceptionUtil.isTrue(configManage==null,"id不存在");
         configManage.setRunResult(runResult);

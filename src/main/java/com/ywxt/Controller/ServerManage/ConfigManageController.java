@@ -1,5 +1,7 @@
 package com.ywxt.Controller.ServerManage;
 
+import com.ywxt.Annotation.NotOperationAction;
+import com.ywxt.Annotation.PassToken;
 import com.ywxt.Domain.ApiResult;
 import com.ywxt.Domain.ServerManage.ConfigManage;
 import com.ywxt.Service.ServerManage.ConfigManageService;
@@ -41,10 +43,12 @@ public class ConfigManageController {
      * @param configManage
      * @return
      */
+    @PassToken
+    @NotOperationAction
     @RequestMapping("/updateState")
     public ApiResult updateState(@RequestBody ConfigManage configManage){
         ExceptionUtil.isTrue(configManage.getRunResult()==null,"配置文件的运行结果不能为空");
-        ExceptionUtil.isTrue(configManage.getId()==null,"id不能为空");
+         ExceptionUtil.isTrue(configManage.getId()==null,"id不能为空");
         configManageService.updateState(configManage.getRunResult(),configManage.getId());
         return ApiResult.success();
     }

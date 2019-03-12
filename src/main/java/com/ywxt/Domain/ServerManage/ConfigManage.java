@@ -16,8 +16,9 @@ import java.util.Date;
 public class ConfigManage implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(length = 50)
+    private String id;
     private Long serverId;//服务器id
     @Column(length = 20)
     private String fileType;//配置类型

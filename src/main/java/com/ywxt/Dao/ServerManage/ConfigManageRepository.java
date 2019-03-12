@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ConfigManageRepository extends JpaRepository<ConfigManage,Long> {
+public interface ConfigManageRepository extends JpaRepository<ConfigManage,String> {
 
     List<ConfigManage> findByServerIdOrderByCreateTimeDesc(Long serverId);
 }
