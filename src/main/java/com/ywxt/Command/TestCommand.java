@@ -27,6 +27,7 @@ public class TestCommand {
     @Resource
     private TestCommand testCommand;
 
+
     private static void saveAliAccount() throws Exception {
         AliAccount aa = new AliAccount();
         aa.setUserName("asdbbbbbbbb");
@@ -161,15 +162,13 @@ public class TestCommand {
         logOperationDao.create(logOperation);
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(123);
-        System.out.println("发送消息");
-        String test = "a|b|c|";
-        test = test.substring(0, test.length() - 1);
+    private void test() throws Exception {
+        long[] ids = new long[1];
+        ids[0] = 2766l;
+    }
 
-        System.out.println(test);
-//        TestCommand.updateEcs();
-//        TestCommand testCommand = new TestCommand();
-//        testCommand.saveLog();
+    public static void main(String[] args) throws Exception {
+        TestCommand a = new TestCommand();
+        a.test();
     }
 }

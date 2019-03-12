@@ -31,6 +31,8 @@ public class Parameter {
     public static int redisTllUserToken = 60 * 60 * 2;
     public static int redisTllMonitorSpeed = 60 * 60;
 
+    // 新建用户默认头像
+    public static String defaultAvatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif";
     // 登陆有效时间（ms）
     public static int loginTtlMs = 60 * 60 * 1000 * 2;
     // 登陆token密钥

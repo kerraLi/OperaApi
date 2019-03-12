@@ -3,16 +3,13 @@ package com.ywxt.Domain.User;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_relations")
-public class UserRelation {
+@Table(name = "user_role_permission")
+public class UserRolePermission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roleId")
     private UserRole userRole;
@@ -26,14 +23,6 @@ public class UserRelation {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public UserRole getUserRole() {
@@ -51,5 +40,4 @@ public class UserRelation {
     public void setUserPermission(UserPermission userPermission) {
         this.userPermission = userPermission;
     }
-
 }

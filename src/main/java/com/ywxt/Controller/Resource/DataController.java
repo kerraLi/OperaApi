@@ -25,8 +25,7 @@ public class DataController extends CommonController {
     @RequestMapping(value = {"/upload/{categoryId}"}, name = "上传", method = RequestMethod.POST)
     public JSONObject upload(@PathVariable Integer categoryId, @RequestBody ArrayList<JSONArray> list) throws Exception {
         dataService.upload(categoryId, list);
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
+        return this.returnObject();
     }
 
     @NotOperationAction
@@ -47,24 +46,21 @@ public class DataController extends CommonController {
     @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     public JSONObject save(@RequestBody Data data) throws Exception {
         dataService.save(data);
-        return this.returnObject(new HashMap<>() {{
-        }});
+        return this.returnObject();
     }
 
     @ResponseBody
     @RequestMapping(value = {"/remove/{id}"}, name = "删除", method = RequestMethod.GET)
     public JSONObject remove(@PathVariable Integer id) throws Exception {
         dataService.remove(id);
-        return this.returnObject(new HashMap<>() {{
-        }});
+        return this.returnObject();
     }
 
     @ResponseBody
     @RequestMapping(value = {"/remove"}, name = "批量删除", method = RequestMethod.POST)
     public JSONObject removeAll(Integer[] ids) throws Exception {
         dataService.removeAll(ids);
-        return this.returnObject(new HashMap<>() {{
-        }});
+        return this.returnObject();
     }
 
 

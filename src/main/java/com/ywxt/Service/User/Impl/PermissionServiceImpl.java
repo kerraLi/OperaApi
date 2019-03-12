@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@Service("permissionServiceImpl")
+@Service
 public class PermissionServiceImpl implements PermissionService {
 
     @Resource
@@ -100,6 +100,11 @@ public class PermissionServiceImpl implements PermissionService {
             ups.add(up);
         }
         return ups;
+    }
+
+    public List<UserPermission> getList() throws Exception {
+        return userPermissionDao.getList(new HashMap<>() {{
+        }});
     }
 
     public List<UserPermission> getList(String type) throws Exception {

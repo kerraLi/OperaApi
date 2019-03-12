@@ -13,6 +13,8 @@ public interface PermissionService {
 
     public List<UserPermission> refreshMenu(ArrayList<JSONObject> list);
 
+    public List<UserPermission> getList() throws Exception;
+
     public List<UserPermission> getList(String type) throws Exception;
 
     public Long create(UserPermission userPermission);

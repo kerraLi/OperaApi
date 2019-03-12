@@ -16,6 +16,17 @@ public class UserPermission {
     // type:menu || api
     private String type;
 
+    public UserPermission() {
+    }
+
+    public UserPermission(Long id, Long parentId, String name, String action, String type) {
+        this.id = id;
+        this.parentId = parentId;
+        this.name = name;
+        this.action = action;
+        this.type = type;
+    }
+
     public Long getId() {
         return id;
     }
