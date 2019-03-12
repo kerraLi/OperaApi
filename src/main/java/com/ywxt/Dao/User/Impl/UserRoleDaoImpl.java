@@ -72,6 +72,9 @@ public class UserRoleDaoImpl implements UserRoleDao {
         // 设置查询属性
         criteriaQuery.select(from).where(from.get("code").in(code));
         List<UserRole> list = em.createQuery(criteriaQuery).getResultList();
+        if (list.size() == 0) {
+            return null;
+        }
         return (UserRole) list.get(0);
     }
 

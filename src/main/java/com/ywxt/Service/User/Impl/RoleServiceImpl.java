@@ -36,10 +36,10 @@ public class RoleServiceImpl implements RoleService {
         if (oldR != null) {
             throw new Exception("已有该编码角色，保存角色失败。");
         }
-        if (oldR.getCode() == null) {
+        if (userRole.getCode() == null) {
             throw new Exception("角色编码不能为空，保存角色失败。");
         }
-        if (oldR.getCode().equals("admin")) {
+        if (userRole.getCode().equals("admin")) {
             throw new Exception("超级管理员角色不能修改，保存角色失败。");
         }
         if (userRole.getId() == null) {
