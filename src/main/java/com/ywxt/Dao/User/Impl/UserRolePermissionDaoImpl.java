@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserRolePermissionDaoImpl implements UserRolePermissionDao {
@@ -27,7 +28,7 @@ public class UserRolePermissionDaoImpl implements UserRolePermissionDao {
         if (type.equals("id")) {
             em.remove(this.getUserRolePermission(id));
             return true;
-        } else {
+        } else if (type.equals("roleId")) {
             em.createQuery(
                     "delete from UserRolePermission urp " +
                             "where urp.userRole in " +
@@ -38,6 +39,19 @@ public class UserRolePermissionDaoImpl implements UserRolePermissionDao {
                     .setParameter("roleId", id)
                     .executeUpdate();
             return true;
+        } else if (type.equals("permissionId")) {
+            em.createQuery(
+                    "delete from UserRolePermission urp " +
+                            "where urp.userPermission in " +
+                            "(" +
+                            "select p.id from urp.userPermission p " +
+                            "where p.id=:permissionId" +
+                            ")")
+                    .setParameter("permissionId", id)
+                    .executeUpdate();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -50,6 +64,18 @@ public class UserRolePermissionDaoImpl implements UserRolePermissionDao {
     @Override
     public UserRolePermission update(UserRolePermission userRolePermission) {
         return null;
+    }
+
+    @Override
+    public void updateUserPermissions(Map<Long, Long> map) {
+        for (Map.Entry<Long, Long> e : map.entrySet()) {
+            em.createQuery("update UserRolePermission " +
+                    "set permissionId =:newPermissionId " +
+                    "where permissionId =:oldPermissionId")
+                    .setParameter("newPermissionId", e.getValue())
+                    .setParameter("oldPermissionId", e.getKey())
+                    .executeUpdate();
+        }
     }
 
     @Override

@@ -27,5 +27,5 @@ public interface UserService {
 
     public User update(User user);
 
-    public User save(User user);
+    public User save(User user) throws Exception;
 }

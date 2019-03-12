@@ -32,6 +32,16 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Long save(UserRole userRole) throws Exception {
+        UserRole oldR = userRoleDao.getUserRole(userRole.getCode());
+        if (oldR != null) {
+            throw new Exception("已有该编码角色，保存角色失败。");
+        }
+        if (oldR.getCode() == null) {
+            throw new Exception("角色编码不能为空，保存角色失败。");
+        }
+        if (oldR.getCode().equals("admin")) {
+            throw new Exception("超级管理员角色不能修改，保存角色失败。");
+        }
         if (userRole.getId() == null) {
             return this.create(userRole);
         } else {
@@ -41,13 +51,11 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Long create(UserRole userRole) throws Exception {
-        // todo code不能重复
         return userRoleDao.create(userRole);
     }
 
     @Override
     public Long update(UserRole userRole) throws Exception {
-        // todo code是否重复 && admin不能修改
         userRoleDao.update(userRole);
         return userRole.getId();
     }

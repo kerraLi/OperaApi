@@ -2,6 +2,7 @@ package com.ywxt.Service.User.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Dao.User.UserPermissionDao;
+import com.ywxt.Dao.User.UserRolePermissionDao;
 import com.ywxt.Domain.User.UserPermission;
 import com.ywxt.Service.User.PermissionService;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -21,16 +23,29 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Resource
     private UserPermissionDao userPermissionDao;
+    @Resource
+    private UserRolePermissionDao userRolePermissionDao;
 
-    public List<UserPermission> refreshApi(HttpServletRequest request) {
+    @Transactional
+    public List<UserPermission> refreshApi(HttpServletRequest request) throws Exception {
+        String type = "api";
+        // 获取已有全部权限
+        List<UserPermission> oldPs = this.getList(type);
+        Map<String, JSONObject> todoMap = new HashMap<String, JSONObject>();
+        for (UserPermission oup : oldPs) {
+            JSONObject obj = new JSONObject() {{
+                put("oldId", oup.getId());
+            }};
+            todoMap.put(oup.getAction(), obj);
+        }
         // 删除已有api
-        this.removeByType("api");
+        this.removeByType(type);
         // 默认已有权限api：忽略不做配置
         List<String> forgetUL = new ArrayList<String>() {{
-            add("/user/login");
-            add("/user/info");
-            add("/user/logout");
-            add("/user/reset/password");
+            add("/auth/login");
+            add("/auth/info");
+            add("/auth/logout");
+            add("/auth/reset/password");
             add("/message/webhook");
             add("/message/websocket");
         }};
@@ -56,49 +71,81 @@ public class PermissionServiceImpl implements PermissionService {
                         UserPermission upParent = new UserPermission();
                         upParent.setName(names[0]);
                         upParent.setAction("");
-                        upParent.setType("api");
+                        upParent.setType(type);
                         Long parentId = this.create(upParent);
                         parentIds.put(names[0], parentId);
                         upParent.setId(parentId);
                         ups.add(upParent);
+                        // 处理待更新map
+                        if (todoMap.containsKey(upParent.getAction())) {
+                            JSONObject obj = todoMap.get(upParent.getAction());
+                            obj.put("newId", upParent.getId());
+                            todoMap.put(upParent.getAction(), obj);
+                        }
                         //
                         up.setParentId(parentId);
                     }
                     up.setName(names[1]);
                     up.setAction(uStr);
-                    up.setType("api");
+                    up.setType(type);
                     Long id = this.create(up);
                     up.setId(id);
                     ups.add(up);
+                    // 处理待更新map
+                    if (todoMap.containsKey(up.getAction())) {
+                        JSONObject obj = todoMap.get(up.getAction());
+                        obj.put("newId", up.getId());
+                        todoMap.put(up.getAction(), obj);
+                    }
                 }
             }
         }
+        // do map
+        this.refreshRolePermission(todoMap);
         return ups;
     }
 
-    public List<UserPermission> refreshMenu(ArrayList<JSONObject> list) {
+    @Transactional
+    public List<UserPermission> refreshMenu(ArrayList<JSONObject> list) throws Exception {
+        String type = "menu";
         List<UserPermission> ups = new ArrayList<UserPermission>();
+        // 获取已有全部权限
+        List<UserPermission> oldPs = this.getList(type);
+        Map<String, JSONObject> todoMap = new HashMap<String, JSONObject>();
+        for (UserPermission oup : oldPs) {
+            JSONObject obj = new JSONObject() {{
+                put("oldId", oup.getId());
+            }};
+            todoMap.put(oup.getAction(), obj);
+        }
         // 删除已有menu
-        this.removeByType("menu");
+        this.removeByType(type);
         for (JSONObject jObject : list) {
             Long parentId = 0L;
             if (jObject.get("parentCode") != null && jObject.get("parentCode") != "") {
                 for (UserPermission up : ups) {
                     if (up.getName().equals(jObject.get("parentName"))) {
-                        System.out.println("========???");
                         parentId = up.getId();
                     }
                 }
             }
             UserPermission up = new UserPermission();
-            up.setType("menu");
+            up.setType(type);
             up.setAction((String) jObject.get("path"));
             up.setName((String) jObject.get("name"));
             up.setParentId(parentId);
             Long id = this.create(up);
             up.setId(id);
             ups.add(up);
+            // 处理待更新map
+            if (todoMap.containsKey(up.getAction())) {
+                JSONObject obj = todoMap.get(up.getAction());
+                obj.put("newId", up.getId());
+                todoMap.put(up.getAction(), obj);
+            }
         }
+        // do map
+        this.refreshRolePermission(todoMap);
         return ups;
     }
 
@@ -122,6 +169,19 @@ public class PermissionServiceImpl implements PermissionService {
 
     public void removeByType(String type) {
         userPermissionDao.delete(type);
+    }
+
+    // 刷新角色对应权限
+    private void refreshRolePermission(Map<String, JSONObject> map) {
+        Map<Long, Long> updateMap = new HashMap<Long, Long>();
+        for (Map.Entry<String, JSONObject> e : map.entrySet()) {
+            if (e.getValue().get("newId") == null) {
+                userRolePermissionDao.delete("permissionId", (long) e.getValue().get("oldId"));
+            } else {
+                updateMap.put((long) e.getValue().get("oldId"), (long) e.getValue().get("newId"));
+            }
+        }
+        userRolePermissionDao.updateUserPermissions(updateMap);
     }
 
 }

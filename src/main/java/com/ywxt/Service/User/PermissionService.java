@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface PermissionService {
 
-    public List<UserPermission> refreshApi(HttpServletRequest request);
+    public List<UserPermission> refreshApi(HttpServletRequest request) throws Exception;
 
-    public List<UserPermission> refreshMenu(ArrayList<JSONObject> list);
+    public List<UserPermission> refreshMenu(ArrayList<JSONObject> list) throws Exception;
 
     public List<UserPermission> getList() throws Exception;
 

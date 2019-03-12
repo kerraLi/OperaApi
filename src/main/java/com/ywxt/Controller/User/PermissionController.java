@@ -46,7 +46,7 @@ public class PermissionController extends CommonController {
     // 菜单权限：增删改查，由前端控制，字段需要跟前端一致，或者由前端生成权限菜单列表
     @ResponseBody
     @RequestMapping(value = {"/menu/refresh"}, name = "重置菜单权限", method = RequestMethod.POST)
-    public JSONObject refreshMenu(@RequestBody ArrayList<JSONObject> list) {
+    public JSONObject refreshMenu(@RequestBody ArrayList<JSONObject> list) throws Exception{
         List<UserPermission> ups = permissionService.refreshMenu(list);
         return this.returnObject(new HashMap<String, Object>() {{
             put("permissions", ups);

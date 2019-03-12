@@ -33,6 +33,9 @@ public class UserController extends CommonController {
     @ResponseBody
     @RequestMapping(value = {"/save"}, name = "保存用户", method = RequestMethod.POST)
     public User save(@RequestBody User user) throws Exception {
+        if (user.getUsername().equals("admin")) {
+            throw new Exception("非法用户名。");
+        }
         return userService.save(user);
     }
 
