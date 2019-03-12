@@ -1,6 +1,8 @@
 package com.ywxt.Handler;
 
 import com.aliyuncs.exceptions.ClientException;
+import com.ywxt.Domain.ApiResult;
+import com.ywxt.Exception.MTMException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -59,6 +61,16 @@ public class ExceptionsHandler {
         return jsonObject.toString();
     }
 
+    @ResponseBody
+    @ExceptionHandler({MTMException.class})
+    public ApiResult errorHandler(Exception ex) throws Exception {
+        if (ex instanceof MTMException) {
+            return ApiResult.failWithMessage(ex.getMessage().substring(ex.getMessage().lastIndexOf("[")));
+        } else {
+            ex.printStackTrace();
+            return ApiResult.failWithMessage("服务器出了点意外...");
+        }
+    }
 
 //    // 可以直接写@EceptionHandler，IOExeption继承于Exception
 //    @ResponseBody
