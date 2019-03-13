@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 // 用户登陆鉴权
-// todo 后期增加权限校验
 public class AuthenticationHandler implements HandlerInterceptor {
 
     @Resource
