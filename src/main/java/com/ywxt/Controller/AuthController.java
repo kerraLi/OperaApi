@@ -26,7 +26,7 @@ public class AuthController extends CommonController {
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     @ResponseBody
-    @PassToken
+    @PassToken(login = true)
     @NotOperationAction
     public JSONObject login(@NotBlank @RequestParam("username") String username, @NotBlank @RequestParam("password") String password) throws Exception {
         String authToken = authService.login(username, password);
@@ -38,6 +38,7 @@ public class AuthController extends CommonController {
     @RequestMapping(value = {"/info"}, method = RequestMethod.GET)
     @ResponseBody
     @NotOperationAction
+    @PassToken
     public User info(HttpServletRequest request, HttpServletResponse response) throws Exception {
         return authService.info(this.getUserIdFromAuthToken(request));
     }
@@ -45,6 +46,7 @@ public class AuthController extends CommonController {
     @RequestMapping(value = {"/logout"}, method = RequestMethod.GET)
     @ResponseBody
     @NotOperationAction
+    @PassToken
     public JSONObject logout(HttpServletRequest request) {
         String authToken = request.getHeader("Authorization");
         authService.logout(authToken);
@@ -53,6 +55,7 @@ public class AuthController extends CommonController {
 
     @RequestMapping(value = {"/reset/password"}, method = RequestMethod.POST)
     @ResponseBody
+    @PassToken
     public JSONObject resetPwd(HttpServletRequest request, @NotBlank String oldPwd, @NotBlank @Size(min = 6, max = 15) String newPwd) throws Exception {
         authService.resetPwd(this.getUserFromAuthToken(request), oldPwd, newPwd);
         return this.returnObject();

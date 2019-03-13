@@ -1,6 +1,7 @@
 package com.ywxt.Service.User.Impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.PassToken;
 import com.ywxt.Dao.User.UserPermissionDao;
 import com.ywxt.Dao.User.UserRolePermissionDao;
 import com.ywxt.Domain.User.UserPermission;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.lang.reflect.Method;
 import java.util.*;
 
 @Service
@@ -40,21 +42,21 @@ public class PermissionServiceImpl implements PermissionService {
         }
         // 删除已有api
         this.removeByType(type);
-        // 默认已有权限api：忽略不做配置
-        List<String> forgetUL = new ArrayList<String>() {{
-            add("/auth/login");
-            add("/auth/info");
-            add("/auth/logout");
-            add("/auth/reset/password");
-            add("/message/webhook");
-            add("/message/websocket");
-        }};
         List<UserPermission> ups = new ArrayList<UserPermission>();
         Map<String, Long> parentIds = new HashMap<>();
         WebApplicationContext wac = (WebApplicationContext) request.getAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE);//获取上下文对象
         RequestMappingHandlerMapping bean = wac.getBean(RequestMappingHandlerMapping.class);//通过上下文对象获取RequestMappingHandlerMapping实例对象
         Map<RequestMappingInfo, HandlerMethod> handlerMethods = bean.getHandlerMethods();
         for (RequestMappingInfo rmi : handlerMethods.keySet()) {
+            // 判断该方法是否跳过鉴权
+            Method method = handlerMethods.get(rmi).getMethod();
+            if (method.isAnnotationPresent(PassToken.class)) {
+                PassToken passToken = method.getAnnotation(PassToken.class);
+                if (passToken.permission()) {
+                    continue;
+                }
+            }
+            // 未配置方法名称
             if (rmi.getName() == null) {
                 continue;
             }
@@ -62,41 +64,39 @@ public class PermissionServiceImpl implements PermissionService {
             PatternsRequestCondition prc = rmi.getPatternsCondition();
             Set<String> patterns = prc.getPatterns();
             for (String uStr : patterns) {
-                if (!forgetUL.contains(uStr)) {
-                    UserPermission up = new UserPermission();
-                    if (parentIds.containsKey(names[0])) {
-                        up.setParentId(parentIds.get(names[0]));
-                    } else {
-                        // 增加父级权限
-                        UserPermission upParent = new UserPermission();
-                        upParent.setName(names[0]);
-                        upParent.setAction("");
-                        upParent.setType(type);
-                        Long parentId = this.create(upParent);
-                        parentIds.put(names[0], parentId);
-                        upParent.setId(parentId);
-                        ups.add(upParent);
-                        // 处理待更新map
-                        if (todoMap.containsKey(upParent.getAction())) {
-                            JSONObject obj = todoMap.get(upParent.getAction());
-                            obj.put("newId", upParent.getId());
-                            todoMap.put(upParent.getAction(), obj);
-                        }
-                        //
-                        up.setParentId(parentId);
-                    }
-                    up.setName(names[1]);
-                    up.setAction(uStr);
-                    up.setType(type);
-                    Long id = this.create(up);
-                    up.setId(id);
-                    ups.add(up);
+                UserPermission up = new UserPermission();
+                if (parentIds.containsKey(names[0])) {
+                    up.setParentId(parentIds.get(names[0]));
+                } else {
+                    // 增加父级权限
+                    UserPermission upParent = new UserPermission();
+                    upParent.setName(names[0]);
+                    upParent.setAction("");
+                    upParent.setType(type);
+                    Long parentId = this.create(upParent);
+                    parentIds.put(names[0], parentId);
+                    upParent.setId(parentId);
+                    ups.add(upParent);
                     // 处理待更新map
-                    if (todoMap.containsKey(up.getAction())) {
-                        JSONObject obj = todoMap.get(up.getAction());
-                        obj.put("newId", up.getId());
-                        todoMap.put(up.getAction(), obj);
+                    if (todoMap.containsKey(upParent.getAction())) {
+                        JSONObject obj = todoMap.get(upParent.getAction());
+                        obj.put("newId", upParent.getId());
+                        todoMap.put(upParent.getAction(), obj);
                     }
+                    //
+                    up.setParentId(parentId);
+                }
+                up.setName(names[1]);
+                up.setAction(uStr);
+                up.setType(type);
+                Long id = this.create(up);
+                up.setId(id);
+                ups.add(up);
+                // 处理待更新map
+                if (todoMap.containsKey(up.getAction())) {
+                    JSONObject obj = todoMap.get(up.getAction());
+                    obj.put("newId", up.getId());
+                    todoMap.put(up.getAction(), obj);
                 }
             }
         }

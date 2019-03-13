@@ -6,13 +6,14 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 
 import com.ywxt.Annotation.PassToken;
 import com.ywxt.Domain.User.User;
-import com.ywxt.Service.User.Impl.UserServiceImpl;
+import com.ywxt.Service.User.RolePermissionService;
 import com.ywxt.Service.User.UserService;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Utils.RedisUtils;
 
 import io.jsonwebtoken.SignatureException;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -28,6 +29,8 @@ public class AuthenticationHandler implements HandlerInterceptor {
 
     @Resource
     private UserService userService;
+    @Resource
+    private RolePermissionService rolePermissionService;
 
     // 在业务处理器处理请求之前被调用
     @Override
@@ -49,7 +52,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
         Method method = handlerMethod.getMethod();
         if (method.isAnnotationPresent(PassToken.class)) {
             PassToken passToken = method.getAnnotation(PassToken.class);
-            if (passToken.required()) {
+            if (passToken.login()) {
                 return true;
             }
         }
@@ -90,6 +93,28 @@ public class AuthenticationHandler implements HandlerInterceptor {
             throw new RuntimeException("401");
         }
 
+        /**
+         * three:判断接口权限
+         */
+        // admin：所有权限
+        if (user.getRole().getCode().equals("admin")) {
+            return true;
+        }
+        // 免鉴权
+        if (method.isAnnotationPresent(PassToken.class)) {
+            PassToken passToken = method.getAnnotation(PassToken.class);
+            if (passToken.permission()) {
+                return true;
+            }
+        }
+        RequestMapping mMapping = method.getAnnotation(RequestMapping.class);
+        RequestMapping cMapping = handlerMethod.getBeanType().getAnnotation(RequestMapping.class);
+        String action = cMapping.value()[0] + mMapping.value()[0];
+        boolean hasPermission = rolePermissionService.checkRolePermission("api", action, user.getRole().getId());
+        // 无权限
+        if (!hasPermission) {
+            throw new RuntimeException("403");
+        }
         return true;
     }
 }

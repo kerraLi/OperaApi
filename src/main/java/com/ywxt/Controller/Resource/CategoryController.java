@@ -2,7 +2,6 @@ package com.ywxt.Controller.Resource;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
-import com.ywxt.Annotation.PassToken;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Resource.Category;
 import com.ywxt.Service.Resource.CategoryService;

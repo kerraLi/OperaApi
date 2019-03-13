@@ -79,6 +79,8 @@ public class UserServiceImpl implements UserService {
             // 单独处理password
             if (user.getPassword() == null) {
                 user.setPassword(oldU.getPassword());
+            } else {
+                user.setPassword(MD5Utils.md5(user.getPassword()));
             }
             return userDao.update(user);
         }

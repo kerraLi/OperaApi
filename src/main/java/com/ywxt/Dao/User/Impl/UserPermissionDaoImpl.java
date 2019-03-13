@@ -74,6 +74,41 @@ public class UserPermissionDaoImpl implements UserPermissionDao {
         return (UserPermission) list.get(0);
     }
 
+    @Transactional
+    public UserPermission getUserPermission(String type, String action, long roleId) {
+        List<UserPermission> list = em.createQuery(
+                "select new " +
+                        "   com.ywxt.Domain.User.UserPermission(" +
+                        "       up.id,up.parentId,up.name,up.action,up.type" +
+                        "   ) " +
+                        "from UserRolePermission urp " +
+                        "join urp.userRole ur " +
+                        "join urp.userPermission up " +
+                        "where ur.id = :roleId " +
+                        "and up.type = :type " +
+                        "and up.action = :action ", UserPermission.class)
+                .setParameter("roleId", roleId)
+                .setParameter("type", type)
+                .setParameter("action", action)
+                .getResultList();
+        return (list.size() > 0) ? list.get(0) : null;
+    }
+
+    @Override
+    public List<UserPermission> getUserPermissionsByRoleId(long roleId) {
+        return em.createQuery(
+                "select new " +
+                        "   com.ywxt.Domain.User.UserPermission(" +
+                        "       up.id,up.parentId,up.name,up.action,up.type" +
+                        "   ) " +
+                        "from UserRolePermission urp " +
+                        "join urp.userRole ur " +
+                        "join urp.userPermission up " +
+                        "where ur.id = :roleId", UserPermission.class)
+                .setParameter("roleId", roleId)
+                .getResultList();
+    }
+
     public List<UserPermission> getList(HashMap<String, Object> params) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<UserPermission> query = builder.createQuery(UserPermission.class);

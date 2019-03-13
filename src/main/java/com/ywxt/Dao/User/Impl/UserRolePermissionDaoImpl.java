@@ -1,13 +1,11 @@
 package com.ywxt.Dao.User.Impl;
 
 import com.ywxt.Dao.User.UserRolePermissionDao;
-import com.ywxt.Domain.User.UserPermission;
 import com.ywxt.Domain.User.UserRolePermission;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -83,18 +81,4 @@ public class UserRolePermissionDaoImpl implements UserRolePermissionDao {
         return em.find(UserRolePermission.class, id);
     }
 
-    @Override
-    public List<UserPermission> getRolePermissions(long roleId) {
-        return em.createQuery(
-                "select new " +
-                        "   com.ywxt.Domain.User.UserPermission(" +
-                        "       up.id,up.parentId,up.name,up.action,up.type" +
-                        "   ) " +
-                        "from UserRolePermission urp " +
-                        "join urp.userRole ur " +
-                        "join urp.userPermission up " +
-                        "where ur.id = :roleId", UserPermission.class)
-                .setParameter("roleId", roleId)
-                .getResultList();
-    }
 }

@@ -9,5 +9,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PassToken {
-    boolean required() default true;
+
+    // 标记接口是否跳过登陆
+    boolean login() default false;
+
+    // 标记接口是否跳过鉴权
+    boolean permission() default true;
 }

@@ -61,7 +61,7 @@ public class UserDaoImpl implements UserDao {
         criteriaQuery.select(from).where(from.get("username").in(username));
         List<User> list = em.createQuery(criteriaQuery).getResultList();
         if (list.size() == 0) {
-            throw new Exception("账号名或密码错误");
+            return null;
         }
         return (User) list.get(0);
     }

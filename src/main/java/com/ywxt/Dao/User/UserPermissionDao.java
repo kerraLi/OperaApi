@@ -21,6 +21,11 @@ public interface UserPermissionDao {
 
     public UserPermission getUserPermission(String action) throws Exception;
 
+    public UserPermission getUserPermission(String type, String action, long roleId);
+
+    // 获取角色所有权限
+    public List<UserPermission> getUserPermissionsByRoleId(long roleId);
+
     public List<UserPermission> getList(HashMap<String, Object> params);
 
     public List<UserPermission> getList(HashMap<String, Object> params, int pageNumber, int pageSize);

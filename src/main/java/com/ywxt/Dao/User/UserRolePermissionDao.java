@@ -26,6 +26,4 @@ public interface UserRolePermissionDao {
     // 获取单个关联
     public UserRolePermission getUserRolePermission(long id);
 
-    // 获取角色所有权限
-    public List<UserPermission> getRolePermissions(long roleId);
 }

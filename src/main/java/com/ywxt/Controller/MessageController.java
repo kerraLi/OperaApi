@@ -73,7 +73,7 @@ public class MessageController extends CommonController {
 
 
     // webhook接收
-    @PassToken
+    @PassToken(login = true)
     @NotOperationAction
     @RequestMapping(value = {"/webhook"}, method = RequestMethod.POST)
     @ResponseBody
@@ -102,7 +102,7 @@ public class MessageController extends CommonController {
     }
 
     // 发送websocket消息
-    @PassToken
+    @PassToken(login = true)
     @NotOperationAction
     @RequestMapping(value = {"/websocket"}, method = RequestMethod.POST)
     @ResponseBody
