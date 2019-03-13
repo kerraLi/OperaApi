@@ -95,7 +95,7 @@ public class UserPermissionDaoImpl implements UserPermissionDao {
     }
 
     @Override
-    public List<UserPermission> getUserPermissionsByRoleId(long roleId) {
+    public List<UserPermission> getUserPermissions(long roleId) {
         return em.createQuery(
                 "select new " +
                         "   com.ywxt.Domain.User.UserPermission(" +
@@ -106,6 +106,23 @@ public class UserPermissionDaoImpl implements UserPermissionDao {
                         "join urp.userPermission up " +
                         "where ur.id = :roleId", UserPermission.class)
                 .setParameter("roleId", roleId)
+                .getResultList();
+    }
+
+    @Override
+    public List<UserPermission> getUserPermissions(long roleId, String type) {
+        return em.createQuery(
+                "select new " +
+                        "   com.ywxt.Domain.User.UserPermission(" +
+                        "       up.id,up.parentId,up.name,up.action,up.type" +
+                        "   ) " +
+                        "from UserRolePermission urp " +
+                        "join urp.userRole ur " +
+                        "join urp.userPermission up " +
+                        "where ur.id = :roleId " +
+                        "and up.type = :type ", UserPermission.class)
+                .setParameter("roleId", roleId)
+                .setParameter("type", type)
                 .getResultList();
     }
 

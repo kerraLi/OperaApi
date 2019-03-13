@@ -124,14 +124,14 @@ public class PermissionServiceImpl implements PermissionService {
             Long parentId = 0L;
             if (jObject.get("parentCode") != null && jObject.get("parentCode") != "") {
                 for (UserPermission up : ups) {
-                    if (up.getName().equals(jObject.get("parentName"))) {
+                    if (up.getAction().equals(jObject.get("parentCode"))) {
                         parentId = up.getId();
                     }
                 }
             }
             UserPermission up = new UserPermission();
             up.setType(type);
-            up.setAction((String) jObject.get("path"));
+            up.setAction((String) jObject.get("code"));
             up.setName((String) jObject.get("name"));
             up.setParentId(parentId);
             Long id = this.create(up);

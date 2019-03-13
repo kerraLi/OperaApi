@@ -1,11 +1,11 @@
 package com.ywxt.Service.Impl;
 
 import com.ywxt.Dao.User.UserDao;
+import com.ywxt.Dao.User.UserPermissionDao;
 import com.ywxt.Domain.User.User;
+import com.ywxt.Domain.User.UserPermission;
 import com.ywxt.Domain.User.UserRole;
 import com.ywxt.Service.AuthService;
-import com.ywxt.Service.User.RoleService;
-import com.ywxt.Service.User.UserService;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
@@ -21,6 +21,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Resource
     private UserDao userDao;
+    @Resource
+    private UserPermissionDao userPermissionDao;
 
     @Override
     public String login(String clientUsername, String clientPassword) throws Exception {
@@ -65,9 +67,13 @@ public class AuthServiceImpl implements AuthService {
         List<String> rolesCodes = new ArrayList<>();
         rolesCodes.add(role.getCode());
         user.setRoles(rolesCodes.toArray(new String[rolesCodes.size()]));
+        // menu
         if (!role.getCode().equals("admin")) {
             List<String> permissionMenus = new ArrayList<>();
-            // todo menu
+            List<UserPermission> ups = userPermissionDao.getUserPermissions(role.getId(), "menu");
+            for (UserPermission up : ups) {
+                permissionMenus.add(up.getAction());
+            }
             user.setMenus(permissionMenus.toArray(new String[permissionMenus.size()]));
         }
         return user;

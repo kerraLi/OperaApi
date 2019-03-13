@@ -50,7 +50,16 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         if (role == null) {
             throw new Exception("无效的角色信息");
         }
-        return userPermissionDao.getUserPermissionsByRoleId(roleId);
+        return userPermissionDao.getUserPermissions(roleId);
+    }
+
+    @Override
+    public List<UserPermission> getRolePermissions(long roleId, String type) throws Exception {
+        UserRole role = userRoleDao.getUserRole(roleId);
+        if (role == null) {
+            throw new Exception("无效的角色信息");
+        }
+        return userPermissionDao.getUserPermissions(roleId, type);
     }
 
     @Override
