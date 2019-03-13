@@ -26,44 +26,43 @@ public class CheckGodaddy extends Check {
         try {
             List<GodaddyDomain> list = new GodaddyDomainServiceImpl().getDomainList(new HashMap<String, Object>() {{
             }});
-            String action = "GODADDY_DOMAIN_EXPIRED";
+            String action = "GODADDY_DOMAIN_EXPIRED_NUM";
+            int count = 0;
             for (GodaddyDomain domain : list) {
                 if (domain.isAlertExpired() && !domain.isAlertMarked()) {
-                    DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-                    Map<String, String> param = new HashMap<String, String>();
-                    param.put("accountName", new GodaddyAccountDaoImpl().getAccount(domain.getAccessKeyId()).getUserName());
-                    param.put("domainId", domain.getDomainId());
-                    param.put("domain", domain.getDomain());
-                    param.put("expiredTime", dfOut.format(domain.getExpires()));
-                    param.put("expirationProtected", String.valueOf(domain.isExpirationProtected()));
-                    setMessage(action, domain.getDomain(), param);
-                    TelegramUtils.sendMessage(action, param);
+                    count++;
                 }
+            }
+            if (count > 0) {
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("count", count + "");
+                setMessage(action, action, param);
+                TelegramUtils.sendMessage(action, param);
             }
         } catch (Exception e) {
             sendException("GODADDY", "domain", e);
         }
     }
 
+    // todo
     // 校验证书有效期
     @Scheduled(cron = "0 10 0/5 * * ?")
     private static void checkCertificate() throws Exception {
         try {
             List<GodaddyCertificate> list = new GodaddyCertificateServiceImpl().getCertificateList(new HashMap<String, Object>() {{
             }});
-            String action = "GODADDY_CERTIFICATE_EXPIRED";
+            String action = "GODADDY_CERTIFICATE_EXPIRED_NUM";
+            int count = 0;
             for (GodaddyCertificate certificate : list) {
                 if (certificate.isAlertExpired() && !certificate.isAlertMarked()) {
-                    DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-                    Map<String, String> param = new HashMap<String, String>();
-                    param.put("accountName", new GodaddyAccountDaoImpl().getAccount(certificate.getAccessKeyId()).getUserName());
-                    param.put("certificateId", certificate.getCertificateId());
-                    param.put("domain", certificate.getCommonName());
-                    param.put("expiredTime", dfOut.format(certificate.getValidEnd()));
-                    param.put("subjectAlternativeNames", certificate.getSubjectAlternativeNames());
-                    setMessage(action, certificate.getCommonName(), param);
-                    TelegramUtils.sendMessage(action, param);
+                    count++;
                 }
+            }
+            if (count > 0) {
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("count", count + "");
+                setMessage(action, action, param);
+                TelegramUtils.sendMessage(action, param);
             }
         } catch (Exception e) {
             sendException("GODADDY", "certificate", e);

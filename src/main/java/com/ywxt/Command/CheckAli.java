@@ -43,18 +43,18 @@ public class CheckAli extends Check {
         try {
             List<AliEcs> list = new AliEcsServiceImpl().getEcsList(new HashMap<String, Object>() {{
             }});
-            String action = "ALI_ECS_EXPIRED";
+            String action = "ALI_ECS_EXPIRED_NUM";
+            int count = 0;
             for (AliEcs aliEcs : list) {
                 if (aliEcs.getAlertExpired() && !aliEcs.getAlertMarked()) {
-                    DateFormat dfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-                    Map<String, String> param = new HashMap<String, String>();
-                    param.put("accountName", new AliAccountDaoImpl().getAliAccount(aliEcs.getAccessKeyId()).getUserName());
-                    param.put("ecsId", aliEcs.getInstanceId());
-                    param.put("ecsName", aliEcs.getInstanceName());
-                    param.put("expiredTime", dfOut.format(aliEcs.getExpiredTime()));
-                    setMessage(action, aliEcs.getInstanceId(), param);
-                    TelegramUtils.sendMessage(action, param);
+                    count++;
                 }
+            }
+            if (count > 0) {
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("count", count + "");
+                setMessage(action, action, param);
+                TelegramUtils.sendMessage(action, param);
             }
         } catch (Exception e) {
             CheckAli.sendException("ALI", "ecs", e);

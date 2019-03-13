@@ -135,6 +135,7 @@ public class MessageServiceImpl {
             if (message.hasImageUrl()) {
                 jsonObject.put("imageUrl", message.getImageUrl());
             }
+            // 发送ws消息
             this.sendWebsocket(jsonObject);
         }
         return id;
@@ -143,8 +144,10 @@ public class MessageServiceImpl {
     // 发送ws消息
     private void sendWebsocket(JSONObject jsonObject) throws Exception {
         if (this.isHttpEnvironment()) {
+            System.out.println("================send ws http===================");
             new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
         } else {
+            System.out.println("================send ws no http===================" + Parameter.urlWebsocket);
             String params = HttpUtils.getParamContext(new HashMap<String, String>() {{
                 put("message", jsonObject.toString());
             }});
