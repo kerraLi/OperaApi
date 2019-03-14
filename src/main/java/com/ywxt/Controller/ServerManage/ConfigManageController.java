@@ -43,7 +43,7 @@ public class ConfigManageController {
      * @param configManage
      * @return
      */
-    @PassToken
+    @PassToken(login =true )
     @NotOperationAction
     @RequestMapping("/updateState")
     public ApiResult updateState(@RequestBody ConfigManage configManage){
