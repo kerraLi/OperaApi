@@ -6,10 +6,8 @@ import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.GodaddyDomainService;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Service.Impl.ParameterServiceImpl;
+import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
-import com.ywxt.Utils.HttpUtils;
-import com.ywxt.Utils.Parameter;
 
 import java.util.*;
 

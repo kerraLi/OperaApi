@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface MonitorSpeedService {
 
-    public JSONObject connPoints(String url) throws Exception;
+    public JSONObject speedTest(String url) throws Exception;
+
+    public JSONObject speedMonitor() throws Exception;
 }

@@ -19,13 +19,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
-@RequestMapping("/ali/cdn")
+@RequestMapping(value = "/ali/cdn", name = "阿里云CDN")
 public class AliCdnController extends CommonController {
 
     // cdn域名列表
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public JSONObject cdnDomainList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -49,7 +49,7 @@ public class AliCdnController extends CommonController {
 
     // 批量设置mark
     @ResponseBody
-    @RequestMapping(value = {"/param/{status}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/param/{status}"}, name = "批量标记", method = RequestMethod.POST)
     public JSONObject cdnParamSetAll(Integer[] ids, @PathVariable String status) throws Exception {
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
         if (status.equals("mark")) {
@@ -70,7 +70,7 @@ public class AliCdnController extends CommonController {
 
     // 设置mark
     @ResponseBody
-    @RequestMapping(value = {"/param/{status}/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/param/{status}/{id}"}, name = "标记", method = RequestMethod.POST)
     public JSONObject cdnParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
         AliCdn aliCdn = new AliCdnServiceImpl().getCdn(id);
         if (status.equals("mark")) {
@@ -84,14 +84,14 @@ public class AliCdnController extends CommonController {
 
     // cdn:节点刷新&预热
     @ResponseBody
-    @RequestMapping(value = {"/refresh"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/refresh"}, name = "刷新&预热", method = RequestMethod.POST)
     public Map<String, String> cdnRefreshObjectCache(String operateType, String refreshType, String content) throws Exception {
         return new AliCdnServiceImpl().refreshCdn(operateType, refreshType, content);
     }
 
     // cdn:节点刷新任务查看
     @ResponseBody
-    @RequestMapping(value = {"/refresh/task/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/refresh/task/list"}, name = "查看刷新任务", method = RequestMethod.POST)
     public JSONObject getCdnRefreshTaskList(HttpServletRequest request, HttpServletResponse response) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -127,7 +127,7 @@ public class AliCdnController extends CommonController {
 
     // cdn:节点刷新任务状态更新
     @ResponseBody
-    @RequestMapping(value = {"/refresh/task/update/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/refresh/task/update/{id}"}, name = "查看刷新任务状态", method = RequestMethod.GET)
     public AliCdnTask updateCdnRefreshTask(@PathVariable Integer id) throws Exception {
         return new AliCdnServiceImpl().updateCdnRefreshTask(id);
     }

@@ -2,7 +2,7 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
     <persistence-unit name="SimplePU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>com.ywxt.Domain.LogOperation</class>
+        <class>com.ywxt.Domain.Log.LogOperation</class>
         <properties>
             <property name="hibernate.connection.driver_class"
                       value="com.mysql.jdbc.Driver"/>

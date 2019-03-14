@@ -1,9 +1,9 @@
-package com.ywxt.Service.Impl;
+package com.ywxt.Service.Log.Impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Dao.LogOperationDao;
-import com.ywxt.Domain.LogOperation;
-import com.ywxt.Service.LogOperationService;
+import com.ywxt.Dao.Log.LogOperationDao;
+import com.ywxt.Domain.Log.LogOperation;
+import com.ywxt.Service.Log.LogOperationService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

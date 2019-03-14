@@ -37,6 +37,14 @@ public class CommonController {
     }
 
     // 统一返回接口
+    protected JSONObject returnObject() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("timestamp", System.currentTimeMillis());
+        jsonObject.put("status", "success");
+        return jsonObject;
+    }
+
+    // 统一返回接口
     protected JSONObject returnObject(HashMap<String, Object> hashMap) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("timestamp", System.currentTimeMillis());

@@ -14,6 +14,15 @@ public class UserRole {
     @Column(unique = true, nullable = false)
     private String code;
 
+    public UserRole() {
+    }
+
+    public UserRole(Long id, String name, String code) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+    }
+
     public Long getId() {
         return id;
     }

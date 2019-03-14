@@ -1,4 +1,4 @@
-package com.ywxt.Domain;
+package com.ywxt.Domain.System;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

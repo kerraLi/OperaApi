@@ -1,6 +1,6 @@
 package com.ywxt.Utils;
 
-import com.ywxt.Service.Impl.ParameterServiceImpl;
+import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,6 +31,8 @@ public class Parameter {
     public static int redisTllUserToken = 60 * 60 * 2;
     public static int redisTllMonitorSpeed = 60 * 60;
 
+    // 新建用户默认头像
+    public static String defaultAvatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif";
     // 登陆有效时间（ms）
     public static int loginTtlMs = 60 * 60 * 1000 * 2;
     // 登陆token密钥
@@ -71,6 +73,11 @@ public class Parameter {
     public static Map<String, String> MessageActions = new HashMap<String, String>() {{
         put("ERROR", df.format(new Date()) + "\r\n错误类：{class}\r\n错误信息{message}");
         put("ALI_ACCOUNT_NO_MONEY", df.format(new Date()) + "\r\n您好，阿里云账号余额已少于" + Parameter.getParamValue("ALI_ACCOUNT_BALANCE") + "元，请及时充值。\r\n账号：{accountName}\r\n当前余额{balance}");
+        // count
+        put("ALI_ECS_EXPIRED_NUM", "您好，已有{count}台阿里云服务器有效时间已少于" + Parameter.getParamValue("ALI_ECS_EXPIRED_DAY") + "天，请及时登陆平台查看，续费。\r\n");
+        put("GODADDY_DOMAIN_EXPIRED_NUM", "您好，已有{count}个GODADDY域名有效时间已少于" + Parameter.getParamValue("GODADDY_DOMAIN_EXPIRED_DAY") + "天，请及时登陆平台查看，续费。\r\n");
+        put("GODADDY_CERTIFICATE_EXPIRED_NUM", "您好，已有{count}个GODADDY证书有效时间已少于" + Parameter.getParamValue("GODADDY_CERTIFICATE_EXPIRED_DAY") + "天，请及时续费。\r\n");
+        // message
         put("ALI_ECS_EXPIRED", df.format(new Date()) + "\r\n您好，阿里云服务器有效时间已少于" + Parameter.getParamValue("ALI_ECS_EXPIRED_DAY") + "天，请及时续费。\r\n账号：{accountName}\r\n服务器ID:{ecsId}\r\n服务器名称:{ecsName}\r\n过期时间：{expiredTime}");
         put("GODADDY_DOMAIN_EXPIRED", df.format(new Date()) + "\r\n您好，Godaddy域名有效时间已少于" + Parameter.getParamValue("GODADDY_DOMAIN_EXPIRED_DAY") + "天，请及时续费。\r\n账号：{accountName}\r\n域名ID:{domainId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n到期是否受保护：{expirationProtected}");
         put("GODADDY_CERTIFICATE_EXPIRED", df.format(new Date()) + "\r\n您好，Godaddy证书有效时间已少于" + Parameter.getParamValue("GODADDY_CERTIFICATE_EXPIRED_DAY") + "天，请及时续费。\r\n账号：{accountName}\r\n证书ID:{certificateId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n主体备选域名：{subjectAlternativeNames}");

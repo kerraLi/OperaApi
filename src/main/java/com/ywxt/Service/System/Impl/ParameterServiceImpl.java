@@ -1,8 +1,8 @@
-package com.ywxt.Service.Impl;
+package com.ywxt.Service.System.Impl;
 
-import com.ywxt.Dao.Impl.ParameterDaoImpl;
-import com.ywxt.Domain.Parameter;
-import com.ywxt.Service.ParameterService;
+import com.ywxt.Dao.System.Impl.ParameterDaoImpl;
+import com.ywxt.Domain.System.Parameter;
+import com.ywxt.Service.System.ParameterService;
 
 import java.util.HashMap;
 import java.util.List;

@@ -44,6 +44,6 @@
         <mapping resource="hbm/Message.hbm.xml"/>
         <mapping resource="hbm/Parameter.hbm.xml"/>
         <mapping resource="hbm/ResourceHardware.hbm.xml"/>
-        <mapping class="com.ywxt.Domain.LogOperation"/>
+        <mapping class="com.ywxt.Domain.Log.LogOperation"/>
     </session-factory>
 </hibernate-configuration>

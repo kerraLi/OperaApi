@@ -13,17 +13,17 @@ import java.util.HashMap;
 import java.util.List;
 
 @Controller
-@RequestMapping("/go/account")
+@RequestMapping(value = "/go/account", name = "GO账户")
 public class GodaddyAccountController extends CommonController {
 
     @NotOperationAction
-    @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.GET)
     @ResponseBody
     public List<GodaddyAccount> list(HttpServletRequest request) throws Exception {
         return new GodaddyAccountServiceImpl().getList();
     }
 
-    @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject save(@ModelAttribute GodaddyAccount godaddyAccount) throws Exception {
         new GodaddyAccountServiceImpl().saveAccount(godaddyAccount);
@@ -31,7 +31,7 @@ public class GodaddyAccountController extends CommonController {
         }});
     }
 
-    @RequestMapping(value = {"/delete/{id}"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/delete/{id}"}, name = "删除", method = RequestMethod.POST)
     @ResponseBody
     public JSONObject delete(HttpServletRequest request, @PathVariable Integer id) throws Exception {
         if (new GodaddyAccountServiceImpl().deleteAccount(id)) {

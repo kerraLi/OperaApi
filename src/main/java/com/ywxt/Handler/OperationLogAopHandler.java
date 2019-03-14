@@ -1,8 +1,8 @@
 package com.ywxt.Handler;
 
 import com.auth0.jwt.JWT;
-import com.ywxt.Domain.LogOperation;
-import com.ywxt.Service.LogOperationService;
+import com.ywxt.Domain.Log.LogOperation;
+import com.ywxt.Service.Log.LogOperationService;
 import net.sf.json.JSONArray;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -27,7 +27,7 @@ public class OperationLogAopHandler {
      * 采用sessionId判断是否同一个请求：错误=》vue正式环境无跨域，因此访问到后台所有sessionId都相同导致访问出错
      */
     // 定义控制器切点
-    @Pointcut("execution(public * com.ywxt.Controller..*.*(..)) && !@annotation(com.ywxt.Annotation.NotOperationAction)")
+    @Pointcut("execution(public * com.ywxt.Controller..*.*(..)) && !@annotation(com.ywxt.Annotation.NotOperationAction) && !@annotation(com.ywxt.Annotation.PassToken)")
     public void pointCut() {
     }
 

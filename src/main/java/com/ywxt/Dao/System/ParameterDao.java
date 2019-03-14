@@ -1,4 +1,4 @@
-package com.ywxt.Dao;
+package com.ywxt.Dao.System;
 
 public interface ParameterDao {
 }

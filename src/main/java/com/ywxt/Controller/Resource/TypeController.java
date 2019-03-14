@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Controller
-@RequestMapping("/resource/type")
+@RequestMapping(value = "/resource/type", name = "资源类型")
 public class TypeController extends CommonController {
 
     @Resource
@@ -22,20 +22,20 @@ public class TypeController extends CommonController {
 
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/info/{code}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/info/{code}"}, name = "信息", method = RequestMethod.GET)
     public Type info(@PathVariable String code) throws Exception {
         return typeService.getType(code);
     }
 
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.GET)
     public List<Type> list(HttpServletRequest request) throws Exception {
         return typeService.getList();
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     public JSONObject save(@ModelAttribute Type type) {
         typeService.save(type);
         return this.returnObject(new HashMap<>() {{
@@ -44,7 +44,7 @@ public class TypeController extends CommonController {
 
 
     @ResponseBody
-    @RequestMapping(value = {"/delete/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/delete/{id}"}, name = "删除", method = RequestMethod.GET)
     public JSONObject delete(@PathVariable Integer id) throws Exception {
         if (typeService.remove(id)) {
             return this.returnObject(new HashMap<>() {{

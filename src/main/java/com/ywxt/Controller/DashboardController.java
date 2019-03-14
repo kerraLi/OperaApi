@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/dash")
+@RequestMapping(value = "/dash", name = "仪表盘")
 public class DashboardController {
 
     // 面板模块数量
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/number"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/number"}, name = "模块", method = RequestMethod.GET)
     public JSONObject number() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("messages", new MessageServiceImpl().getTotal(new HashMap<String, Object>()));
@@ -44,7 +44,7 @@ public class DashboardController {
     // 消息列表
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/message"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/message"}, name = "消息块", method = RequestMethod.GET)
     public JSONObject message() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("lineChart", new MessageServiceImpl().getLineChartData(10));
@@ -55,7 +55,7 @@ public class DashboardController {
     // 账户列表
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/account"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/account"}, name = "账户块", method = RequestMethod.GET)
     public JSONObject account() throws Exception {
         String[] xData = {"Ali-ECS", "Ali-CDN域名", "GO-域名", "GO-证书"};
         JSONObject jsonObject = new JSONObject();
@@ -133,11 +133,6 @@ public class DashboardController {
         }});
         // jsonObject.put("divide", jsonArray);
         return jsonObject;
-    }
-
-    public static void main(String[] args) throws Exception {
-        String[] xData = {"Ali-ECS", "Ali-CDN域名", "GO-域名", "GO-证书"};
-        new DashboardController().account();
     }
 
 }

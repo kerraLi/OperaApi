@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 @Controller
-@RequestMapping("/monitor/point")
+@RequestMapping(value = "/monitor/point", name = "监控点")
 public class PointController extends CommonController {
 
     @Resource
@@ -21,7 +21,7 @@ public class PointController extends CommonController {
 
     @NotOperationAction
     @ResponseBody
-    @RequestMapping(value = {"/list"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
         int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
@@ -33,7 +33,7 @@ public class PointController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/save"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     public JSONObject save(@RequestBody MonitorPoint monitorPoint) throws Exception {
         if (monitorPoint.getLocation().isEmpty()) {
             throw new Exception("监控点地区不能为空。");
@@ -47,7 +47,7 @@ public class PointController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/remove/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/remove/{id}"}, name = "删除", method = RequestMethod.GET)
     public JSONObject remove(@PathVariable Integer id) throws Exception {
         monitorPointService.remove(id);
         return this.returnObject(new HashMap<>() {{
@@ -55,7 +55,7 @@ public class PointController extends CommonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = {"/remove"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/remove"}, name = "批量删除", method = RequestMethod.POST)
     public JSONObject removeAll(Integer[] ids) throws Exception {
         monitorPointService.removeAll(ids);
         return this.returnObject(new HashMap<>() {{

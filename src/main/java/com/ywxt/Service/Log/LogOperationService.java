@@ -1,7 +1,7 @@
-package com.ywxt.Service;
+package com.ywxt.Service.Log;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Domain.LogOperation;
+import com.ywxt.Domain.Log.LogOperation;
 
 import java.util.HashMap;
 

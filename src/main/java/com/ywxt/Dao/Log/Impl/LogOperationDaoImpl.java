@@ -1,7 +1,7 @@
-package com.ywxt.Dao.Impl;
+package com.ywxt.Dao.Log.Impl;
 
-import com.ywxt.Dao.LogOperationDao;
-import com.ywxt.Domain.LogOperation;
+import com.ywxt.Dao.Log.LogOperationDao;
+import com.ywxt.Domain.Log.LogOperation;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

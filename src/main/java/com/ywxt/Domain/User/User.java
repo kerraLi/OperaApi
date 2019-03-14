@@ -1,9 +1,13 @@
 package com.ywxt.Domain.User;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "users")
+@DynamicUpdate
 public class User {
 
     @Id
@@ -18,10 +22,13 @@ public class User {
     private String nickname;
     private String introduction;
     private String avatar;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "roleId")
+    private UserRole role;
     @Transient
-    private String[] roles;
+    private String[] roles = new String[0];
     @Transient
-    private String[] menus;
+    private String[] menus = new String[0];
 
     public long getId() {
         return id;
@@ -86,4 +93,13 @@ public class User {
     public void setMenus(String[] menus) {
         this.menus = menus;
     }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
 }

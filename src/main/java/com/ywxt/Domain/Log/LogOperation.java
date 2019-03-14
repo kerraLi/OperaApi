@@ -1,4 +1,4 @@
-package com.ywxt.Domain;
+package com.ywxt.Domain.Log;
 
 import org.springframework.data.annotation.CreatedDate;
 
