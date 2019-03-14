@@ -74,6 +74,18 @@ public class MessageServiceImpl {
         return new MessageDaoImpl().getListTotal(params);
     }
 
+    // 获取所有类型
+    public List<String> getTypes() {
+        Map<String, String> map = Parameter.MessageTitles;
+        List<String> list = new ArrayList<>();
+        for (String s : map.values()) {
+            if (!list.contains(s)) {
+                list.add(s);
+            }
+        }
+        return list;
+    }
+
     // 查询所有&分页
     public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         // 最近时间倒叙
@@ -108,7 +120,6 @@ public class MessageServiceImpl {
         }
         // 存数据转换城br
         context = context.replace("\r\n", "</br>");
-        String[] actions = action.split("_");
         // 额外设置参数 目前“webhook”参数
         if (otherParam.size() > 0) {
             message.setImageUrl(otherParam.get("imageUrl"));
@@ -116,7 +127,7 @@ public class MessageServiceImpl {
             context = context + "</br><img src='" + otherParam.get("imageUrl") + "'>";
         }
         message.setTitle(Parameter.MessageTitles.get(action));
-        message.setTheme(actions[0]);
+        message.setTheme(action);
         message.setThemeId(themeId);
         message.setMessage(context);
         message.setCreatedTime(new Date());
