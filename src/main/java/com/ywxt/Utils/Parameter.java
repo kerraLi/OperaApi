@@ -85,6 +85,20 @@ public class Parameter {
     }};
     public static Map<String, String> MessageTitles = new HashMap<String, String>() {{
         put("ALI_ACCOUNT_NO_MONEY", "续费");
+        put("ALI_ECS_EXPIRED_NUM", "ALI服务器过期");
+        put("ALI_ECS_EXPIRED", "ALI服务器过期");
+        put("GODADDY_DOMAIN_EXPIRED_NUM", "GO域名过期");
+        put("GODADDY_DOMAIN_EXPIRED", "GO域名过期");
+        put("GODADDY_CERTIFICATE_EXPIRED_NUM", "GO证书过期");
+        put("GODADDY_CERTIFICATE_EXPIRED", "GO证书过期");
+        put("WEBHOOK_MESSAGE", "WEBHOOK报警");
+    }};
+
+    /**
+     * todo 特殊权限
+     */
+    public static Map<String, String> SpecialPermissions = new HashMap<String, String>() {{
+        put("ALI_ACCOUNT_NO_MONEY", "续费");
         put("ALI_ECS_EXPIRED", "过期");
         put("ALI_ECS_EXPIRED_NUM", "过期");
         put("GODADDY_DOMAIN_EXPIRED", "过期");
@@ -93,4 +107,5 @@ public class Parameter {
         put("GODADDY_CERTIFICATE_EXPIRED_NUM", "过期");
         put("WEBHOOK_MESSAGE", "报警");
     }};
+
 }
