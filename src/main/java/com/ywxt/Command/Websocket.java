@@ -161,7 +161,6 @@ public class Websocket {
             return;
         }
         JSONObject infoJson = JSONObject.parseObject(speedInfo);
-//        List<String> urls = JSONObject.parseArray((String) infoJson.get("urls"), String.class);
         JSONArray urls = (JSONArray) infoJson.get("urls");
         JSONArray points = (JSONArray) infoJson.get("points");
         HashMap<String, Object> totalData = new HashMap<String, Object>();

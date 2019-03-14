@@ -1,6 +1,7 @@
 package com.ywxt.Controller.User;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.User.UserPermission;
 import com.ywxt.Service.User.RolePermissionService;
@@ -27,6 +28,7 @@ public class RolePermissionController extends CommonController {
     }
 
     @ResponseBody
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public List<UserPermission> getPermissions(long roleId) throws Exception {
         return rolePermissionService.getRolePermissions(roleId);

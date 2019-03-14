@@ -1,6 +1,7 @@
 package com.ywxt.Controller.User;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.User.User;
 import com.ywxt.Service.User.UserService;
@@ -21,6 +22,7 @@ public class UserController extends CommonController {
     private UserService userService;
 
     @ResponseBody
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, name = "用户列表", method = RequestMethod.POST)
     public JSONObject list(HttpServletRequest request) throws Exception {
         int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));

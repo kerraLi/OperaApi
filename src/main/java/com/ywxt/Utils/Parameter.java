@@ -86,8 +86,11 @@ public class Parameter {
     public static Map<String, String> MessageTitles = new HashMap<String, String>() {{
         put("ALI_ACCOUNT_NO_MONEY", "续费");
         put("ALI_ECS_EXPIRED", "过期");
+        put("ALI_ECS_EXPIRED_NUM", "过期");
         put("GODADDY_DOMAIN_EXPIRED", "过期");
+        put("GODADDY_DOMAIN_EXPIRED_NUM", "过期");
         put("GODADDY_CERTIFICATE_EXPIRED", "过期");
+        put("GODADDY_CERTIFICATE_EXPIRED_NUM", "过期");
         put("WEBHOOK_MESSAGE", "报警");
     }};
 }

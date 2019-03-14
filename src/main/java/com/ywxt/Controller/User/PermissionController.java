@@ -1,6 +1,7 @@
 package com.ywxt.Controller.User;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.User.UserPermission;
 import com.ywxt.Service.User.PermissionService;
@@ -21,12 +22,14 @@ public class PermissionController extends CommonController {
     private PermissionService permissionService;
 
     @ResponseBody
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public List<UserPermission> list() throws Exception {
         return permissionService.getList();
     }
 
     @ResponseBody
+    @NotOperationAction
     @RequestMapping(value = {"/list/{type}"}, name = "单类型列表", method = RequestMethod.POST)
     public List<UserPermission> list(@PathVariable String type) throws Exception {
         return permissionService.getList(type);

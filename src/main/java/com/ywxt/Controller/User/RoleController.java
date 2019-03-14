@@ -1,6 +1,7 @@
 package com.ywxt.Controller.User;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.User.UserRole;
 import com.ywxt.Service.User.RoleService;
@@ -21,12 +22,14 @@ public class RoleController extends CommonController {
     private RoleService roleService;
 
     @ResponseBody
+    @NotOperationAction
     @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
     public List<UserRole> list() throws Exception {
         return roleService.getList();
     }
 
     @ResponseBody
+    @NotOperationAction
     @RequestMapping(value = {"/list/valid"}, name = "有效列表", method = RequestMethod.POST)
     public List<UserRole> listValid() throws Exception {
         return roleService.getListValid();
