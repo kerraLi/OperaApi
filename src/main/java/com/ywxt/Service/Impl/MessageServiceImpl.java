@@ -120,6 +120,7 @@ public class MessageServiceImpl {
         }
         // 存数据转换城br
         context = context.replace("\r\n", "</br>");
+        String[] actions = action.split("_");
         // 额外设置参数 目前“webhook”参数
         if (otherParam.size() > 0) {
             message.setImageUrl(otherParam.get("imageUrl"));
@@ -127,7 +128,7 @@ public class MessageServiceImpl {
             context = context + "</br><img src='" + otherParam.get("imageUrl") + "'>";
         }
         message.setTitle(Parameter.MessageTitles.get(action));
-        message.setTheme(action);
+        message.setTheme(actions[0]);
         message.setThemeId(themeId);
         message.setMessage(context);
         message.setCreatedTime(new Date());

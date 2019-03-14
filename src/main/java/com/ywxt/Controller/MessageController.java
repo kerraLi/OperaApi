@@ -44,8 +44,8 @@ public class MessageController extends CommonController {
         if (!(request.getParameter("status") == null) && !request.getParameter("status").isEmpty()) {
             params.put("status", request.getParameter("status"));
         }
-        if (!(request.getParameter("theme") == null) && !request.getParameter("theme").isEmpty()) {
-            params.put("theme", request.getParameter("theme"));
+        if (!(request.getParameter("title") == null) && !request.getParameter("title").isEmpty()) {
+            params.put("title", request.getParameter("title"));
         }
         if (!(request.getParameter("key") == null) && !(request.getParameter("key").isEmpty())) {
             params.put("filter", request.getParameter("key"));

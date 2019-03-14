@@ -72,6 +72,11 @@ public class DataServiceImpl implements DataService {
     }
 
     // 列表
+    public List<Data> getList(HashMap<String, Object> params) {
+        return dataDao.getList(params);
+    }
+
+    // 列表
     public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         List<Data> list = dataDao.getList(params, pageNumber, pageSize);
         JSONObject jsonObject = new JSONObject();
