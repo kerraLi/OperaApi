@@ -6,8 +6,10 @@ import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
+import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Handler.PropertyStrategyHandler;
 import com.ywxt.Service.Godaddy.GodaddyService;
+import com.ywxt.Service.System.Impl.RefreshServiceImpl;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import net.sf.ezmorph.object.DateMorpher;
@@ -51,6 +53,12 @@ public class GodaddyServiceImpl implements GodaddyService {
 
     // 更新源数据
     public void freshSourceData() throws Exception {
+        // 记录更新时间
+        LogRefresh log = new LogRefresh();
+        log.setTime(new Date());
+        log.setType("godaddy");
+        new RefreshServiceImpl().saveRefreshLog(log);
+        // 刷新
         this.freshDomain();
         this.freshCertificate();
     }

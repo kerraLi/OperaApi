@@ -59,6 +59,7 @@ public class ConfigManageController {
      * @return
      */
     @RequestMapping("/list")
+    @NotOperationAction
     public ApiResult list(@RequestBody ConfigManage configManage) {
         ExceptionUtil.isTrue(configManage.getServerId() == null, "服务器id不能为空");
         return ApiResult.successWithObject(configManageService.list(configManage.getServerId()));

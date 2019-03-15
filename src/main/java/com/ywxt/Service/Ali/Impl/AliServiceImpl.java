@@ -1,6 +1,5 @@
 package com.ywxt.Service.Ali.Impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceRequest;
@@ -15,9 +14,10 @@ import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliCdn;
 import com.ywxt.Domain.Ali.AliEcs;
+import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
-import com.ywxt.Utils.Parameter;
+import com.ywxt.Service.System.Impl.RefreshServiceImpl;
 
 import java.util.*;
 
@@ -60,6 +60,11 @@ public class AliServiceImpl implements AliService {
 
     // 更新ali源数据(按账户更新)
     public void freshSourceData() throws Exception {
+        // 记录更新时间
+        LogRefresh log = new LogRefresh();
+        log.setTime(new Date());
+        log.setType("ali");
+        new RefreshServiceImpl().saveRefreshLog(log);
         // 更新ecs数据 && 更新cdn域名数据
         this.freshEcsData();
         this.freshCdnData();
