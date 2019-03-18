@@ -1,6 +1,5 @@
 package com.ywxt.Service.Ali.Impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceRequest;
@@ -9,19 +8,31 @@ import com.aliyuncs.cdn.model.v20141111.*;
 import com.aliyuncs.ecs.model.v20140526.*;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.aliyuncs.scdn.model.v20171115.DescribeScdnUserDomainsRequest;
+import com.aliyuncs.scdn.model.v20171115.DescribeScdnUserDomainsResponse;
+import com.ywxt.Dao.Ali.AliScdnDao;
 import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliCdnDaoImpl;
 import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliCdn;
 import com.ywxt.Domain.Ali.AliEcs;
+import com.ywxt.Domain.Ali.AliScdn;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
-import com.ywxt.Utils.Parameter;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Scope("prototype")
+@Service
 public class AliServiceImpl implements AliService {
+
+    @Autowired
+    private AliScdnDao aliScdnDao;
 
     private String accessKeyId;
     private String accessKeySecret;
@@ -63,6 +74,58 @@ public class AliServiceImpl implements AliService {
         // 更新ecs数据 && 更新cdn域名数据
         this.freshEcsData();
         this.freshCdnData();
+    }
+    //// 更新ali源数据(按账户更新)
+    public void freshSourceData(String accessKeyId,String accessKeySecret) throws Exception {
+        this.accessKeyId = accessKeyId;
+        this.accessKeySecret = accessKeySecret;
+        // 更新ecs数据 && 更新cdn域名数据
+        this.freshEcsData();
+        this.freshCdnData();
+        this.freshScdnData();
+    }
+
+    //更新scdn数据
+    private void freshScdnData() throws Exception {
+        List<AliScdn> list = aliScdnDao.findByAccessKeyId(this.accessKeyId);
+        if(CollectionUtils.isNotEmpty(list)){
+            aliScdnDao.deleteInBatch(list);
+        }
+        AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(this.accessKeyId);
+        List<AliScdn> aliScdns = new ArrayList<>();
+        IClientProfile profile = DefaultProfile.getProfile("",this.accessKeyId,this.accessKeySecret);
+        IAcsClient client = new DefaultAcsClient(profile);
+        int pageSize = 20;
+        int pageNumber = 1;
+        for(;;){
+            DescribeScdnUserDomainsRequest scdnRequest = new DescribeScdnUserDomainsRequest();
+            scdnRequest.setPageSize(pageSize);
+            scdnRequest.setPageNumber(pageNumber);
+            scdnRequest.setEndpoint("scdn.aliyuncs.com");
+            DescribeScdnUserDomainsResponse response = null;
+            try {
+                response = client.getAcsResponse(scdnRequest);
+            }catch (Exception e){
+                //账号没有开启scdn报的错误
+            }
+            if(response!=null){
+                List<DescribeScdnUserDomainsResponse.PageData> datas = response.getDomains();
+                for(DescribeScdnUserDomainsResponse.PageData data : datas){
+                    AliScdn aliScdn = new AliScdn(aliAccount,data);
+                    aliScdns.add(aliScdn);
+                }
+                // 最后一页 跳出
+                if (datas.size() < pageSize) {
+                    break;
+                }
+                pageNumber++;
+            }
+            break;
+        }
+        if(CollectionUtils.isNotEmpty(aliScdns)){
+            aliScdnDao.saveAll(aliScdns);
+            aliScdnDao.flush();
+        }
     }
 
     // 更新ecs数据

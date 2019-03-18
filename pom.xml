@@ -123,6 +123,12 @@
             <artifactId>aliyun-java-sdk-cdn</artifactId>
             <version>3.0.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-scdn -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-scdn</artifactId>
+            <version>1.2.3</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -278,8 +284,6 @@
             <artifactId>httpmime</artifactId>
             <version>4.5.2</version>
         </dependency>
-
-
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>

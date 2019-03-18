@@ -1,21 +1,23 @@
 package com.ywxt.Command;
 
-import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Utils.TelegramUtils;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
 public class CheckAli extends Check {
+
+    @Autowired
+    private ObjectFactory<AliServiceImpl> objectFactory;
 
     // 校验余额
     @Scheduled(cron = "0 0 0/1 * * ?")
@@ -64,12 +66,12 @@ public class CheckAli extends Check {
 
     // 刷新数据
     @Scheduled(cron = "0 0 0/5 * * ?")
-    private static void refreshData() {
+    private void refreshData() {
         try {
             List<AliAccount> list = new AliAccountServiceImpl().getList();
             for (AliAccount aliAccount : list) {
                 if (aliAccount.getStatus().equals("normal")) {
-                    new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
+                    objectFactory.getObject().freshSourceData(aliAccount.getAccessKeyId(),aliAccount.getAccessKeySecret());
                 }
             }
         } catch (Exception e) {
