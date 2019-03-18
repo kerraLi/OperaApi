@@ -71,17 +71,17 @@ public class ExceptionsHandler {
         }
     }
 
-//    // 可以直接写@EceptionHandler，IOExeption继承于Exception
-//    @ResponseBody
-//    @ExceptionHandler(Exception.class)
-//    public String defaultExceptionHandler(HttpServletRequest request, Exception exception) {
-//        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("timestamp", System.currentTimeMillis());
-//        jsonObject.put("status", "error");
-//        jsonObject.put("message", exception.getMessage());
-//        jsonObject.put("class", exception.getClass());
-//        jsonObject.put("line", exception.toString());
-//        jsonObject.put("path", request.getPathInfo());
-//        return jsonObject.toString();
-//    }
+    // 可以直接写@EceptionHandler，IOExeption继承于Exception
+    @ResponseBody
+    @ExceptionHandler(Exception.class)
+    public String defaultExceptionHandler(HttpServletRequest request, Exception exception) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("timestamp", System.currentTimeMillis());
+        jsonObject.put("status", "error");
+        jsonObject.put("message", exception.getMessage());
+        jsonObject.put("class", exception.getClass());
+        jsonObject.put("line", exception.toString());
+        jsonObject.put("path", request.getPathInfo());
+        return jsonObject.toString();
+    }
 }

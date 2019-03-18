@@ -4,6 +4,8 @@ import com.ywxt.Dao.Aws.Impl.AwsAccountDaoImpl;
 import com.ywxt.Dao.Aws.Impl.AwsEc2DaoImpl;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Domain.Aws.AwsEc2;
+import com.ywxt.Domain.Log.LogRefresh;
+import com.ywxt.Service.System.Impl.RefreshServiceImpl;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -14,6 +16,7 @@ import software.amazon.awssdk.services.ec2.model.Instance;
 import software.amazon.awssdk.services.ec2.model.Reservation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +44,12 @@ public class AwsServiceImpl {
 
     // 更新源数据
     public void freshSourceData() throws Exception {
+        // 记录更新时间
+        LogRefresh log = new LogRefresh();
+        log.setTime(new Date());
+        log.setType("aws");
+        new RefreshServiceImpl().saveRefreshLog(log);
+        // 刷新
         this.freshEc2();
     }
 
@@ -74,9 +83,6 @@ public class AwsServiceImpl {
                     }
                 }
             }
-        }
-        for (AwsEc2 awsEc2 : aeList) {
-            System.out.println(awsEc2.getRegion() + "=========" + awsEc2.getInstanceId());
         }
         new AwsEc2DaoImpl().saveAwsEc2s(aeList);
     }

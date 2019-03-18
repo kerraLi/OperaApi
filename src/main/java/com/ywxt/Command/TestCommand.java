@@ -7,6 +7,7 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Log.LogOperation;
+import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Domain.System.Parameter;
 import com.ywxt.Domain.User.User;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
@@ -15,18 +16,21 @@ import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.System.Impl.RefreshServiceImpl;
+import com.ywxt.Service.System.RefreshService;
 import com.ywxt.Service.User.Impl.UserServiceImpl;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.*;
 
+@Component
 public class TestCommand {
 
     @Resource
     private LogOperationDao logOperationDao;
     @Resource
     private TestCommand testCommand;
-
 
     private static void saveAliAccount() throws Exception {
         AliAccount aa = new AliAccount();
@@ -168,7 +172,12 @@ public class TestCommand {
     }
 
     public static void main(String[] args) throws Exception {
-        TestCommand a = new TestCommand();
-        a.test();
+        LogRefresh log = new LogRefresh();
+        log.setType("ali");
+        log.setTime(new Date());
+        new RefreshServiceImpl().saveRefreshLog(log);
+//        new AliEcsServiceImpl().freshSourceData();
+//        TestCommand a = new TestCommand();
+//        a.test();
     }
 }

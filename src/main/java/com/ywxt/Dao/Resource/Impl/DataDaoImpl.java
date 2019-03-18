@@ -51,6 +51,20 @@ public class DataDaoImpl implements DataDao {
         return em.find(Data.class, id);
     }
 
+    public List<Data> getList(HashMap<String, Object> params) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Data> query = builder.createQuery(Data.class);
+        // 查询条件
+        Root<Data> root = query.from(Data.class);
+        List<Predicate> predicates = this.filterParam(builder, root, params);
+        Predicate[] p = new Predicate[predicates.size()];
+        query.where(predicates.toArray(p));
+        // 默认按照id倒叙
+        query.orderBy(builder.desc(root.get("id")));
+        return em.createQuery(query)
+                .getResultList();
+    }
+
     public List<Data> getList(HashMap<String, Object> params, int pageNumber, int pageSize) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Data> query = builder.createQuery(Data.class);

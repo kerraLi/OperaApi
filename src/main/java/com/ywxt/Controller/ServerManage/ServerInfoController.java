@@ -1,5 +1,6 @@
 package com.ywxt.Controller.ServerManage;
 
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.ApiResult;
 import com.ywxt.Domain.ServerManage.ServerInfo;
@@ -48,6 +49,7 @@ public class ServerInfoController extends CommonController{
      * @return
      */
     @PostMapping("/list/{page}/{limit}")
+    @NotOperationAction
     public ApiResult list(@RequestBody ServerInfo serverInfo,@PathVariable() Integer page,@PathVariable Integer limit){
         page = page==null ? 1:page;
         limit = limit==null ? 10:limit;
@@ -55,6 +57,7 @@ public class ServerInfoController extends CommonController{
     }
 
     @PostMapping("/delete/{id}")
+    @NotOperationAction
     public ApiResult list(@PathVariable Long id){
         ExceptionUtil.isTrue(id==null||id<1,"服务器id不合法");
         serverInfoService.delete(id);

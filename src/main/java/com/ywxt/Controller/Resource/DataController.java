@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/resource/data", name = "资源数据")
@@ -41,6 +42,16 @@ public class DataController extends CommonController {
         }
         return dataService.getList(params, pageNumber, pageSize);
     }
+
+    @NotOperationAction
+    @ResponseBody
+    @RequestMapping(value = {"/download/{categoryId}"}, name = "下载", method = RequestMethod.POST)
+    public List<Data> download(@PathVariable Integer categoryId) throws Exception {
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("categoryId", categoryId);
+        return dataService.getList(params);
+    }
+
 
     @ResponseBody
     @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)

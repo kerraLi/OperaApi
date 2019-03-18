@@ -18,12 +18,14 @@ import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliCdn;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.Ali.AliScdn;
+import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import com.ywxt.Service.System.Impl.RefreshServiceImpl;
 
 import java.util.*;
 
@@ -71,12 +73,23 @@ public class AliServiceImpl implements AliService {
 
     // 更新ali源数据(按账户更新)
     public void freshSourceData() throws Exception {
+        // 记录更新时间
+        LogRefresh log = new LogRefresh();
+        log.setTime(new Date());
+        log.setType("ali");
+        new RefreshServiceImpl().saveRefreshLog(log);
         // 更新ecs数据 && 更新cdn域名数据
         this.freshEcsData();
         this.freshCdnData();
     }
     //// 更新ali源数据(按账户更新)
     public void freshSourceData(String accessKeyId,String accessKeySecret) throws Exception {
+        // 记录更新时间
+        LogRefresh log = new LogRefresh();
+        log.setTime(new Date());
+        log.setType("ali");
+        new RefreshServiceImpl().saveRefreshLog(log);
+
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = accessKeySecret;
         // 更新ecs数据 && 更新cdn域名数据

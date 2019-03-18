@@ -22,5 +22,7 @@ public interface DataService {
 
     public Data save(Data data) throws Exception;
 
+    public List<Data> getList(HashMap<String, Object> params);
+
     public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 }

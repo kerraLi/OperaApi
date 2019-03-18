@@ -74,6 +74,18 @@ public class MessageServiceImpl {
         return new MessageDaoImpl().getListTotal(params);
     }
 
+    // 获取所有类型
+    public List<String> getTypes() {
+        Map<String, String> map = Parameter.MessageTitles;
+        List<String> list = new ArrayList<>();
+        for (String s : map.values()) {
+            if (!list.contains(s)) {
+                list.add(s);
+            }
+        }
+        return list;
+    }
+
     // 查询所有&分页
     public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         // 最近时间倒叙

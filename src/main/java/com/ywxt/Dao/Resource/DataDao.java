@@ -17,6 +17,8 @@ public interface DataDao {
 
     public Data getData(int id);
 
+    public List<Data> getList(HashMap<String, Object> params);
+
     public List<Data> getList(HashMap<String, Object> params, int pageNumber, int pageSize);
 
     public int getListTotal(HashMap<String, Object> params);
