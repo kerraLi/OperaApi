@@ -93,6 +93,8 @@ public class ConfigManageService {
         }
         if(jsonObject.get("status").equals("success")){
             configManage.setState(1);
+        }else {
+            configManage.setState(0);
         }
         configManage.setId(jsonObject.getString("code"));
         configManageRepository.saveAndFlush(configManage);
@@ -100,7 +102,6 @@ public class ConfigManageService {
         //保存上传历史20条，超过20条删除
         List<ConfigManage> list = configManageRepository.findByServerIdOrderByCreateTimeDesc(id);
 
-        List<Long> longs = new ArrayList<>();
         if(list.size()>20){
             List<ConfigManage> temps = list.subList(19,list.size()-1);
             if(CollectionUtils.isNotEmpty(temps)){

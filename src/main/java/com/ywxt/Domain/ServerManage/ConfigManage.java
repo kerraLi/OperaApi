@@ -25,9 +25,9 @@ public class ConfigManage implements Serializable {
     @Column(length = 200)
     private String fileName;//配置名字
     @Column(length = 1)
-    private Integer state=2;//配置上传状态 0：失败 1：成功 2:没有返回结果
+    private Integer state=2;//配置上传状态 0：失败 1：成功 2:执行中
     @Column(length = 1)
-    private Integer runResult=2;//配置运行结果 0：失败 1：成功 2:没有返回结果
+    private Integer runResult=2;//配置运行结果 0：失败 1：成功 2:执行中
     @Column(columnDefinition="TEXT")
     private String content;//内容
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
