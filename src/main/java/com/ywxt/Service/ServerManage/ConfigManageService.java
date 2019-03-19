@@ -95,6 +95,7 @@ public class ConfigManageService {
             configManage.setState(1);
         }else {
             configManage.setState(0);
+            configManage.setRunResult(0);
         }
         configManage.setId(jsonObject.getString("code"));
         configManageRepository.saveAndFlush(configManage);
