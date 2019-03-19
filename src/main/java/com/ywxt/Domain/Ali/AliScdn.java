@@ -52,7 +52,11 @@ public class AliScdn implements Serializable {
         this.gmtCreated = df.parse(data.getGmtCreated().replace("Z", " UTC"));
         DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm Z");
         df1.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        this.gmtModified = df1.parse(data.getGmtModified().replace("Z", " UTC"));
+        if(data.getGmtModified().length()<20){
+            this.gmtModified = df1.parse(data.getGmtModified().replace("Z", " UTC"));
+        }else{
+            this.gmtModified = df.parse(data.getGmtModified().replace("Z", " UTC"));
+        }
         this.description = data.getDescription();
         this.sslProtocol = data.getSSLProtocol();
         this.resourceGroupId = data.getResourceGroupId();
