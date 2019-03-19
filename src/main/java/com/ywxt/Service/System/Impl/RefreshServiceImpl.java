@@ -16,6 +16,8 @@ import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.System.RefreshService;
 import com.ywxt.Utils.AsyncUtils;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import java.util.List;
 
 @Service
 public class RefreshServiceImpl implements RefreshService {
+    @Autowired
+    private ObjectFactory<AliServiceImpl> objectFactory;
 
     // 获取刷新类型
     public List<JSONObject> refreshTypes() {
@@ -51,7 +55,7 @@ public class RefreshServiceImpl implements RefreshService {
                             List<AliAccount> aliAccounts = new AliAccountServiceImpl().getList();
                             for (AliAccount aliAccount : aliAccounts) {
                                 if (aliAccount.getStatus().equals("normal")) {
-                                    new AliServiceImpl(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret()).freshSourceData();
+                                    objectFactory.getObject().freshSourceData(aliAccount.getAccessKeyId(),aliAccount.getAccessKeySecret());
                                 }
                             }
                             break;
