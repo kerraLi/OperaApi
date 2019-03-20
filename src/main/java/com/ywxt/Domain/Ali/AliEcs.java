@@ -4,24 +4,23 @@ import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
 import com.ywxt.Annotation.MarkCloumn;
 import com.ywxt.Annotation.NotFilterColumn;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 @Entity
+@Table(name = "ali_ecs")
 public class AliEcs {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     // 账号
-    @NotFilterColumn
+    @Transient
     private String userName;
     private String accessKeyId;
-    // 标记是否即将过期
-    private Boolean isAlertExpired = false;
-    // 标记数据是否弃用
-    private Boolean isAlertMarked = false;
-    @MarkCloumn
     private String instanceId;
     private String instanceName;
     private String instanceType;
@@ -50,6 +49,10 @@ public class AliEcs {
     private String lockReason = "";
     // 状态
     private String status;
+    @Transient
+    private Boolean isAlertExpired = false;
+    @Transient
+    private Boolean isAlertMarked = false;
 
     public AliEcs() {
     }

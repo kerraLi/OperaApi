@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AliScdnDao extends JpaRepository<AliScdn,Long> {
+public interface AliScdnDao extends JpaRepository<AliScdn, Long> {
+
+    void deleteByAccessKeyId(String keyId);
 
     List<AliScdn> findByAccessKeyId(String accessKeyId);
 

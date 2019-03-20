@@ -3,25 +3,29 @@ package com.ywxt.Domain.Ali;
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.ywxt.Annotation.MarkCloumn;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+@Entity
+@Table(name = "ali_account")
 public class AliAccount {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank
     private String userName;
     @NotBlank
-    @MarkCloumn
     private String accessKeyId;
     @NotBlank
     private String accessKeySecret;
     // status:正常使用normal/账号异常invalid（取数据错误）
     private String status = "invalid";
+    @Transient
     private QueryAccountBalanceResponse.Data balanceData;
-    // 标记数据报警状态
+    @Transient
     private Boolean isAlertBalance = false;
-    // 标记数据是否弃用
+    @Transient
     private Boolean isAlertMarked = false;
 
     public AliAccount() {

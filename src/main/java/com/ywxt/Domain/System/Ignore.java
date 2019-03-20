@@ -1,16 +1,19 @@
-package com.ywxt.Domain;
+package com.ywxt.Domain.System;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
-public class ParameterIgnore {
+@Table(name = "system_ignore")
+public class Ignore {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    // 忽略主体类型
+    @Column(nullable = false)
     private String domain;
-    // 忽略参照字段
+    @Column(nullable = false)
     private String markKey;
-    // 具体数据
+    @Column(nullable = false)
     private String markValue;
 
     public int getId() {

@@ -6,9 +6,9 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.aliyuncs.scdn.model.v20171115.*;
+import com.ywxt.Dao.Ali.AliAccountDao;
 import com.ywxt.Dao.Ali.AliScdnDao;
 import com.ywxt.Dao.Ali.AliScdnTaskDao;
-import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliScdn;
 import com.ywxt.Domain.Ali.AliScdnTask;
@@ -43,6 +43,8 @@ public class AliScdnService {
     private AliScdnDao aliScdnDao;
     @Autowired
     private AliScdnTaskDao aliScdnTaskDao;
+    @Autowired
+    private AliAccountDao aliAccountDao;
 
     /**
      * 分页查询
@@ -107,7 +109,7 @@ public class AliScdnService {
         ExceptionUtil.isTrue(domain==null,"url错误");
         AliScdn scdn = aliScdnDao.findByDomainName(domain);
         ExceptionUtil.isTrue(scdn==null,"url错误");
-        AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(scdn.getAccessKeyId());
+        AliAccount aliAccount = aliAccountDao.getByAccessKeyId(scdn.getAccessKeyId());
 
         //获取连接
         IAcsClient client = getAliClient(aliAccount);
@@ -208,7 +210,7 @@ public class AliScdnService {
     public void updateScdn(Long id) throws Exception {
         AliScdnTask aliScdnTask = aliScdnTaskDao.getOne(id);
         ExceptionUtil.isTrue(aliScdnTask==null,"id不正确");
-        AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(aliScdnTask.getAccessKeyId());
+        AliAccount aliAccount = aliAccountDao.getByAccessKeyId(aliScdnTask.getAccessKeyId());
         //获取连接
         IAcsClient client = getAliClient(aliAccount);
 

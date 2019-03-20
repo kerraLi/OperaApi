@@ -4,7 +4,7 @@ import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.Impl.GodaddyDomainServiceImpl;
-import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.System.Impl.IgnoreServiceImpl;
 import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,40 +54,6 @@ public class GodaddyDomainController extends CommonController {
             params.put("ifMarked", request.getParameter("ifMarked"));
         }
         return new GodaddyDomainServiceImpl().getDomainList(params, pageNumber, pageSize);
-    }
-
-    // domain 批量保存标记
-    @ResponseBody
-    @RequestMapping(value = {"/param/{status}"}, name = "批量标记", method = RequestMethod.POST)
-    public com.alibaba.fastjson.JSONObject domainParamSetAll(Integer[] ids, @PathVariable String status) throws Exception {
-        List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
-        if (status.equals("mark")) {
-            for (Integer i : list) {
-                GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(i);
-                new ParameterIgnoreServiceImpl().saveMarked(godaddyDomain);
-            }
-        } else if (status.equals("unmark")) {
-            for (Integer i : list) {
-                GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(i);
-                new ParameterIgnoreServiceImpl().deleteMarked(godaddyDomain);
-            }
-        }
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
-    }
-
-    // domain 保存标记
-    @ResponseBody
-    @RequestMapping(value = {"/param/{status}/{id}"}, name = "标记", method = RequestMethod.POST)
-    public com.alibaba.fastjson.JSONObject domainParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
-        GodaddyDomain godaddyDomain = new GodaddyDomainServiceImpl().getDomain(id);
-        if (status.equals("mark")) {
-            new ParameterIgnoreServiceImpl().saveMarked(godaddyDomain);
-        } else if (status.equals("unmark")) {
-            new ParameterIgnoreServiceImpl().deleteMarked(godaddyDomain);
-        }
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
     }
 
 }

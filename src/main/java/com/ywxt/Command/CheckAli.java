@@ -2,11 +2,11 @@ package com.ywxt.Command;
 
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Ali.AliEcs;
+import com.ywxt.Service.Ali.AliAccountService;
+import com.ywxt.Service.Ali.AliEcsService;
+import com.ywxt.Service.Ali.AliService;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
-import com.ywxt.Service.Ali.Impl.AliEcsServiceImpl;
-import com.ywxt.Service.Ali.Impl.AliServiceImpl;
 import com.ywxt.Utils.TelegramUtils;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,13 +17,17 @@ import java.util.*;
 public class CheckAli extends Check {
 
     @Autowired
-    private ObjectFactory<AliServiceImpl> objectFactory;
+    private AliService aliService;
+    @Autowired
+    private AliAccountService aliAccountService;
+    @Autowired
+    private AliEcsService aliEcsService;
 
     // 校验余额
     @Scheduled(cron = "0 0 0/1 * * ?")
-    private static void checkAccount() {
+    private void checkAccount() {
         try {
-            List<AliAccount> list = new AliAccountServiceImpl().getList(true);
+            List<AliAccount> list = aliAccountService.getList(true);
             String action = "ALI_ACCOUNT_NO_MONEY";
             for (AliAccount aliAccount : list) {
                 if (aliAccount.getAlertBalance() && (!aliAccount.getAlertMarked())) {
@@ -41,16 +45,13 @@ public class CheckAli extends Check {
 
     // 校验ecs服务器过期
     @Scheduled(cron = "0 10 0/5 * * ?")
-    private static void checkEcsExpired() {
+    private void checkEcsExpired() {
         try {
-            List<AliEcs> list = new AliEcsServiceImpl().getEcsList(new HashMap<String, Object>() {{
-            }});
+            List<AliEcs> list = aliEcsService.getAlertList();
             String action = "ALI_ECS_EXPIRED_NUM";
             int count = 0;
             for (AliEcs aliEcs : list) {
-                if (aliEcs.getAlertExpired() && !aliEcs.getAlertMarked()) {
-                    count++;
-                }
+                count++;
             }
             if (count > 0) {
                 Map<String, String> param = new HashMap<String, String>();
@@ -71,7 +72,7 @@ public class CheckAli extends Check {
             List<AliAccount> list = new AliAccountServiceImpl().getList();
             for (AliAccount aliAccount : list) {
                 if (aliAccount.getStatus().equals("normal")) {
-                    objectFactory.getObject().freshSourceData(aliAccount.getAccessKeyId(),aliAccount.getAccessKeySecret());
+                    aliService.freshSourceData(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret());
                 }
             }
         } catch (Exception e) {

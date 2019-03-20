@@ -1,35 +1,40 @@
 package com.ywxt.Service.System.Impl;
 
-import com.ywxt.Dao.System.Impl.ParameterDaoImpl;
+import com.ywxt.Dao.System.ParameterDao;
 import com.ywxt.Domain.System.Parameter;
 import com.ywxt.Service.System.ParameterService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
+@Service
 public class ParameterServiceImpl implements ParameterService {
 
+    @Autowired
+    private ParameterDao parameterDao;
+
     // 获取value
-    public String getValue(String key) throws Exception {
-        Parameter parameter = new ParameterDaoImpl().getParameter(key);
+    public String getValue(String key) {
+        Parameter parameter = parameterDao.getByKey(key);
         return parameter.getValue();
     }
 
     // 获取列表
-    public List<Parameter> getList(HashMap<String, Object> params) throws Exception {
-        return new ParameterDaoImpl().getList(params);
+    public List<Parameter> getList() throws Exception {
+        return parameterDao.findAll();
     }
 
     // 修改value
-    public int updateValue(int id, String value) throws Exception {
-        Parameter parameter = new ParameterDaoImpl().getParameter(id);
+    public void updateValue(int id, String value) {
+        Parameter parameter = parameterDao.getOne(id);
         parameter.setValue(value);
-        return this.save(parameter);
+        parameterDao.saveAndFlush(parameter);
     }
 
     // 创建key-value
     public Parameter createKeyValue(String key, String value) throws Exception {
-        Parameter parameter = new ParameterDaoImpl().getParameter(key);
+        Parameter parameter = parameterDao.getByKey(key);
         if (parameter != null) {
             throw new Exception("该KEY值已存在，请更换后重试。");
         }
@@ -37,12 +42,13 @@ public class ParameterServiceImpl implements ParameterService {
         parameter.setKey(key);
         parameter.setValue(value);
         parameter.setStatus("temp");
-        return new ParameterDaoImpl().getParameter(this.save(parameter));
+        parameterDao.saveAndFlush(parameter);
+        return parameter;
     }
 
     // 创建key-value-introduce
     public Parameter createKeyValue(String key, String value, String introduce) throws Exception {
-        Parameter parameter = new ParameterDaoImpl().getParameter(key);
+        Parameter parameter = parameterDao.getByKey(key);
         if (parameter != null) {
             throw new Exception("该KEY值已存在，请更换后重试。");
         }
@@ -51,25 +57,22 @@ public class ParameterServiceImpl implements ParameterService {
         parameter.setValue(value);
         parameter.setStatus("temp");
         parameter.setIntroduce(introduce);
-        return new ParameterDaoImpl().getParameter(this.save(parameter));
+        parameterDao.saveAndFlush(parameter);
+        return parameter;
     }
 
     // 新增&修改
-    public int save(Parameter parameter) throws Exception {
-        return new ParameterDaoImpl().save(parameter);
+    public void save(Parameter parameter) {
+        parameterDao.saveAndFlush(parameter);
     }
 
     // 删除
-    public void delete(int id) throws Exception {
-        Parameter parameter = new ParameterDaoImpl().getParameter(id);
-        this.delete(parameter);
+    public void delete(int id) {
+        parameterDao.deleteById(id);
     }
 
     // 删除
-    public void delete(Parameter parameter) throws Exception {
-        if (parameter.getStatus().equals("fixed")) {
-            throw new Exception("删除失败。该参数为常驻参数，删除将会影响平台运行。");
-        }
-        new ParameterDaoImpl().delete(parameter.getId());
+    public void delete(Parameter parameter) {
+        parameterDao.delete(parameter);
     }
 }

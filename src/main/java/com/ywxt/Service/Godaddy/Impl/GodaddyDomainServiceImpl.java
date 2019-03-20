@@ -5,7 +5,7 @@ import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
 import com.ywxt.Service.Godaddy.GodaddyDomainService;
-import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.System.Impl.IgnoreServiceImpl;
 import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 
@@ -65,19 +65,19 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
     // domain-获取个数按account分组
     public List<Object[]> getDomainTotalByAccount(HashMap<String, Object> params) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new GodaddyDomainDaoImpl().getDomainTotalByAccount(filterParams);
+//        String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
+//        String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
+//        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        return new GodaddyDomainDaoImpl().getDomainTotalByAccount(params);
     }
 
     // domain-获取个数
     public int getDomainTotal(HashMap<String, Object> params) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new GodaddyDomainDaoImpl().getDomainTotal(filterParams);
+//        String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
+//        String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
+//        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        return new GodaddyDomainDaoImpl().getDomainTotal(params);
     }
 
 
@@ -89,10 +89,10 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
     // domain-查询所有域名
     public List<GodaddyDomain> getDomainList(HashMap<String, Object> params) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams);
+//        String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
+//        String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
+//        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(params);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -100,9 +100,9 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
             if (gd.getStatus().equals("ACTIVE")) {
                 gd.setAlertExpired(gd.getExpires().before(thresholdDate));
             }
-            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
-                gd.setAlertMarked(true);
-            }
+//            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
+//                gd.setAlertMarked(true);
+//            }
             gd.setUserName(this.getUserName(gd.getAccessKeyId()));
         }
         return list;
@@ -111,10 +111,10 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
     // domain-查询所有域名&分页
     public Map<String, Object> getDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(filterParams, pageNumber, pageSize);
+//        String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyDomain.class);
+//        String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyDomain.class);
+//        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyDomain> list = new GodaddyDomainDaoImpl().getDomainList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_DOMAIN_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -122,13 +122,13 @@ public class GodaddyDomainServiceImpl extends GodaddyServiceImpl implements Goda
             if (gd.getStatus().equals("ACTIVE")) {
                 gd.setAlertExpired(gd.getExpires().before(thresholdDate));
             }
-            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
-                gd.setAlertMarked(true);
-            }
+//            if (ArrayUtils.hasString(markeValues, gd.getDomainId())) {
+//                gd.setAlertMarked(true);
+//            }
             gd.setUserName(this.getUserName(gd.getAccessKeyId()));
         }
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", new GodaddyDomainDaoImpl().getDomainTotal(filterParams));
+        result.put("total", new GodaddyDomainDaoImpl().getDomainTotal(params));
         result.put("items", list);
         return result;
     }

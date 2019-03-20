@@ -5,17 +5,21 @@ import com.aliyuncs.cdn.model.v20141111.DescribeUserDomainsResponse;
 import com.ywxt.Annotation.MarkCloumn;
 import com.ywxt.Annotation.NotFilterColumn;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 @Entity
+@Table(name = "ali_cdn")
 public class AliCdn {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotFilterColumn
+    @Transient
     private String userName;
     private String accessKeyId;
     private String cdnType;
@@ -28,6 +32,7 @@ public class AliCdn {
     private String description;
     private String resourceGroupId;
     private String domainStatus;
+    @Transient
     private Boolean isAlertMarked = false;
 
     public AliCdn() {

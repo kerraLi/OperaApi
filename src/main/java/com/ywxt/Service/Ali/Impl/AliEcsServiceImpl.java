@@ -1,199 +1,162 @@
 package com.ywxt.Service.Ali.Impl;
 
-import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.ecs.model.v20140526.*;
-import com.aliyuncs.profile.DefaultProfile;
-import com.aliyuncs.profile.IClientProfile;
-import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Dao.Ali.Impl.AliAccountDaoImpl;
-import com.ywxt.Dao.Ali.Impl.AliEcsDaoImpl;
-import com.ywxt.Domain.Ali.AliAccount;
+import com.ywxt.Dao.Ali.AliEcsDao;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.AliEcsService;
-import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
-import com.ywxt.Service.System.Impl.ParameterServiceImpl;
+import com.ywxt.Service.Ali.AliService;
+import com.ywxt.Service.System.IgnoreService;
+import com.ywxt.Service.System.ParameterService;
 import com.ywxt.Utils.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
+import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
 import java.util.*;
 
-public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
+@Service
+public class AliEcsServiceImpl implements AliEcsService {
 
-    private String accessKeyId;
-    private String accessKeySecret;
-    private HashMap<String, String> userNameMap = new HashMap<>();
-
-    public AliEcsServiceImpl() {
-    }
-
-    public AliEcsServiceImpl(String accessKeyId) throws Exception {
-        AliAccount aliAccount = new AliAccountDaoImpl().getAliAccount(accessKeyId);
-        this.accessKeyId = accessKeyId;
-        this.accessKeySecret = aliAccount.getAccessKeySecret();
-    }
-
-    public AliEcsServiceImpl(String keyId, String keySecret) {
-        this.accessKeyId = keyId;
-        this.accessKeySecret = keySecret;
-    }
-
-    // 获取dash数据
-    public HashMap<String, Object> getDashData() throws Exception {
-        HashMap<String, Object> resultParams = new HashMap<String, Object>();
-        // normal invalid
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        for (Object[] os : new AliEcsDaoImpl().getCountGroup(params)) {
-            if (os[0].equals("Running")) {
-                resultParams.put("ali-ecs-" + os[1] + "-normal", os[2]);
-            } else {
-                resultParams.put("ali-ecs-" + os[1] + "-invalid", os[2]);
-            }
-        }
-        // expired
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("ALI_ECS_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        params = new HashMap<String, Object>();
-        params.put("status", "Running");
-        params.put("expiredTime@lt", thresholdDate);
-        for (Object[] os : this.getEcsTotalByAccount(params)) {
-            resultParams.put("ali-ecs-" + os[0] + "-expired", os[1]);
-        }
-        // deprecated
-        params = new HashMap<String, Object>();
-        params.put("ifMarked", "true");
-        for (Object[] os : this.getEcsTotalByAccount(params)) {
-            resultParams.put("ali-ecs-" + os[0] + "-deprecated", os[1]);
-        }
-        return resultParams;
-    }
-
-    // ecs-获取个数按account分组
-    public List<Object[]> getEcsTotalByAccount(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliEcs.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliEcs.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new AliEcsDaoImpl().getAliEcsesTotalByAccount(filterParams);
-    }
-
-    // ecs-获取个数
-    public int getEcsTotal(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliEcs.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliEcs.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new AliEcsDaoImpl().getAliEcsesTotal(filterParams);
-    }
+    @Autowired
+    private AliService aliService;
+    @Autowired
+    private AliEcsDao aliEcsDao;
+    @Autowired
+    private IgnoreService ignoreService;
+    @Autowired
+    private ParameterService parameterService;
 
     // ecs-获取单个
     public AliEcs getEcs(int id) {
-        return new AliEcsDaoImpl().getEcs(id);
+        return aliEcsDao.getOne(id);
     }
 
-    // ecs-查询所有
-    public List<AliEcs> getEcsList(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliEcs.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliEcs.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(filterParams);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("ALI_ECS_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (AliEcs ae : list) {
-            // 执行中&更新状态
-            if (ae.getStatus().equals("Starting") || ae.getStatus().equals("Stopping")) {
-                ae.setStatus(this.updateEcsStatus(ae).getStatus());
+    // ecs-查询报警
+    public List<AliEcs> getAlertList() {
+        Specification<AliEcs> specification = new Specification<AliEcs>() {
+            @Override
+            public Predicate toPredicate(Root<AliEcs> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                // 忽略数据
+                String[] markValues = ignoreService.getMarkedValues("AliEcs");
+                if (markValues.length > 0) {
+                    for (String s : markValues) {
+                        Predicate predicate = cb.notEqual(root.get("instanceId").as(String.class), s);
+                        predicates.add(predicate);
+                    }
+                }
+                // 过期数据
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue("ALI_ECS_EXPIRED_DAY")));
+                Date thresholdDate = calendar.getTime();
+                predicates.add(cb.equal(root.get("status").as(String.class), "Running"));
+                predicates.add(cb.lessThanOrEqualTo(root.get("expiredTime"), thresholdDate));
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
-            if (ae.getStatus().equals("Running")) {
-                ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
-            }
-            if (ArrayUtils.hasString(markeValues, ae.getInstanceId())) {
-                ae.setAlertMarked(true);
-            }
-            ae.setUserName(this.getUserName(ae.getAccessKeyId()));
-        }
-        return list;
+        };
+        return aliEcsDao.findAll(specification);
     }
 
     // ecs-查询所有实例的详细信息&分页
-    public JSONObject getEcsList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(AliEcs.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(AliEcs.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<AliEcs> list = new AliEcsDaoImpl().getAliEcsesList(filterParams, pageNumber, pageSize);
+    public Page<AliEcs> getList(Map<String, String[]> params) throws Exception {
+        int pageNumber = params.get("page") == null ? 1 : Integer.parseInt(params.get("page")[0]);
+        int pageSize = params.get("limit") == null ? 10 : Integer.parseInt(params.get("limit")[0]);
+        AliEcs aliEcs = new AliEcs();
+        aliEcs.setStatus(params.get("status") == null ? null : params.get("status")[0]);
+        aliEcs.setLockReason(params.get("lockReason") == null ? null : params.get("lockReason")[0]);
+        // 排除忽略数据
+        String[] markValues = ignoreService.getMarkedValues("AliEcs");
+        // 处理过期数据
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("ALI_ECS_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue("ALI_ECS_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
-        for (AliEcs ae : list) {
+        // 处理查询条件
+        Specification<AliEcs> specification = new Specification<AliEcs>() {
+            @Override
+            public Predicate toPredicate(Root<AliEcs> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                // filter批量过滤
+                if (params.get("key") != null && !params.get("key")[0].equals("")) {
+                    String filter = "%" + params.get("key")[0] + "%";
+                    Field[] fields = aliEcs.getClass().getDeclaredFields();
+                    // 多个or条件
+                    List<Predicate> psOr = new ArrayList<>();
+                    for (Field f : fields) {
+                        if (f.getType() == String.class && !f.isAnnotationPresent(Transient.class)) {
+                            psOr.add(cb.like(root.get(f.getName()).as(String.class), filter));
+                        }
+                    }
+                    predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                }
+                // 忽略数据
+                if (markValues.length > 0) {
+                    if (params.get("ifMarked") != null && params.get("ifMarked")[0].equals("true")) {
+                        // 多个or条件
+                        List<Predicate> psOr = new ArrayList<>();
+                        for (String s : markValues) {
+                            psOr.add(cb.like(root.get("instanceId").as(String.class), s));
+                        }
+                        predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                    } else {
+                        for (String s : markValues) {
+                            Predicate predicate = cb.notEqual(root.get("instanceId").as(String.class), s);
+                            predicates.add(predicate);
+                        }
+                    }
+                }
+                // 过期数据
+                if (params.get("ifExpired") != null && params.get("ifExpired")[0].equals("true")) {
+                    predicates.add(cb.equal(root.get("status").as(String.class), "Running"));
+                    predicates.add(cb.lessThanOrEqualTo(root.get("expiredTime"), thresholdDate));
+                    cb.asc(root.get("expiredTime"));
+                }
+                if (StringUtils.isNoneBlank(aliEcs.getStatus())) {
+                    Predicate predicate = cb.equal(root.get("status").as(String.class), aliEcs.getStatus());
+                    predicates.add(predicate);
+                }
+                if (StringUtils.isNoneBlank(aliEcs.getLockReason())) {
+                    Predicate predicate = cb.equal(root.get("lockReason").as(String.class), aliEcs.getLockReason());
+                    predicates.add(predicate);
+                }
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<AliEcs> page = aliEcsDao.findAll(specification, pageable);
+        // 查询后处理
+        for (AliEcs ae : page.getContent()) {
             // 执行中&更新状态
             if (ae.getStatus().equals("Starting") || ae.getStatus().equals("Stopping")) {
                 ae.setStatus(this.updateEcsStatus(ae).getStatus());
             }
+            // 过期
             if (ae.getStatus().equals("Running")) {
                 ae.setAlertExpired(ae.getExpiredTime().before(thresholdDate));
             }
-            if (ArrayUtils.hasString(markeValues, ae.getInstanceId())) {
+            // 弃用
+            if (ArrayUtils.hasString(markValues, ae.getInstanceId())) {
                 ae.setAlertMarked(true);
             }
-            ae.setUserName(this.getUserName(ae.getAccessKeyId()));
+            ae.setUserName(aliService.getUserName(ae.getAccessKeyId()));
         }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", new AliEcsDaoImpl().getAliEcsesTotal(filterParams));
-        jsonObject.put("items", list);
-        return jsonObject;
-    }
-
-    // ecs-操作
-    public void actionEcs(String action, int id) throws Exception {
-        AliEcs aliEcs = new AliEcsDaoImpl().getEcs(id);
-        if (this.accessKeyId == null || this.accessKeySecret == null) {
-            this.accessKeyId = aliEcs.getAccessKeyId();
-            this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
-        }
-        switch (action) {
-            case "run":
-                this.startEcs(aliEcs.getRegionId(), aliEcs.getInstanceId());
-                aliEcs.setStatus("Starting");
-                new AliEcsDaoImpl().saveAliEcs(aliEcs);
-                break;
-            case "stop":
-                this.stopEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
-                aliEcs.setStatus("Stopping");
-                new AliEcsDaoImpl().saveAliEcs(aliEcs);
-                break;
-            case "stop-force":
-                this.stopEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
-                aliEcs.setStatus("Stopping");
-                new AliEcsDaoImpl().saveAliEcs(aliEcs);
-                break;
-            case "rerun":
-                this.restartEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
-                aliEcs.setStatus("Starting");
-                new AliEcsDaoImpl().saveAliEcs(aliEcs);
-                break;
-            case "rerun-force":
-                this.restartEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
-                aliEcs.setStatus("Starting");
-                new AliEcsDaoImpl().saveAliEcs(aliEcs);
-                break;
-            case "free":
-                this.deleteEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), false);
-                break;
-            case "free-force":
-                this.deleteEcs(aliEcs.getRegionId(), aliEcs.getInstanceId(), true);
-                break;
-        }
+        return page;
     }
 
     // ecs-最新状态
     public AliEcs updateEcsStatus(AliEcs aliEcs) throws Exception {
-        this.accessKeyId = aliEcs.getAccessKeyId();
-        this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
-        IClientProfile profile = DefaultProfile.getProfile(aliEcs.getRegionId(), this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
+        Map<String, String> keys = aliService.getKey(aliEcs);
+        IAcsClient client = aliService.getAliClient(aliEcs.getRegionId(), keys.get("id"), keys.get("secret"));
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         request.setRegionId(aliEcs.getRegionId());
         request.setInstanceIds("[\"" + aliEcs.getInstanceId() + "\"]");
@@ -205,11 +168,9 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
 
     // ecs-预付费
     public AliEcs perPay(String instanceId, String periodUnit, int period) throws Exception {
-        AliEcs aliEcs = new AliEcsDaoImpl().getEcs(instanceId);
-        this.accessKeyId = aliEcs.getAccessKeyId();
-        this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
-        IClientProfile profile = DefaultProfile.getProfile(aliEcs.getRegionId(), this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
+        AliEcs aliEcs = aliEcsDao.getByInstanceId(instanceId);
+        Map<String, String> keys = aliService.getKey(aliEcs);
+        IAcsClient client = aliService.getAliClient("", keys.get("id"), keys.get("secret"));
         RenewInstanceRequest request = new RenewInstanceRequest();
         request.setInstanceId(instanceId);
         request.setPeriodUnit(periodUnit);
@@ -221,11 +182,9 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
 
     // ecs-更新单个ecs数据
     public AliEcs updateEcs(String instanceId) throws Exception {
-        AliEcs aliEcs = new AliEcsDaoImpl().getEcs(instanceId);
-        this.accessKeyId = aliEcs.getAccessKeyId();
-        this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
-        IClientProfile profile = DefaultProfile.getProfile(aliEcs.getRegionId(), this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
+        AliEcs aliEcs = aliEcsDao.getByInstanceId(instanceId);
+        Map<String, String> keys = aliService.getKey(aliEcs);
+        IAcsClient client = aliService.getAliClient(aliEcs.getRegionId(), keys.get("id"), keys.get("secret"));
         DescribeInstancesRequest request = new DescribeInstancesRequest();
         request.setInstanceIds("[\"" + aliEcs.getInstanceId() + "\"]");
         DescribeInstancesResponse response = client.getAcsResponse(request);
@@ -235,23 +194,60 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
             throw new Exception("无该服务器");
         }
         aliEcs.updateData(list.get(0));
-        new AliEcsDaoImpl().saveAliEcs(aliEcs);
+        aliEcsDao.saveAndFlush(aliEcs);
         return aliEcs;
     }
 
+
+    // ecs-操作
+    public void actionEcs(String action, int id) throws Exception {
+        AliEcs aliEcs = aliEcsDao.getOne(id);
+        Map<String, String> keys = aliService.getKey(aliEcs);
+        IAcsClient client = aliService.getAliClient(aliEcs.getRegionId(), keys.get("id"), keys.get("secret"));
+        switch (action) {
+            case "run":
+                this.startEcs(client, aliEcs.getInstanceId());
+                aliEcs.setStatus("Starting");
+                aliEcsDao.saveAndFlush(aliEcs);
+                break;
+            case "stop":
+                this.stopEcs(client, aliEcs.getInstanceId(), false);
+                aliEcs.setStatus("Stopping");
+                aliEcsDao.saveAndFlush(aliEcs);
+                break;
+            case "stop-force":
+                this.stopEcs(client, aliEcs.getInstanceId(), true);
+                aliEcs.setStatus("Stopping");
+                aliEcsDao.saveAndFlush(aliEcs);
+                break;
+            case "rerun":
+                this.restartEcs(client, aliEcs.getInstanceId(), false);
+                aliEcs.setStatus("Starting");
+                aliEcsDao.saveAndFlush(aliEcs);
+                break;
+            case "rerun-force":
+                this.restartEcs(client, aliEcs.getInstanceId(), true);
+                aliEcs.setStatus("Starting");
+                aliEcsDao.saveAndFlush(aliEcs);
+                break;
+            case "free":
+                this.deleteEcs(client, aliEcs.getInstanceId(), false);
+                break;
+            case "free-force":
+                this.deleteEcs(client, aliEcs.getInstanceId(), true);
+                break;
+        }
+    }
+
     // ecs-启动
-    public void startEcs(String regionId, String instanceId) throws Exception {
-        IClientProfile profile = DefaultProfile.getProfile(regionId, this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
+    private void startEcs(IAcsClient client, String instanceId) throws Exception {
         StartInstanceRequest request = new StartInstanceRequest();
         request.setInstanceId(instanceId);
         client.getAcsResponse(request);
     }
 
     // ecs-停止
-    public void stopEcs(String regionId, String instanceId, boolean forceStop) throws Exception {
-        IClientProfile profile = DefaultProfile.getProfile(regionId, this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
+    private void stopEcs(IAcsClient client, String instanceId, boolean forceStop) throws Exception {
         StopInstanceRequest request = new StopInstanceRequest();
         request.setInstanceId(instanceId);
         request.setForceStop(forceStop);
@@ -259,9 +255,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
     }
 
     // ecs-重启
-    public void restartEcs(String regionId, String instanceId, boolean forceStop) throws Exception {
-        IClientProfile profile = DefaultProfile.getProfile(regionId, this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
+    private void restartEcs(IAcsClient client, String instanceId, boolean forceStop) throws Exception {
         RebootInstanceRequest request = new RebootInstanceRequest();
         request.setInstanceId(instanceId);
         request.setForceStop(forceStop);
@@ -269,9 +263,7 @@ public class AliEcsServiceImpl extends AliServiceImpl implements AliEcsService {
     }
 
     // ecs-释放
-    public void deleteEcs(String regionId, String instanceId, boolean force) throws Exception {
-        IClientProfile profile = DefaultProfile.getProfile(regionId, this.accessKeyId, this.accessKeySecret);
-        IAcsClient client = new DefaultAcsClient(profile);
+    private void deleteEcs(IAcsClient client, String instanceId, boolean force) throws Exception {
         DeleteInstanceRequest request = new DeleteInstanceRequest();
         request.setInstanceId(instanceId);
         request.setForce(force);

@@ -1,17 +1,15 @@
 package com.ywxt.Dao.Ali;
 
 import com.ywxt.Domain.Ali.AliCdn;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.HashMap;
 import java.util.List;
 
-public interface AliCdnDao {
+public interface AliCdnDao extends JpaRepository<AliCdn, Integer> {
 
-    public int getCdnTotal(HashMap<String, Object> params) throws Exception;
+    void deleteByAccessKeyId(String keyId);
 
-    public abstract List<AliCdn> getCdnList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    AliCdn getByDomainName(String domainName);
 
-    public abstract void saveAliCdns(List<AliCdn> list);
-
-    public abstract void deleteAliCdnByAccessId(String accessId);
 }

@@ -14,7 +14,7 @@ import java.util.TimeZone;
 
 @Data
 @Entity
-@Table(name = "ali_Scdn_task")
+@Table(name = "ali_scdn_task")
 public class AliScdnTask implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

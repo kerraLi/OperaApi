@@ -3,17 +3,21 @@ package com.ywxt.Domain.Ali;
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
 import com.ywxt.Annotation.NotFilterColumn;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 @Entity
+@Table(name = "ali_cdn_task")
 public class AliCdnTask {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotFilterColumn
+    @Transient
     private String userName;
     private String accessKeyId;
     private String taskId;

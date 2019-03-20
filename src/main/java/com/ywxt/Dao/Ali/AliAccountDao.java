@@ -1,19 +1,11 @@
 package com.ywxt.Dao.Ali;
 
 import com.ywxt.Domain.Ali.AliAccount;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AliAccountDao {
-    public abstract AliAccount getAliAccount(int id);
+public interface AliAccountDao extends JpaRepository<AliAccount, Integer> {
 
-    public abstract AliAccount getAliAccount(String accessKeyId) throws Exception;
-
-    public abstract List<AliAccount> getAliAccountsNormal();
-
-    public abstract List<AliAccount> getAliAccounts();
-
-    public abstract int saveAliAccount(AliAccount aliAccount);
-
-    public abstract boolean deleteAliAccount(int aliAccountId);
+    AliAccount getByAccessKeyId(String keyId);
 }

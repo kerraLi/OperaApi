@@ -5,7 +5,7 @@ import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Service.Godaddy.GodaddyCertificateService;
-import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
+import com.ywxt.Service.System.Impl.IgnoreServiceImpl;
 import com.ywxt.Service.System.Impl.ParameterServiceImpl;
 import com.ywxt.Utils.ArrayUtils;
 
@@ -66,19 +66,19 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
     // certificates-获取个数按account分组
     public List<Object[]> getCertificateTotalByAccount(HashMap<String, Object> params) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new GodaddyCertificateDaoImpl().getCertificateTotalByAccount(filterParams);
+        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
+        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
+        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        return new GodaddyCertificateDaoImpl().getCertificateTotalByAccount(params);
     }
 
     // certificates-获取个数
     public int getCertificateTotal(HashMap<String, Object> params) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new GodaddyCertificateDaoImpl().getCertificateTotal(filterParams);
+        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
+        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
+        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        return new GodaddyCertificateDaoImpl().getCertificateTotal(params);
     }
 
     // certificates
@@ -89,10 +89,10 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
     // certificates-查询所有证书
     public List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams);
+        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
+        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
+        // HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -100,9 +100,9 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
             if (gc.getCertificateStatus().equals("ISSUED")) {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
             }
-            if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
-                gc.setAlertMarked(true);
-            }
+            //if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
+            //    gc.setAlertMarked(true);
+            //}
             gc.setUserName(this.getUserName(gc.getAccessKeyId()));
         }
         return list;
@@ -111,10 +111,10 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
     // certificates-查询所有证书&分页
     public Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
         // 是否弃用标记
-        String coulmn = new ParameterIgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        String[] markeValues = new ParameterIgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(filterParams, pageNumber, pageSize);
+        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
+        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
+        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
+        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params, pageNumber, pageSize);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
         Date thresholdDate = calendar.getTime();
@@ -122,14 +122,14 @@ public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements
             if (gc.getCertificateStatus().equals("ISSUED")) {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
             }
-            if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
-                gc.setAlertMarked(true);
-            }
+            //if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
+            //    gc.setAlertMarked(true);
+            //}
             gc.setUserName(this.getUserName(gc.getAccessKeyId()));
         }
         // DATE为空转换失败所以用map
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", new GodaddyCertificateDaoImpl().getCertificateTotal(filterParams));
+        result.put("total", new GodaddyCertificateDaoImpl().getCertificateTotal(params));
         result.put("items", list);
         return result;
     }

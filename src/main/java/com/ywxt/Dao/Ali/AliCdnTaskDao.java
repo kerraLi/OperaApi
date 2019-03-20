@@ -1,4 +1,7 @@
 package com.ywxt.Dao.Ali;
 
-public interface AliCdnTaskDao {
+import com.ywxt.Domain.Ali.AliCdnTask;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AliCdnTaskDao extends JpaRepository<AliCdnTask, Integer> {
 }

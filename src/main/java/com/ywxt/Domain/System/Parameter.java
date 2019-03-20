@@ -1,12 +1,15 @@
 package com.ywxt.Domain.System;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "system_parameter")
 public class Parameter {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "\"key\"", nullable = false, unique = true)
     private String key;
     private String value;
     // fixed:常驻固定 || temp:临时
@@ -21,7 +24,6 @@ public class Parameter {
         this.id = id;
     }
 
-    @Column(name = "\"key\"", nullable = false, unique = true)
     public String getKey() {
         return key;
     }

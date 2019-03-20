@@ -3,10 +3,7 @@ package com.ywxt.Controller.Ali;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
-import com.ywxt.Domain.Ali.AliCdn;
-import com.ywxt.Domain.Ali.AliCdnTask;
 import com.ywxt.Service.Ali.Impl.AliCdnServiceImpl;
-import com.ywxt.Service.Impl.ParameterIgnoreServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -47,41 +43,6 @@ public class AliCdnController extends CommonController {
         return new AliCdnServiceImpl().getCdnDomainList(params, pageNumber, pageSize);
     }
 
-    // 批量设置mark
-    @ResponseBody
-    @RequestMapping(value = {"/param/{status}"}, name = "批量标记", method = RequestMethod.POST)
-    public JSONObject cdnParamSetAll(Integer[] ids, @PathVariable String status) throws Exception {
-        List<Integer> list = new ArrayList<Integer>(Arrays.asList(ids));
-        if (status.equals("mark")) {
-            for (Integer i : list) {
-                AliCdn aliCdn = new AliCdnServiceImpl().getCdn(i);
-                new ParameterIgnoreServiceImpl().saveMarked(aliCdn);
-            }
-        } else if (status.equals("unmark")) {
-            for (Integer i : list) {
-                AliCdn aliCdn = new AliCdnServiceImpl().getCdn(i);
-                new ParameterIgnoreServiceImpl().deleteMarked(aliCdn);
-            }
-        }
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
-    }
-
-
-    // 设置mark
-    @ResponseBody
-    @RequestMapping(value = {"/param/{status}/{id}"}, name = "标记", method = RequestMethod.POST)
-    public JSONObject cdnParamSet(@PathVariable String status, @PathVariable Integer id) throws Exception {
-        AliCdn aliCdn = new AliCdnServiceImpl().getCdn(id);
-        if (status.equals("mark")) {
-            new ParameterIgnoreServiceImpl().saveMarked(aliCdn);
-        } else if (status.equals("unmark")) {
-            new ParameterIgnoreServiceImpl().deleteMarked(aliCdn);
-        }
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
-    }
-
     // cdn:节点刷新&预热
     @ResponseBody
     @RequestMapping(value = {"/refresh"}, name = "刷新&预热", method = RequestMethod.POST)
@@ -90,46 +51,46 @@ public class AliCdnController extends CommonController {
     }
 
     // cdn:节点刷新任务查看
-    @ResponseBody
-    @RequestMapping(value = {"/refresh/task/list"}, name = "查看刷新任务", method = RequestMethod.POST)
-    public JSONObject getCdnRefreshTaskList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
-        int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        if (!(request.getParameter("operDate") == null)) {
-            String[] operateDate = request.getParameter("operDate").split(",");
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            params.put("creationTime@gt", sdf.parse(operateDate[0] + " 00:00:00"));
-            params.put("creationTime@lt", sdf.parse(operateDate[1] + " 23:59:59"));
-        }
-        if (!(request.getParameter("url") == null) && !(request.getParameter("url").isEmpty())) {
-            params.put("objectPath@like", request.getParameter("url"));
-        }
-        if (!(request.getParameter("operType") == null) && !(request.getParameter("operType").isEmpty())) {
-            String operateType = request.getParameter("operType");
-            switch (operateType) {
-                case "url-refresh":
-                    params.put("objectType", "file");
-                    break;
-                case "content-refresh":
-                    params.put("objectType", "path");
-                    break;
-                case "url-warm":
-                    params.put("objectType", "preload");
-                    break;
-                default:
-                    break;
-            }
-        }
-        params.put("orderDesc", "creationTime");
-        return new AliCdnServiceImpl().getCdnRefreshTaskList(params, pageSize, pageNumber);
-    }
-
-    // cdn:节点刷新任务状态更新
-    @ResponseBody
-    @RequestMapping(value = {"/refresh/task/update/{id}"}, name = "查看刷新任务状态", method = RequestMethod.GET)
-    public AliCdnTask updateCdnRefreshTask(@PathVariable Integer id) throws Exception {
-        return new AliCdnServiceImpl().updateCdnRefreshTask(id);
-    }
+//    @ResponseBody
+//    @RequestMapping(value = {"/refresh/task/list"}, name = "查看刷新任务", method = RequestMethod.POST)
+//    public JSONObject getCdnRefreshTaskList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+//        int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
+//        int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
+//        HashMap<String, Object> params = new HashMap<String, Object>();
+//        if (!(request.getParameter("operDate") == null)) {
+//            String[] operateDate = request.getParameter("operDate").split(",");
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            params.put("creationTime@gt", sdf.parse(operateDate[0] + " 00:00:00"));
+//            params.put("creationTime@lt", sdf.parse(operateDate[1] + " 23:59:59"));
+//        }
+//        if (!(request.getParameter("url") == null) && !(request.getParameter("url").isEmpty())) {
+//            params.put("objectPath@like", request.getParameter("url"));
+//        }
+//        if (!(request.getParameter("operType") == null) && !(request.getParameter("operType").isEmpty())) {
+//            String operateType = request.getParameter("operType");
+//            switch (operateType) {
+//                case "url-refresh":
+//                    params.put("objectType", "file");
+//                    break;
+//                case "content-refresh":
+//                    params.put("objectType", "path");
+//                    break;
+//                case "url-warm":
+//                    params.put("objectType", "preload");
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//        params.put("orderDesc", "creationTime");
+//        return new AliCdnServiceImpl().getCdnRefreshTaskList(params, pageSize, pageNumber);
+//    }
+//
+//    // cdn:节点刷新任务状态更新
+//    @ResponseBody
+//    @RequestMapping(value = {"/refresh/task/update/{id}"}, name = "查看刷新任务状态", method = RequestMethod.GET)
+//    public AliCdnTask updateCdnRefreshTask(@PathVariable Integer id) throws Exception {
+//        return new AliCdnServiceImpl().updateCdnRefreshTask(id);
+//    }
 
 }
