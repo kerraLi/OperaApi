@@ -40,8 +40,8 @@ public class AwsEc2ServiceImpl implements AwsEc2Service {
 
     // ec2-查询所有实例的详细信息&分页
     public Page<AwsEc2> getList(Map<String, String> params) {
-        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
-        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        int pageNumber = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
+        int pageSize = params.containsKey("limit") ? Integer.parseInt(params.get("limit")) : 10;
         Specification<AwsEc2> specification = new Specification<AwsEc2>() {
             @Override
             public Predicate toPredicate(Root<AwsEc2> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {

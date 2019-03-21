@@ -46,7 +46,7 @@ public class MessageController extends CommonController {
 
     // 消息类型
     @NotOperationAction
-    @PostMapping(value = {"/types"}, name = "类型列表")
+    @GetMapping(value = {"/types"}, name = "类型列表")
     public ApiResult types() {
         return ApiResult.successWithObject(messageService.getTypes());
     }

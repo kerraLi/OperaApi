@@ -54,8 +54,8 @@ public class AliCdnServiceImpl implements AliCdnService {
 
     // CDN-域名列表&分页信息
     public Page<AliCdn> getList(Map<String, String> params) throws Exception {
-        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
-        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        int pageNumber = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
+        int pageSize = params.containsKey("limit") ? Integer.parseInt(params.get("limit")) : 10;
         // 排除忽略数据
         String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
         // 处理查询条件
@@ -119,8 +119,8 @@ public class AliCdnServiceImpl implements AliCdnService {
 
     // CDN-TASK-刷新预热任务列表(page&从数据库中读取)
     public Page<AliCdnTask> getTaskList(Map<String, String> params) throws Exception {
-        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
-        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        int pageNumber = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
+        int pageSize = params.containsKey("limit") ? Integer.parseInt(params.get("limit")) : 10;
         Specification<AliCdnTask> specification = new Specification<AliCdnTask>() {
             @Override
             public Predicate toPredicate(Root<AliCdnTask> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {

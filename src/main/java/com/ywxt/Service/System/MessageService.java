@@ -24,5 +24,5 @@ public interface MessageService {
     void setStatus(int id, String status);
 
     // 新建消息
-    void create(String action, String themeId, Map<String, String> msgParam, Map<String, String> otherParam);
+    void create(String action, String themeId, Map<String, String> msgParam, Map<String, String> otherParam) throws Exception;
 }

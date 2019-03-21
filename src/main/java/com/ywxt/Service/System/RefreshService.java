@@ -8,11 +8,11 @@ import java.util.List;
 public interface RefreshService {
 
     // 获取刷新类型
-    public List<JSONObject> refreshTypes();
+    List<JSONObject> refreshTypes();
 
     // 数据刷新
-    public void refreshData(String type);
+    void refreshData(String type);
 
     // 保存刷新日志
-    public void saveRefreshLog(LogRefresh logRefresh);
+    void saveRefreshLog(LogRefresh logRefresh);
 }

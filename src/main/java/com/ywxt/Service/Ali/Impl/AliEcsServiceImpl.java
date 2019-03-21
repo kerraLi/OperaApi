@@ -78,8 +78,8 @@ public class AliEcsServiceImpl implements AliEcsService {
 
     // ecs-查询所有实例的详细信息&分页
     public Page<AliEcs> getList(Map<String, String> params) throws Exception {
-        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
-        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        int pageNumber = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
+        int pageSize = params.containsKey("limit") ? Integer.parseInt(params.get("limit")) : 10;
         AliEcs aliEcs = new AliEcs();
         if (params.containsKey("status")) {
             aliEcs.setStatus(params.get("status"));

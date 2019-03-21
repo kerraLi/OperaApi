@@ -70,8 +70,8 @@ public class GodaddyCertificateServiceImpl implements GodaddyCertificateService 
 
     // certificates-查询所有证书&分页
     public Page<GodaddyCertificate> getList(Map<String, String> params) throws Exception {
-        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
-        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        int pageNumber = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
+        int pageSize = params.containsKey("limit") ? Integer.parseInt(params.get("limit")) : 10;
         // 排除忽略数据
         String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
         // 处理过期数据

@@ -1,15 +1,19 @@
 package com.ywxt.Service.System.Impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ywxt.Dao.Log.LogRefreshDao;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Handler.AsyncHandler;
+import com.ywxt.Service.Ali.AliService;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Aws.AwsService;
 import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
 import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
+import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
 import com.ywxt.Service.System.RefreshService;
@@ -24,15 +28,22 @@ import java.util.List;
 
 @Service
 public class RefreshServiceImpl implements RefreshService {
+
     @Autowired
-    private ObjectFactory<AliServiceImpl> objectFactory;
+    private LogRefreshDao logRefreshDao;
+    @Autowired
+    private AliService aliService;
+    @Autowired
+    private AwsService awsService;
+    @Autowired
+    private GodaddyService godaddyService;
 
     // 获取刷新类型
     public List<JSONObject> refreshTypes() {
         String[] types = new String[]{"ali", "aws", "godaddy"};
         List<JSONObject> list = new ArrayList<>();
         for (String type : types) {
-            LogRefresh last = new LogRefreshDaoImpl().getLast(type);
+            LogRefresh last = logRefreshDao.getFirstByTypeOrderByIdDesc(type);
             JSONObject temp = new JSONObject();
             temp.put("type", type);
             temp.put("name", type.toUpperCase());
@@ -53,7 +64,7 @@ public class RefreshServiceImpl implements RefreshService {
                             List<AliAccount> aliAccounts = new AliAccountServiceImpl().getList();
                             for (AliAccount aliAccount : aliAccounts) {
                                 if (aliAccount.getStatus().equals("normal")) {
-                                    objectFactory.getObject().freshSourceData(aliAccount.getAccessKeyId(),aliAccount.getAccessKeySecret());
+                                    aliService.freshSourceData(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret());
                                 }
                             }
                             break;
@@ -61,7 +72,7 @@ public class RefreshServiceImpl implements RefreshService {
                             List<AwsAccount> awsAccounts = new AwsAccountServiceImpl().getList();
                             for (AwsAccount awsAccount : awsAccounts) {
                                 if (awsAccount.getStatus().equals("normal")) {
-                                    new AwsServiceImpl(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret()).freshSourceData();
+                                    awsService.freshSourceData(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret());
                                 }
                             }
                             break;
@@ -69,7 +80,7 @@ public class RefreshServiceImpl implements RefreshService {
                             List<GodaddyAccount> goAccounts = new GodaddyAccountServiceImpl().getList();
                             for (GodaddyAccount godaddyAccount : goAccounts) {
                                 if (godaddyAccount.getStatus().equals("normal")) {
-                                    new GodaddyServiceImpl(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret()).freshSourceData();
+                                    godaddyService.freshSourceData(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret());
                                 }
                             }
                             break;
@@ -80,7 +91,7 @@ public class RefreshServiceImpl implements RefreshService {
                     LogRefresh log = new LogRefresh();
                     log.setTime(new Date());
                     log.setType(type);
-                    new RefreshServiceImpl().saveRefreshLog(log);
+                    logRefreshDao.saveAndFlush(log);
                 } catch (Exception e) {
                     // 异步处理数据错误
                     System.out.println(e.getMessage());
@@ -92,7 +103,7 @@ public class RefreshServiceImpl implements RefreshService {
 
     // 保存刷新日志
     public void saveRefreshLog(LogRefresh logRefresh) {
-        new LogRefreshDaoImpl().saveLogRefresh(logRefresh);
+        logRefreshDao.saveAndFlush(logRefresh);
     }
 
 

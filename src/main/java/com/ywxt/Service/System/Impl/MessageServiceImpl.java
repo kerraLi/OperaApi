@@ -50,8 +50,8 @@ public class MessageServiceImpl implements MessageService {
 
     // 查询所有&分页
     public Page<Message> getList(Map<String, String> params) throws Exception {
-        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
-        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        int pageNumber = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
+        int pageSize = params.containsKey("limit") ? Integer.parseInt(params.get("limit")) : 10;
         // 处理查询条件
         Specification<Message> specification = new Specification<Message>() {
             @Override
