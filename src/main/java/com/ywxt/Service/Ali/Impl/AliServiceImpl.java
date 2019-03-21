@@ -171,7 +171,7 @@ public class AliServiceImpl implements AliService {
     }
 
     // 更新cdn数据
-    public void freshCdnData(String keyId, String keySecret) throws Exception {
+    private void freshCdnData(String keyId, String keySecret) throws Exception {
         aliCdnDao.deleteByAccessKeyId(keyId);
         List<AliCdn> acList = new ArrayList<>();
         // cdn不分地区：只查一个地区
@@ -197,24 +197,6 @@ public class AliServiceImpl implements AliService {
         }
         aliCdnDao.saveAll(acList);
         aliCdnDao.flush();
-    }
-
-    // todo 过滤弃用param
-    public HashMap<String, Object> filterParamMarked(HashMap<String, Object> params, String coulmn, String[] markeValues) {
-        boolean ifMarked = (params.get("ifMarked") != null) && (params.get("ifMarked").equals("true"));
-        if (ifMarked) {
-            if (markeValues.length > 0) {
-                params.put(coulmn + "@in", markeValues);
-            } else {
-                params.put(coulmn + "@eq", "");
-            }
-        } else {
-            if (markeValues.length > 0) {
-                params.put(coulmn + "@notIn", markeValues);
-            }
-        }
-        params.remove("ifMarked");
-        return params;
     }
 
     // 获取userName

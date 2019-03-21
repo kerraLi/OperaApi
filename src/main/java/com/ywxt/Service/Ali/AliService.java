@@ -27,9 +27,6 @@ public interface AliService {
     // 获取accessKeySecret
     public String getAccessKeySecret(String accessKeyId) throws Exception;
 
-    // 过滤弃用param
-    public HashMap<String, Object> filterParamMarked(HashMap<String, Object> params, String coulmn, String[] markeValues);
-
     // 删除账号对应数据源
     public void removeSourceData(String keyId);
 

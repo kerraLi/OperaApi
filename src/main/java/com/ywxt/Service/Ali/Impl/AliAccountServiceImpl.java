@@ -110,7 +110,7 @@ public class AliAccountServiceImpl implements AliAccountService {
     }
 
     // 校验密钥
-    public boolean checkAccount(String accessKeyId, String accessKeySecret) throws Exception {
+    private boolean checkAccount(String accessKeyId, String accessKeySecret) throws Exception {
         IClientProfile profile = DefaultProfile.getProfile("", accessKeyId, accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
         try {

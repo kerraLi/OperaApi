@@ -2,40 +2,32 @@ package com.ywxt.Controller.Aws;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
+import com.ywxt.Domain.ApiResult;
+import com.ywxt.Service.Aws.AwsEc2Service;
 import com.ywxt.Service.Aws.Impl.AwsEc2ServiceImpl;
+import com.ywxt.Utils.CommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping(value = "/aws/ec2", name = "亚马逊EC2")
 public class AwsEc2Controller {
 
+    @Autowired
+    private AwsEc2Service awsEc2Service;
+
     // ec2:服务器列表
     @NotOperationAction
-    @ResponseBody
-    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.POST)
-    public JSONObject ecsList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        int pageNumber = request.getParameter("page") == null ? 1 : Integer.parseInt(request.getParameter("page"));
-        int pageSize = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        if (!(request.getParameter("status") == null) && !(request.getParameter("status").isEmpty())) {
-            if (request.getParameter("status").equals("others")) {
-                String[] statusStrings = {"running"};
-                params.put("status@notIn", statusStrings);
-            } else {
-                params.put("status", request.getParameter("status"));
-            }
-        }
-        if (!(request.getParameter("key") == null) && !(request.getParameter("key").isEmpty())) {
-            params.put("filter", request.getParameter("key"));
-        }
-        return new AwsEc2ServiceImpl().getEc2List(params, pageNumber, pageSize);
+    @PostMapping(value = {"/list"}, name = "列表")
+    public ApiResult ecsList(HttpServletRequest request) {
+        Map<String, String> params = CommonUtils.preSpringParams(request.getParameterMap());
+        return ApiResult.successWithObject(awsEc2Service.getList(params));
     }
 
 }

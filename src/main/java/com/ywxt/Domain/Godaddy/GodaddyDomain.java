@@ -1,22 +1,23 @@
 package com.ywxt.Domain.Godaddy;
 
 import com.ywxt.Annotation.MarkCloumn;
-import com.ywxt.Annotation.NotFilterColumn;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "godaddy_domain")
 public class GodaddyDomain {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotFilterColumn
+    @Transient
     private String userName;
     private String accessKeyId;
     private String domain;
     @MarkCloumn
     private String domainId;
-    @NotFilterColumn
     private String nameServers;
     private Date createdAt;
     private Date expires;
@@ -31,8 +32,10 @@ public class GodaddyDomain {
     // ACTIVE/CANCELLED_REDEEMABLE
     private String status;
     // 是否报警
+    @Transient
     private boolean isAlertExpired = false;
     // 是否弃用
+    @Transient
     private boolean isAlertMarked = false;
 
 

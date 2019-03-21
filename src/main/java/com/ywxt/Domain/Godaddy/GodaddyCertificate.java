@@ -1,16 +1,19 @@
 package com.ywxt.Domain.Godaddy;
 
-import com.ywxt.Annotation.MarkCloumn;
-import com.ywxt.Annotation.NotFilterColumn;
 
-import javax.persistence.Entity;
+import com.ywxt.Annotation.MarkCloumn;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "godaddy_certificate")
 public class GodaddyCertificate {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotFilterColumn
+    @Transient
     private String userName;
     private String accessKeyId;
     @MarkCloumn
@@ -28,9 +31,9 @@ public class GodaddyCertificate {
     private String productGuid;
     // 状态ISSUED
     private String certificateStatus;
-    // 是否报警
+    @Transient
     private boolean isAlertExpired = false;
-    // 数据是否弃用
+    @Transient
     private boolean isAlertMarked = false;
 
 

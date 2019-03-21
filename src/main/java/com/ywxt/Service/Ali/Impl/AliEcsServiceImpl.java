@@ -28,6 +28,14 @@ import java.util.*;
 @Service
 public class AliEcsServiceImpl implements AliEcsService {
 
+    private String paramIgnoreDomain = "AliEcs";
+    private String paramIgnoreColumn = "instanceId";
+    private String paramExpiresColumn = "expiredTime";
+    private String paramExpiresKey = "ALI_ECS_EXPIRED_DAY";
+    private String paramStatusColumn = "status";
+    private String paramStatusNormal = "Running";
+    private String[] ParamStatusExcept = {"Running"};
+
     @Autowired
     private AliService aliService;
     @Autowired
@@ -49,19 +57,19 @@ public class AliEcsServiceImpl implements AliEcsService {
             public Predicate toPredicate(Root<AliEcs> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
                 // 忽略数据
-                String[] markValues = ignoreService.getMarkedValues("AliEcs");
+                String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
                 if (markValues.length > 0) {
                     for (String s : markValues) {
-                        Predicate predicate = cb.notEqual(root.get("instanceId").as(String.class), s);
+                        Predicate predicate = cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s);
                         predicates.add(predicate);
                     }
                 }
                 // 过期数据
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue("ALI_ECS_EXPIRED_DAY")));
+                calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue(paramExpiresKey)));
                 Date thresholdDate = calendar.getTime();
-                predicates.add(cb.equal(root.get("status").as(String.class), "Running"));
-                predicates.add(cb.lessThanOrEqualTo(root.get("expiredTime"), thresholdDate));
+                predicates.add(cb.equal(root.get(paramStatusColumn).as(String.class), paramStatusNormal));
+                predicates.add(cb.lessThanOrEqualTo(root.get(paramExpiresColumn), thresholdDate));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
@@ -80,10 +88,10 @@ public class AliEcsServiceImpl implements AliEcsService {
             aliEcs.setStatus(params.get("lockReason"));
         }
         // 排除忽略数据
-        String[] markValues = ignoreService.getMarkedValues("AliEcs");
+        String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
         // 处理过期数据
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue("ALI_ECS_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue(paramExpiresKey)));
         Date thresholdDate = calendar.getTime();
         // 处理查询条件
         Specification<AliEcs> specification = new Specification<AliEcs>() {
@@ -109,21 +117,21 @@ public class AliEcsServiceImpl implements AliEcsService {
                         // 多个or条件
                         List<Predicate> psOr = new ArrayList<>();
                         for (String s : markValues) {
-                            psOr.add(cb.like(root.get("instanceId").as(String.class), s));
+                            psOr.add(cb.like(root.get(paramIgnoreColumn).as(String.class), s));
                         }
                         predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
                     } else {
                         for (String s : markValues) {
-                            Predicate predicate = cb.notEqual(root.get("instanceId").as(String.class), s);
+                            Predicate predicate = cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s);
                             predicates.add(predicate);
                         }
                     }
                 }
                 // 过期数据
                 if (params.containsKey("ifExpired") && params.get("ifExpired").equals("true")) {
-                    predicates.add(cb.equal(root.get("status").as(String.class), "Running"));
-                    predicates.add(cb.lessThanOrEqualTo(root.get("expiredTime"), thresholdDate));
-                    cb.asc(root.get("expiredTime"));
+                    predicates.add(cb.equal(root.get(paramStatusColumn).as(String.class), paramStatusNormal));
+                    predicates.add(cb.lessThanOrEqualTo(root.get(paramExpiresColumn), thresholdDate));
+                    cb.asc(root.get(paramExpiresColumn));
                 }
                 if (StringUtils.isNoneBlank(aliEcs.getStatus())) {
                     Predicate predicate = cb.equal(root.get("status").as(String.class), aliEcs.getStatus());

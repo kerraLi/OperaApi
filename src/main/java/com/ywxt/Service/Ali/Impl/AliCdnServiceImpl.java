@@ -33,6 +33,13 @@ import java.util.regex.Pattern;
 @Service
 public class AliCdnServiceImpl implements AliCdnService {
 
+    private String paramIgnoreDomain = "AliCdn";
+    private String paramIgnoreColumn = "domainName";
+    private String paramExpiresColumn = "";
+    private String paramExpiresKey = "";
+    private String paramStatusColumn = "domainStatus";
+    private String paramStatusNormal = "online";
+    private String[] ParamStatusExcept = {"online", "offline"};
 
     @Autowired
     private AliCdnDao aliCdnDao;
@@ -50,7 +57,7 @@ public class AliCdnServiceImpl implements AliCdnService {
         int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
         int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
         // 排除忽略数据
-        String[] markValues = ignoreService.getMarkedValues("AliCdn");
+        String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
         // 处理查询条件
         Specification<AliCdn> specification = new Specification<AliCdn>() {
             @Override
@@ -75,22 +82,23 @@ public class AliCdnServiceImpl implements AliCdnService {
                         // 多个or条件
                         List<Predicate> psOr = new ArrayList<>();
                         for (String s : markValues) {
-                            psOr.add(cb.like(root.get("instanceId").as(String.class), s));
+                            psOr.add(cb.like(root.get(paramIgnoreColumn).as(String.class), s));
                         }
                         predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
                     } else {
                         for (String s : markValues) {
-                            predicates.add(cb.notEqual(root.get("instanceId").as(String.class), s));
+                            predicates.add(cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s));
                         }
                     }
                 }
                 // status
                 if (params.containsKey("status")) {
                     if (params.get("status").equals("others")) {
-                        predicates.add(cb.notEqual(root.get("status").as(String.class), "online"));
-                        predicates.add(cb.notEqual(root.get("status").as(String.class), "offline"));
+                        for (String s : ParamStatusExcept) {
+                            predicates.add(cb.notEqual(root.get(paramStatusColumn).as(String.class), s));
+                        }
                     } else {
-                        predicates.add(cb.equal(root.get("status").as(String.class), params.get("status")));
+                        predicates.add(cb.equal(root.get(paramStatusColumn).as(String.class), params.get("status")));
                     }
                 }
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));

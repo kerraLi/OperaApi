@@ -1,11 +1,14 @@
 package com.ywxt.Service.Aws.Impl;
 
-import com.ywxt.Dao.Aws.Impl.AwsAccountDaoImpl;
-import com.ywxt.Dao.Aws.Impl.AwsEc2DaoImpl;
+import com.ywxt.Dao.Aws.AwsAccountDao;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Handler.AsyncHandler;
+import com.ywxt.Service.Aws.AwsAccountService;
+import com.ywxt.Service.Aws.AwsService;
 import com.ywxt.Utils.AsyncUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.*;
 import software.amazon.awssdk.services.iam.model.IamException;
 import software.amazon.awssdk.services.iam.model.ListUsersRequest;
@@ -13,23 +16,23 @@ import software.amazon.awssdk.services.iam.model.ListUsersResponse;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IamClient;
 
-import java.util.HashMap;
 import java.util.List;
 
-public class AwsAccountServiceImpl {
+@Service
+public class AwsAccountServiceImpl implements AwsAccountService {
 
-    // 获取总数
-    public int getTotal(HashMap<String, Object> params) throws Exception {
-        return new AwsAccountDaoImpl().getListTotal(params);
-    }
+    @Autowired
+    private AwsAccountDao awsAccountDao;
+    @Autowired
+    private AwsService awsService;
 
     // 列表
     public List<AwsAccount> getList() {
-        return new AwsAccountDaoImpl().getAccounts();
+        return awsAccountDao.findAll();
     }
 
     // 新增/修改
-    public int saveAccount(AwsAccount awsAccount) throws Exception {
+    public AwsAccount saveAccount(AwsAccount awsAccount) {
         // check key
         if (this.checkAccount(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret())) {
             awsAccount.setStatus("normal");
@@ -39,7 +42,7 @@ public class AwsAccountServiceImpl {
                 public void handle() {
                     try {
                         try {
-                            new AwsServiceImpl(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret()).freshSourceData();
+                            awsService.freshSourceData(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret());
                         } catch (Exception e) {
                             // 异步处理数据错误
                             System.out.println(e.getMessage());
@@ -54,29 +57,28 @@ public class AwsAccountServiceImpl {
         } else {
             awsAccount.setStatus("invalid");
         }
-        return new AwsAccountDaoImpl().saveAccount(awsAccount);
+        return awsAccountDao.saveAndFlush(awsAccount);
     }
 
     // 删除账号
-    public boolean deleteAccount(int awsAccountId) {
+    public void deleteAccount(int id) {
         // update Data
-        AwsAccount awsAccount = new AwsAccountDaoImpl().getAccount(awsAccountId);
+        AwsAccount awsAccount = awsAccountDao.getOne(id);
         if (awsAccount.getStatus().equals("normal")) {
             // update Data & 异步
             AsyncHandler handler = new AsyncHandler() {
                 @Override
                 public void handle() {
-                    // 删除ec2
-                    new AwsEc2DaoImpl().deleteAwsEc2ByAccessId(awsAccount.getAccessKeyId());
+                    awsService.removeSourceData(awsAccount.getAccessKeyId());
                 }
             };
             AsyncUtils.asyncWork(handler);
         }
-        return new AwsAccountDaoImpl().deleteAccount(awsAccountId);
+        awsAccountDao.deleteById(id);
     }
 
     // 校验密钥
-    public boolean checkAccount(String accessKeyId, String accessKeySecret) throws Exception {
+    private boolean checkAccount(String accessKeyId, String accessKeySecret) {
         try {
             Region region = Region.AWS_GLOBAL;
             IamClient client = IamClient.builder()

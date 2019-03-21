@@ -31,11 +31,6 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- 开启绑定本地的session -->
         <property name="hibernate.current_session_context_class">thread</property>
-        <mapping resource="hbm/AwsAccount.hbm.xml"/>
-        <mapping resource="hbm/AwsEc2.hbm.xml"/>
-        <mapping resource="hbm/GodaddyAccount.hbm.xml"/>
-        <mapping resource="hbm/GodaddyDomain.hbm.xml"/>
-        <mapping resource="hbm/GodaddyCertifacate.hbm.xml"/>
         <mapping resource="hbm/LogRefresh.hbm.xml"/>
         <mapping resource="hbm/Message.hbm.xml"/>
         <mapping class="com.ywxt.Domain.Log.LogOperation"/>

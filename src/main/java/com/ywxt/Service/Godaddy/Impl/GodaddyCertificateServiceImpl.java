@@ -1,137 +1,150 @@
 package com.ywxt.Service.Godaddy.Impl;
 
-import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
-import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
-import com.ywxt.Domain.Godaddy.GodaddyAccount;
+import com.ywxt.Dao.Godaddy.GodaddyCertificateDao;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Service.Godaddy.GodaddyCertificateService;
-import com.ywxt.Service.System.Impl.IgnoreServiceImpl;
-import com.ywxt.Service.System.Impl.ParameterServiceImpl;
+import com.ywxt.Service.Godaddy.GodaddyService;
+import com.ywxt.Service.System.IgnoreService;
+import com.ywxt.Service.System.ParameterService;
 import com.ywxt.Utils.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
+import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
 import java.util.*;
 
-public class GodaddyCertificateServiceImpl extends GodaddyServiceImpl implements GodaddyCertificateService {
+@Service
+public class GodaddyCertificateServiceImpl implements GodaddyCertificateService {
 
-    private String accessKeyId;
-    private String accessKeySecret;
-    private HashMap<String, String> userNameMap = new HashMap<>();
+    private String paramIgnoreDomain = "GodaddyCertificate";
+    private String paramIgnoreColumn = "certificateId";
+    private String paramExpiresColumn = "validEnd";
+    private String paramExpiresKey = "GODADDY_CERTIFICATE_EXPIRED_DAY";
+    private String paramStatusColumn = "certificateStatus";
+    private String paramStatusNormal = "ISSUED";
+    private String[] ParamStatusExcept = {"ISSUED"};
 
+    @Autowired
+    private GodaddyCertificateDao godaddyCertificateDao;
+    @Autowired
+    private GodaddyService godaddyService;
+    @Autowired
+    private IgnoreService ignoreService;
+    @Autowired
+    private ParameterService parameterService;
 
-    public GodaddyCertificateServiceImpl() {
-
-    }
-
-    public GodaddyCertificateServiceImpl(String accessKeyId) throws Exception {
-        GodaddyAccount godaddyAccount = new GodaddyAccountDaoImpl().getAccount(accessKeyId);
-        this.accessKeyId = accessKeyId;
-        this.accessKeySecret = godaddyAccount.getAccessKeySecret();
-    }
-
-    public GodaddyCertificateServiceImpl(String keyId, String keySecret) {
-        this.accessKeyId = keyId;
-        this.accessKeySecret = keySecret;
-    }
-
-    // 获取dash数据
-    public HashMap<String, Object> getDashData() throws Exception {
-        HashMap<String, Object> resultParams = new HashMap<String, Object>();
-        // normal invalid
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        for (Object[] os : new GodaddyCertificateDaoImpl().getCountGroup(params)) {
-            if (os[0].equals("ISSUED")) {
-                resultParams.put("go-certificate-" + os[1] + "-normal", os[2]);
-            } else {
-                resultParams.put("go-certificate-" + os[1] + "-invalid", os[2]);
+    // certificates-查询报警证书
+    public List<GodaddyCertificate> getAlertList() {
+        Specification<GodaddyCertificate> specification = new Specification<GodaddyCertificate>() {
+            @Override
+            public Predicate toPredicate(Root<GodaddyCertificate> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                // 忽略数据
+                String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
+                if (markValues.length > 0) {
+                    for (String s : markValues) {
+                        Predicate predicate = cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s);
+                        predicates.add(predicate);
+                    }
+                }
+                // 过期数据
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue(paramExpiresKey)));
+                Date thresholdDate = calendar.getTime();
+                predicates.add(cb.equal(root.get(paramStatusColumn).as(String.class), paramStatusNormal));
+                predicates.add(cb.lessThanOrEqualTo(root.get(paramExpiresColumn), thresholdDate));
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
-        }
-        // expired
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        params.put("certificateStatus", "ISSUED");
-        params.put("validEnd@lt", thresholdDate);
-        for (Object[] os : this.getCertificateTotalByAccount(params)) {
-            resultParams.put("go-certificate-" + os[0] + "-expired", os[1]);
-        }
-        // deprecated
-        params = new HashMap<String, Object>();
-        params.put("ifMarked", "true");
-        for (Object[] os : this.getCertificateTotalByAccount(params)) {
-            resultParams.put("go-certificate-" + os[0] + "-deprecated", os[1]);
-        }
-        return resultParams;
-    }
-
-    // certificates-获取个数按account分组
-    public List<Object[]> getCertificateTotalByAccount(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new GodaddyCertificateDaoImpl().getCertificateTotalByAccount(params);
-    }
-
-    // certificates-获取个数
-    public int getCertificateTotal(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        return new GodaddyCertificateDaoImpl().getCertificateTotal(params);
-    }
-
-    // certificates
-    public GodaddyCertificate getCertificate(int id) {
-        return new GodaddyCertificateDaoImpl().getCertificate(id);
-    }
-
-    // certificates-查询所有证书
-    public List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        // HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params);
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
-        Date thresholdDate = calendar.getTime();
-        for (GodaddyCertificate gc : list) {
-            if (gc.getCertificateStatus().equals("ISSUED")) {
-                gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
-            }
-            //if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
-            //    gc.setAlertMarked(true);
-            //}
-            gc.setUserName(this.getUserName(gc.getAccessKeyId()));
-        }
-        return list;
+        };
+        return godaddyCertificateDao.findAll(specification);
     }
 
     // certificates-查询所有证书&分页
-    public Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        // 是否弃用标记
-        //String coulmn = new IgnoreServiceImpl().getMarkKey(GodaddyCertificate.class);
-        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(GodaddyCertificate.class);
-        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        List<GodaddyCertificate> list = new GodaddyCertificateDaoImpl().getCertificateList(params, pageNumber, pageSize);
+    public Page<GodaddyCertificate> getList(Map<String, String> params) throws Exception {
+        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
+        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        // 排除忽略数据
+        String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
+        // 处理过期数据
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, Integer.parseInt(new ParameterServiceImpl().getValue("GODADDY_CERTIFICATE_EXPIRED_DAY")));
+        calendar.add(Calendar.DATE, Integer.parseInt(parameterService.getValue(paramExpiresKey)));
         Date thresholdDate = calendar.getTime();
-        for (GodaddyCertificate gc : list) {
-            if (gc.getCertificateStatus().equals("ISSUED")) {
+        Specification<GodaddyCertificate> specification = new Specification<GodaddyCertificate>() {
+            @Override
+            public Predicate toPredicate(Root<GodaddyCertificate> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                // filter批量过滤
+                if (params.containsKey("key")) {
+                    String filter = "%" + params.get("key") + "%";
+                    Field[] fields = GodaddyCertificate.class.getDeclaredFields();
+                    // 多个or条件
+                    List<Predicate> psOr = new ArrayList<>();
+                    for (Field f : fields) {
+                        if (f.getType() == String.class && !f.isAnnotationPresent(Transient.class)) {
+                            psOr.add(cb.like(root.get(f.getName()).as(String.class), filter));
+                        }
+                    }
+                    predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                }
+                // 忽略数据
+                if (markValues.length > 0) {
+                    if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
+                        // 多个or条件
+                        List<Predicate> psOr = new ArrayList<>();
+                        for (String s : markValues) {
+                            psOr.add(cb.like(root.get(paramIgnoreColumn).as(String.class), s));
+                        }
+                        predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                    } else {
+                        for (String s : markValues) {
+                            Predicate predicate = cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s);
+                            predicates.add(predicate);
+                        }
+                    }
+                }
+                // 过期数据
+                if (params.containsKey("ifExpired") && params.get("ifExpired").equals("true")) {
+                    predicates.add(cb.equal(root.get(paramStatusColumn).as(String.class), paramStatusNormal));
+                    predicates.add(cb.lessThanOrEqualTo(root.get(paramExpiresColumn), thresholdDate));
+                    cb.asc(root.get(paramExpiresColumn));
+                }
+                // status
+                if (params.containsKey("status")) {
+                    if (params.get("status").equals("OTHERS")) {
+                        for (String s : ParamStatusExcept) {
+                            predicates.add(cb.notEqual(root.get(paramStatusColumn).as(String.class), s));
+                        }
+                    } else {
+                        predicates.add(cb.equal(root.get(paramStatusColumn).as(String.class), params.get("status")));
+                    }
+                }
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<GodaddyCertificate> page = godaddyCertificateDao.findAll(specification, pageable);
+        // 处理查询条件
+        for (GodaddyCertificate gc : page.getContent()) {
+            // 过期
+            if (gc.getCertificateStatus().equals(paramStatusNormal)) {
                 gc.setAlertExpired(gc.getValidEnd().before(thresholdDate));
             }
-            //if (ArrayUtils.hasString(markeValues, gc.getCertificateId())) {
-            //    gc.setAlertMarked(true);
-            //}
-            gc.setUserName(this.getUserName(gc.getAccessKeyId()));
+            // 弃用
+            if (ArrayUtils.hasString(markValues, gc.getCertificateId())) {
+                gc.setAlertMarked(true);
+            }
+            gc.setUserName(godaddyService.getUserName(gc.getAccessKeyId()));
         }
-        // DATE为空转换失败所以用map
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("total", new GodaddyCertificateDaoImpl().getCertificateTotal(params));
-        result.put("items", list);
-        return result;
+        return page;
     }
 
 }

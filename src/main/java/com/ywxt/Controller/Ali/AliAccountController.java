@@ -7,8 +7,6 @@ import com.ywxt.Service.Ali.AliAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 @RestController
 @RequestMapping(value = "/ali/account", name = "阿里云账号")
 public class AliAccountController {
@@ -18,7 +16,7 @@ public class AliAccountController {
 
     @NotOperationAction
     @GetMapping(value = {"/list"}, name = "列表")
-    public ApiResult list(HttpServletRequest request) throws Exception {
+    public ApiResult list() throws Exception {
         return ApiResult.successWithObject(aliAccountService.getList(true));
     }
 
@@ -29,7 +27,7 @@ public class AliAccountController {
     }
 
     @PostMapping(value = {"/delete/{id}"}, name = "删除")
-    public ApiResult delete(HttpServletRequest request, @PathVariable Integer id) throws Exception {
+    public ApiResult delete(@PathVariable Integer id){
         aliAccountService.deleteAccount(id);
         return ApiResult.success();
     }

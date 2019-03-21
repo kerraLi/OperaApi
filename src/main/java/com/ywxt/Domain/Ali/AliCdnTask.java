@@ -1,7 +1,6 @@
 package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.cdn.model.v20141111.DescribeRefreshTasksResponse;
-import com.ywxt.Annotation.NotFilterColumn;
 
 import javax.persistence.*;
 import java.text.DateFormat;
@@ -16,7 +15,6 @@ public class AliCdnTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotFilterColumn
     @Transient
     private String userName;
     private String accessKeyId;

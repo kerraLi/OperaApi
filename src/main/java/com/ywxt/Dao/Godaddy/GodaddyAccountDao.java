@@ -1,20 +1,9 @@
 package com.ywxt.Dao.Godaddy;
 
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+public interface GodaddyAccountDao extends JpaRepository<GodaddyAccount, Integer> {
 
-public interface GodaddyAccountDao {
-    public abstract GodaddyAccount getAccount(int id);
-
-    public abstract GodaddyAccount getAccount(String accessKeyId) throws Exception;
-
-    public abstract List<GodaddyAccount> getAccountsNormal();
-
-    public abstract List<GodaddyAccount> getAccounts();
-
-    public abstract int saveAccount(GodaddyAccount account);
-
-    public abstract boolean deleteAccount(int accountId);
-
+    GodaddyAccount getByAccessKeyId(String keyId);
 }

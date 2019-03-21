@@ -1,8 +1,14 @@
 package com.ywxt.Domain.Aws;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+@Entity
+@Table(name = "aws_account")
 public class AwsAccount {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank
     private String userName;

@@ -1,43 +1,35 @@
 package com.ywxt.Controller.Aws;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
+import com.ywxt.Domain.ApiResult;
 import com.ywxt.Domain.Aws.AwsAccount;
-import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
-import org.springframework.stereotype.Controller;
+import com.ywxt.Service.Aws.AwsAccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-
-@Controller
+@RestController
 @RequestMapping(value = "/aws/account", name = "亚马逊账户")
 public class AwsAccountController extends CommonController {
 
+    @Autowired
+    private AwsAccountService awsAccountService;
+
     @NotOperationAction
-    @RequestMapping(value = {"/list"}, name = "列表", method = RequestMethod.GET)
-    @ResponseBody
-    public List<AwsAccount> list(HttpServletRequest request) throws Exception {
-        return new AwsAccountServiceImpl().getList();
+    @GetMapping(value = {"/list"}, name = "列表")
+    public ApiResult list() {
+        return ApiResult.successWithObject(awsAccountService.getList());
     }
 
-    @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
-    @ResponseBody
-    public JSONObject save(@ModelAttribute AwsAccount awsAccount) throws Exception {
-        new AwsAccountServiceImpl().saveAccount(awsAccount);
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
+    @PostMapping(value = {"/save"}, name = "修改")
+    public ApiResult save(@ModelAttribute AwsAccount awsAccount) {
+        awsAccountService.saveAccount(awsAccount);
+        return ApiResult.success();
     }
 
-    @RequestMapping(value = {"/delete/{id}"}, name = "删除", method = RequestMethod.POST)
-    @ResponseBody
-    public JSONObject delete(HttpServletRequest request, @PathVariable Integer id) throws Exception {
-        if (new AwsAccountServiceImpl().deleteAccount(id)) {
-            return this.returnObject(new HashMap<String, Object>() {{
-            }});
-        }
-        throw new Exception("删除失败。");
+    @PostMapping(value = {"/delete/{id}"}, name = "删除")
+    public ApiResult delete(@PathVariable Integer id) {
+        awsAccountService.deleteAccount(id);
+        return ApiResult.success();
     }
 }

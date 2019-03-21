@@ -1,20 +1,23 @@
 package com.ywxt.Domain.Aws;
 
 import com.ywxt.Annotation.MarkCloumn;
-import com.ywxt.Annotation.NotFilterColumn;
 import software.amazon.awssdk.services.ec2.model.Instance;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 @Entity
+@Table(name = "aws_ec2")
 public class AwsEc2 {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     // 账号
-    @NotFilterColumn
+    @Transient
     private String userName;
     private String accessKeyId;
     private String region;

@@ -1,14 +1,16 @@
 package com.ywxt.Service.Godaddy;
 
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
+import org.springframework.data.domain.Page;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public interface GodaddyCertificateService {
 
-    public abstract List<GodaddyCertificate> getCertificateList(HashMap<String, Object> params) throws Exception;
+    // certificates-查询报警证书
+    List<GodaddyCertificate> getAlertList();
 
-    public abstract Map<String, Object> getCertificateList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    // certificates-查询所有证书&分页
+    Page<GodaddyCertificate> getList(Map<String, String> params) throws Exception;
 }

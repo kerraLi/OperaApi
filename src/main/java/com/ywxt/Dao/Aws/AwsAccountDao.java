@@ -1,4 +1,8 @@
 package com.ywxt.Dao.Aws;
 
-public interface AwsAccountDao {
+import com.ywxt.Domain.Aws.AwsAccount;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AwsAccountDao extends JpaRepository<AwsAccount, Integer> {
+    AwsAccount getByAccessKeyId(String keyId);
 }

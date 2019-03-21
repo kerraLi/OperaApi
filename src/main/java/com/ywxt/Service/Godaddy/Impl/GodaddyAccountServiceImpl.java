@@ -2,35 +2,36 @@ package com.ywxt.Service.Godaddy.Impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.ywxt.Dao.Godaddy.GodaddyAccountDao;
-import com.ywxt.Dao.Godaddy.Impl.GodaddyAccountDaoImpl;
-import com.ywxt.Dao.Godaddy.Impl.GodaddyCertificateDaoImpl;
-import com.ywxt.Dao.Godaddy.Impl.GodaddyDomainDaoImpl;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Handler.AsyncHandler;
 import com.ywxt.Service.Godaddy.GodaddyAccountService;
+import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Utils.AsyncUtils;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class GodaddyAccountServiceImpl implements GodaddyAccountService {
 
-    // 获取总数
-    public int getTotal(HashMap<String, Object> params) throws Exception {
-        return new GodaddyAccountDaoImpl().getListTotal(params);
-    }
+    @Autowired
+    private GodaddyAccountDao godaddyAccountDao;
+    @Autowired
+    private GodaddyService godaddyService;
 
     // 列表
     public List<GodaddyAccount> getList() {
-        return new GodaddyAccountDaoImpl().getAccounts();
+        return godaddyAccountDao.findAll();
     }
 
     // 新增/修改
-    public int saveAccount(GodaddyAccount godaddyAccount) throws Exception {
+    public GodaddyAccount saveAccount(GodaddyAccount godaddyAccount) throws Exception {
         // check key
         if (this.checkAccount(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret())) {
             godaddyAccount.setStatus("normal");
@@ -39,7 +40,7 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
                 @Override
                 public void handle() {
                     try {
-                        new GodaddyServiceImpl(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret()).freshSourceData();
+                        godaddyService.freshSourceData(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret());
                     } catch (Exception e) {
                         // 异步处理数据错误
                         System.out.println(e.getMessage());
@@ -50,31 +51,28 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
         } else {
             godaddyAccount.setStatus("invalid");
         }
-        return new GodaddyAccountDaoImpl().saveAccount(godaddyAccount);
+        return godaddyAccountDao.saveAndFlush(godaddyAccount);
     }
 
     // 删除账号
-    public boolean deleteAccount(int godaddyAccountId) {
+    public void deleteAccount(int id) {
         // update Data
-        GodaddyAccount godaddyAccount = new GodaddyAccountDaoImpl().getAccount(godaddyAccountId);
+        GodaddyAccount godaddyAccount = godaddyAccountDao.getOne(id);
         if (godaddyAccount.getStatus().equals("normal")) {
             // update Data & 异步
             AsyncHandler handler = new AsyncHandler() {
                 @Override
                 public void handle() {
-                    // 删除ecs
-                    new GodaddyDomainDaoImpl().deleteDomainByAccessId(godaddyAccount.getAccessKeyId());
-                    // 删除cdn
-                    new GodaddyCertificateDaoImpl().deleteCertificateByAccessId(godaddyAccount.getAccessKeyId());
+                    godaddyService.removeSourceData(godaddyAccount.getAccessKeyId());
                 }
             };
             AsyncUtils.asyncWork(handler);
         }
-        return new GodaddyAccountDaoImpl().deleteAccount(godaddyAccountId);
+        godaddyAccountDao.deleteById(id);
     }
 
     // 校验密钥
-    public boolean checkAccount(String accessKeyId, String accessKeySecret) throws Exception {
+    private boolean checkAccount(String accessKeyId, String accessKeySecret) throws Exception {
         try {
             HashMap<String, String> inParam = new HashMap<>();
             inParam.put("limit", "1");

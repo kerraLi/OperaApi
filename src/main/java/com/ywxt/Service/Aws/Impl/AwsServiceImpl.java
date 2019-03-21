@@ -1,11 +1,14 @@
 package com.ywxt.Service.Aws.Impl;
 
-import com.ywxt.Dao.Aws.Impl.AwsAccountDaoImpl;
-import com.ywxt.Dao.Aws.Impl.AwsEc2DaoImpl;
+import com.ywxt.Dao.Aws.AwsAccountDao;
+import com.ywxt.Dao.Aws.AwsEc2Dao;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Domain.Aws.AwsEc2;
 import com.ywxt.Domain.Log.LogRefresh;
+import com.ywxt.Service.Aws.AwsService;
 import com.ywxt.Service.System.Impl.RefreshServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -20,42 +23,35 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class AwsServiceImpl {
+@Service("awsService")
+public class AwsServiceImpl implements AwsService {
 
-    private String accessKeyId;
-    private String accessKeySecret;
+    @Autowired
+    private AwsAccountDao awsAccountDao;
+    @Autowired
+    private AwsEc2Dao awsEc2Dao;
+
     private HashMap<String, String> userNameMap = new HashMap<>();
 
-
-    public AwsServiceImpl() {
-
-    }
-
-    public AwsServiceImpl(String accessKeyId) throws Exception {
-        AwsAccount awsAccount = new AwsAccountDaoImpl().getAccount(accessKeyId);
-        this.accessKeyId = accessKeyId;
-        this.accessKeySecret = awsAccount.getAccessKeySecret();
-    }
-
-    public AwsServiceImpl(String keyId, String keySecret) {
-        this.accessKeyId = keyId;
-        this.accessKeySecret = keySecret;
-    }
-
     // 更新源数据
-    public void freshSourceData() throws Exception {
+    public void freshSourceData(String keyId, String keySecret) throws Exception {
         // 记录更新时间
         LogRefresh log = new LogRefresh();
         log.setTime(new Date());
         log.setType("aws");
         new RefreshServiceImpl().saveRefreshLog(log);
         // 刷新
-        this.freshEc2();
+        this.freshEc2(keyId, keySecret);
+    }
+
+    // 删除源数据
+    public void removeSourceData(String keyId) {
+        awsEc2Dao.deleteByAccessKeyId(keyId);
     }
 
     // 更新ec2
-    public void freshEc2() throws Exception {
-        new AwsEc2DaoImpl().deleteAwsEc2ByAccessId(this.accessKeyId);
+    public void freshEc2(String keyId, String keySecret) throws Exception {
+        awsEc2Dao.deleteByAccessKeyId(keyId);
         List<AwsEc2> aeList = new ArrayList<>();
         for (Region region : Region.regions()) {
             // 排除不可用区
@@ -66,7 +62,7 @@ public class AwsServiceImpl {
                     && !region.id().equals("cn-northwest-1")
             ) {
                 Ec2Client client = Ec2Client.builder()
-                        .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKeyId, accessKeySecret)))
+                        .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(keyId, keySecret)))
                         .region(region).build();
                 DescribeInstancesRequest request = DescribeInstancesRequest.builder().build();
                 boolean done = false;
@@ -74,7 +70,7 @@ public class AwsServiceImpl {
                     DescribeInstancesResponse response = client.describeInstances(request);
                     for (Reservation reservation : response.reservations()) {
                         for (Instance instance : reservation.instances()) {
-                            AwsEc2 awsEc2 = new AwsEc2(this.accessKeyId, region.id(), instance);
+                            AwsEc2 awsEc2 = new AwsEc2(keyId, region.id(), instance);
                             aeList.add(awsEc2);
                         }
                     }
@@ -84,13 +80,14 @@ public class AwsServiceImpl {
                 }
             }
         }
-        new AwsEc2DaoImpl().saveAwsEc2s(aeList);
+        awsEc2Dao.saveAll(aeList);
+        awsEc2Dao.flush();
     }
 
     // 获取userName
-    public String getUserName(String accessKeyId) throws Exception {
+    public String getUserName(String accessKeyId) {
         if (this.userNameMap.get(accessKeyId) == null) {
-            AwsAccount awsAccount = new AwsAccountDaoImpl().getAccount(accessKeyId);
+            AwsAccount awsAccount = awsAccountDao.getByAccessKeyId(accessKeyId);
             this.userNameMap.put(accessKeyId, awsAccount.getUserName());
             return awsAccount.getUserName();
         } else {

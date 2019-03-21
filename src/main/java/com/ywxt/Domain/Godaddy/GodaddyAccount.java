@@ -1,11 +1,14 @@
 package com.ywxt.Domain.Godaddy;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
+@Table(name = "godaddy_account")
 public class GodaddyAccount {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotBlank
     private String userName;

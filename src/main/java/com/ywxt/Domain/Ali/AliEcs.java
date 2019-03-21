@@ -2,7 +2,6 @@ package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.ecs.model.v20140526.DescribeInstancesResponse;
 import com.ywxt.Annotation.MarkCloumn;
-import com.ywxt.Annotation.NotFilterColumn;
 
 import javax.persistence.*;
 import java.text.DateFormat;
@@ -21,6 +20,7 @@ public class AliEcs {
     @Transient
     private String userName;
     private String accessKeyId;
+    @MarkCloumn
     private String instanceId;
     private String instanceName;
     private String instanceType;
