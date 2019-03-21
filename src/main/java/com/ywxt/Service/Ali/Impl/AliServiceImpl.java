@@ -19,6 +19,7 @@ import com.ywxt.Domain.Ali.AliScdn;
 import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliService;
+import com.ywxt.Service.System.RefreshService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,8 @@ public class AliServiceImpl implements AliService {
     private AliCdnDao aliCdnDao;
     @Autowired
     private AliScdnDao aliScdnDao;
+    @Autowired
+    private RefreshService refreshService;
 
     private HashMap<String, String> userNameMap = new HashMap<>();
 
@@ -89,7 +92,7 @@ public class AliServiceImpl implements AliService {
         LogRefresh log = new LogRefresh();
         log.setTime(new Date());
         log.setType("ali");
-        new RefreshServiceImpl().saveRefreshLog(log);
+        refreshService.saveRefreshLog(log);
         // 更新ecs数据 && 更新cdn域名数据
         this.freshEcsData(keyId, keySecret);
         this.freshCdnData(keyId, keySecret);
@@ -102,7 +105,7 @@ public class AliServiceImpl implements AliService {
         if (CollectionUtils.isNotEmpty(list)) {
             aliScdnDao.deleteInBatch(list);
         }
-        AliAccount aliAccount = aliAccountDao.getByAccessKeyId(keyId);
+        AliAccount aliAccount = aliAccountDao.findAliAccountByAccessKeyId(keyId);
         List<AliScdn> aliScdns = new ArrayList<>();
         IClientProfile profile = DefaultProfile.getProfile("", keyId, keySecret);
         IAcsClient client = new DefaultAcsClient(profile);
@@ -202,7 +205,7 @@ public class AliServiceImpl implements AliService {
     // 获取userName
     public String getUserName(String keyId) {
         if (this.userNameMap.get(keyId) == null) {
-            AliAccount aliAccount = aliAccountDao.getByAccessKeyId(keyId);
+            AliAccount aliAccount = aliAccountDao.findAliAccountByAccessKeyId(keyId);
             this.userNameMap.put(keyId, aliAccount.getUserName());
             return aliAccount.getUserName();
         } else {
@@ -212,7 +215,7 @@ public class AliServiceImpl implements AliService {
 
     // 获取accessKeySecret
     public String getAccessKeySecret(String accessKeyId) {
-        AliAccount aliAccount = aliAccountDao.getByAccessKeyId(accessKeyId);
+        AliAccount aliAccount = aliAccountDao.findAliAccountByAccessKeyId(accessKeyId);
         return aliAccount.getAccessKeySecret();
     }
 

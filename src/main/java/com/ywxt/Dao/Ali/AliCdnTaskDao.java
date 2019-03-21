@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AliCdnTaskDao extends JpaRepository<AliCdnTask, Integer> {
 
+    AliCdnTask findAliCdnTaskById(Integer id);
+
     Page<AliCdnTask> findAll(Specification<AliCdnTask> specification, Pageable pageable);
 
 }

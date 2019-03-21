@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface AliAccountDao extends JpaRepository<AliAccount, Integer> {
 
-    AliAccount getByAccessKeyId(String keyId);
+    AliAccount findAliAccountById(Integer id);
+
+    AliAccount findAliAccountByAccessKeyId(String keyId);
 }

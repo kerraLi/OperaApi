@@ -7,6 +7,7 @@ import com.ywxt.Domain.Aws.AwsEc2;
 import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Service.Aws.AwsService;
 import com.ywxt.Service.System.Impl.RefreshServiceImpl;
+import com.ywxt.Service.System.RefreshService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -30,6 +31,8 @@ public class AwsServiceImpl implements AwsService {
     private AwsAccountDao awsAccountDao;
     @Autowired
     private AwsEc2Dao awsEc2Dao;
+    @Autowired
+    private RefreshService refreshService;
 
     private HashMap<String, String> userNameMap = new HashMap<>();
 
@@ -39,7 +42,7 @@ public class AwsServiceImpl implements AwsService {
         LogRefresh log = new LogRefresh();
         log.setTime(new Date());
         log.setType("aws");
-        new RefreshServiceImpl().saveRefreshLog(log);
+        refreshService.saveRefreshLog(log);
         // 刷新
         this.freshEc2(keyId, keySecret);
     }
@@ -87,7 +90,7 @@ public class AwsServiceImpl implements AwsService {
     // 获取userName
     public String getUserName(String accessKeyId) {
         if (this.userNameMap.get(accessKeyId) == null) {
-            AwsAccount awsAccount = awsAccountDao.getByAccessKeyId(accessKeyId);
+            AwsAccount awsAccount = awsAccountDao.findAwsAccountByAccessKeyId(accessKeyId);
             this.userNameMap.put(accessKeyId, awsAccount.getUserName());
             return awsAccount.getUserName();
         } else {

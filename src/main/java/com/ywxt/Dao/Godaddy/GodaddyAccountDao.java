@@ -5,5 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GodaddyAccountDao extends JpaRepository<GodaddyAccount, Integer> {
 
-    GodaddyAccount getByAccessKeyId(String keyId);
+    GodaddyAccount findGodaddyAccountById(Integer id);
+
+    GodaddyAccount findGodaddyAccountByAccessKeyId(String keyId);
 }

@@ -14,6 +14,8 @@ public class ParameterServiceImpl implements ParameterService {
     @Autowired
     private ParameterDao parameterDao;
 
+    // 获取action-value
+
     // 获取value
     public String getValue(String key) {
         Parameter parameter = parameterDao.getByKey(key);

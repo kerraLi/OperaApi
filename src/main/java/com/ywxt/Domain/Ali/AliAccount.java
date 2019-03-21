@@ -2,13 +2,16 @@ package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
 import com.ywxt.Annotation.MarkCloumn;
+import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
+@Data
 @Entity
 @Table(name = "ali_account")
-public class AliAccount {
+public class AliAccount implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,67 +39,4 @@ public class AliAccount {
         this.accessKeySecret = keySecret;
     }
 
-    public QueryAccountBalanceResponse.Data getBalanceData() {
-        return balanceData;
-    }
-
-    public void setBalanceData(QueryAccountBalanceResponse.Data balanceData) {
-        this.balanceData = balanceData;
-    }
-
-    public String getAccessKeyId() {
-        return accessKeyId;
-    }
-
-    public void setAccessKeyId(String accessKeyId) {
-        this.accessKeyId = accessKeyId;
-    }
-
-    public String getAccessKeySecret() {
-        return accessKeySecret;
-    }
-
-    public void setAccessKeySecret(String accessKeySecret) {
-        this.accessKeySecret = accessKeySecret;
-    }
-
-    public Boolean getAlertBalance() {
-        return isAlertBalance;
-    }
-
-    public void setAlertBalance(Boolean alertBalance) {
-        isAlertBalance = alertBalance;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Boolean getAlertMarked() {
-        return isAlertMarked;
-    }
-
-    public void setAlertMarked(Boolean alertMarked) {
-        isAlertMarked = alertMarked;
-    }
 }

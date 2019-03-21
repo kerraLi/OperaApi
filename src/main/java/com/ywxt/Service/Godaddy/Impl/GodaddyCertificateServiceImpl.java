@@ -96,19 +96,21 @@ public class GodaddyCertificateServiceImpl implements GodaddyCertificateService 
                     predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
                 }
                 // 忽略数据
-                if (markValues.length > 0) {
-                    if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
-                        // 多个or条件
-                        List<Predicate> psOr = new ArrayList<>();
-                        for (String s : markValues) {
-                            psOr.add(cb.like(root.get(paramIgnoreColumn).as(String.class), s));
-                        }
-                        predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
+                    // in
+                    List<Predicate> psOr = new ArrayList<>();
+                    CriteriaBuilder.In<String> in = cb.in(root.get(paramIgnoreColumn));
+                    if (markValues.length == 0) {
+                        in.value((String) null);
                     } else {
                         for (String s : markValues) {
-                            Predicate predicate = cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s);
-                            predicates.add(predicate);
+                            in.value(s);
                         }
+                    }
+                    predicates.add(in);
+                } else {
+                    for (String s : markValues) {
+                        predicates.add(cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s));
                     }
                 }
                 // 过期数据

@@ -36,7 +36,7 @@ public class AliAccountServiceImpl implements AliAccountService {
 
     // 获取账户
     public AliAccount getAliAccount(int id) {
-        return aliAccountDao.getOne(id);
+        return aliAccountDao.findAliAccountById(id);
     }
 
     // 列表
@@ -57,11 +57,11 @@ public class AliAccountServiceImpl implements AliAccountService {
                     // ali 金额 带千分符(,)
                     if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue()
                             <= Double.parseDouble(parameterService.getValue("ALI_ACCOUNT_BALANCE"))) {
-                        aa.setAlertBalance(true);
+                        aa.setIsAlertBalance(true);
                     }
                 }
                 if (ArrayUtils.hasString(markValues, aa.getAccessKeyId())) {
-                    aa.setAlertMarked(true);
+                    aa.setIsAlertMarked(true);
                 }
             }
         }
@@ -89,13 +89,13 @@ public class AliAccountServiceImpl implements AliAccountService {
         } else {
             aliAccount.setStatus("invalid");
         }
-        return aliAccountDao.save(aliAccount);
+        return aliAccountDao.saveAndFlush(aliAccount);
     }
 
     // 删除账号
     public void deleteAccount(int id) {
         // update ali Data
-        AliAccount aliAccount = aliAccountDao.getOne(id);
+        AliAccount aliAccount = aliAccountDao.findAliAccountById(id);
         if (aliAccount.getStatus().equals("normal")) {
             // update Data & 异步
             AsyncHandler handler = new AsyncHandler() {

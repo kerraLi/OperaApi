@@ -47,7 +47,7 @@ public class AliEcsServiceImpl implements AliEcsService {
 
     // ecs-获取单个
     public AliEcs getEcs(int id) {
-        return aliEcsDao.getOne(id);
+        return aliEcsDao.findAliEcsById(id);
     }
 
     // ecs-查询报警
@@ -112,19 +112,21 @@ public class AliEcsServiceImpl implements AliEcsService {
                     predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
                 }
                 // 忽略数据
-                if (markValues.length > 0) {
-                    if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
-                        // 多个or条件
-                        List<Predicate> psOr = new ArrayList<>();
-                        for (String s : markValues) {
-                            psOr.add(cb.like(root.get(paramIgnoreColumn).as(String.class), s));
-                        }
-                        predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
+                    // in
+                    List<Predicate> psOr = new ArrayList<>();
+                    CriteriaBuilder.In<String> in = cb.in(root.get(paramIgnoreColumn));
+                    if (markValues.length == 0) {
+                        in.value((String) null);
                     } else {
                         for (String s : markValues) {
-                            Predicate predicate = cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s);
-                            predicates.add(predicate);
+                            in.value(s);
                         }
+                    }
+                    predicates.add(in);
+                } else {
+                    for (String s : markValues) {
+                        predicates.add(cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s));
                     }
                 }
                 // 过期数据
@@ -213,7 +215,7 @@ public class AliEcsServiceImpl implements AliEcsService {
 
     // ecs-操作
     public void actionEcs(String action, int id) throws Exception {
-        AliEcs aliEcs = aliEcsDao.getOne(id);
+        AliEcs aliEcs = aliEcsDao.findAliEcsById(id);
         Map<String, String> keys = aliService.getKey(aliEcs);
         IAcsClient client = aliService.getAliClient(aliEcs.getRegionId(), keys.get("id"), keys.get("secret"));
         switch (action) {

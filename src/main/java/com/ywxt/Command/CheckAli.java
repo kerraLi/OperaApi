@@ -30,7 +30,7 @@ public class CheckAli extends Check {
             List<AliAccount> list = aliAccountService.getList(true);
             String action = "ALI_ACCOUNT_NO_MONEY";
             for (AliAccount aliAccount : list) {
-                if (aliAccount.getAlertBalance() && (!aliAccount.getAlertMarked())) {
+                if (aliAccount.getIsAlertBalance() && (!aliAccount.getIsAlertMarked())) {
                     Map<String, String> param = new HashMap<String, String>();
                     param.put("accountName", aliAccount.getUserName());
                     param.put("balance", aliAccount.getBalanceData().getAvailableAmount());

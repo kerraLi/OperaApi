@@ -57,7 +57,7 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
     // 删除账号
     public void deleteAccount(int id) {
         // update Data
-        GodaddyAccount godaddyAccount = godaddyAccountDao.getOne(id);
+        GodaddyAccount godaddyAccount = godaddyAccountDao.findGodaddyAccountById(id);
         if (godaddyAccount.getStatus().equals("normal")) {
             // update Data & 异步
             AsyncHandler handler = new AsyncHandler() {

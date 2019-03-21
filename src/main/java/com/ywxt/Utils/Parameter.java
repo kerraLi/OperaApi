@@ -58,7 +58,7 @@ public class Parameter {
         put("GET_CERTIFICATE_LIST", "/v1/certificates");
     }};
 
-    // message 消息
+    // todo message 消息
     private static String getParamValue(String key) {
         try {
             return new ParameterServiceImpl().getValue(key);
@@ -83,6 +83,7 @@ public class Parameter {
         put("GODADDY_CERTIFICATE_EXPIRED", "您好，Godaddy证书有效时间已少于" + Parameter.getParamValue("GODADDY_CERTIFICATE_EXPIRED_DAY") + "天，请及时续费。\r\n账号：{accountName}\r\n证书ID:{certificateId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n主体备选域名：{subjectAlternativeNames}");
         put("WEBHOOK_MESSAGE", "*****报警信息*****\r\n标题：{ruleName}\r\n报警连接：{ruleUrl}\r\n状态:{state}\r\n内容：{title}\r\n具体消息：{message}");
     }};
+
     public static Map<String, String> MessageTitles = new HashMap<String, String>() {{
         put("ALI_ACCOUNT_NO_MONEY", "续费");
         put("ALI_ECS_EXPIRED_NUM", "ALI服务器过期");

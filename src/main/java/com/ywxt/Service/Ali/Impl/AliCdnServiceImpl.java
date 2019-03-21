@@ -25,6 +25,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -77,18 +78,21 @@ public class AliCdnServiceImpl implements AliCdnService {
                     predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
                 }
                 // 忽略数据
-                if (markValues.length > 0) {
-                    if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
-                        // 多个or条件
-                        List<Predicate> psOr = new ArrayList<>();
-                        for (String s : markValues) {
-                            psOr.add(cb.like(root.get(paramIgnoreColumn).as(String.class), s));
-                        }
-                        predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
+                    // in
+                    List<Predicate> psOr = new ArrayList<>();
+                    CriteriaBuilder.In<String> in = cb.in(root.get(paramIgnoreColumn));
+                    if (markValues.length == 0) {
+                        in.value((String) null);
                     } else {
                         for (String s : markValues) {
-                            predicates.add(cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s));
+                            in.value(s);
                         }
+                    }
+                    predicates.add(in);
+                } else {
+                    for (String s : markValues) {
+                        predicates.add(cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s));
                     }
                 }
                 // status
@@ -128,8 +132,11 @@ public class AliCdnServiceImpl implements AliCdnService {
                 if (params.containsKey("operDate")) {
                     String[] operateDate = params.get("operDate").split(",");
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    predicates.add(cb.greaterThan(root.get("creationTime"), operateDate[0] + " 00:00:00"));
-                    predicates.add(cb.lessThan(root.get("creationTime"), operateDate[1] + " 23:59:59"));
+                    try {
+                        predicates.add(cb.greaterThan(root.get("creationTime"), sdf.parse(operateDate[0] + " 00:00:00")));
+                        predicates.add(cb.lessThan(root.get("creationTime"), sdf.parse(operateDate[1] + " 23:59:59")));
+                    } catch (ParseException e) {
+                    }
                 }
                 if (params.containsKey("url")) {
                     predicates.add(cb.like(root.get("objectPath"), "%" + params.get("url") + "%"));
@@ -181,7 +188,7 @@ public class AliCdnServiceImpl implements AliCdnService {
 
     // CDN-TASK-刷新预热任务(更新process与status)
     public AliCdnTask updateTask(int id) throws Exception {
-        AliCdnTask act = aliCdnTaskDao.getOne(id);
+        AliCdnTask act = aliCdnTaskDao.findAliCdnTaskById(id);
         String keyId = act.getAccessKeyId();
         String keySecret = aliService.getAccessKeySecret(keyId);
         IAcsClient client = aliService.getAliClient(AliRegion.QINGDAO.getRegion(), keyId, keySecret);
@@ -206,11 +213,13 @@ public class AliCdnServiceImpl implements AliCdnService {
         String[] objectPaths = objectPath.split("\\n");
         // 默认未同一个账号内，若为不同账号更新失败
         Matcher matcher = p.matcher(objectPaths[0]);
-        String domain = matcher.group();
-        AliCdn c = aliCdnDao.getByDomainName(domain);
-        if (c == null) {
+        String domain = null;
+        if (matcher.find()) {
+            domain = matcher.group();
+        } else {
             throw new Exception("输入DOMAIN错误。");
         }
+        AliCdn c = aliCdnDao.getByDomainName(domain);
         String keyId = c.getAccessKeyId();
         String keySecret = aliService.getAccessKeySecret(keyId);
         IAcsClient client = aliService.getAliClient(AliRegion.QINGDAO.getRegion(), keyId, keySecret);

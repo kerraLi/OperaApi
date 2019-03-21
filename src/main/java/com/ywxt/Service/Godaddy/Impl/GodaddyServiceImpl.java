@@ -10,6 +10,7 @@ import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Handler.PropertyStrategyHandler;
 import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Service.System.Impl.RefreshServiceImpl;
+import com.ywxt.Service.System.RefreshService;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import net.sf.ezmorph.object.DateMorpher;
@@ -32,6 +33,8 @@ public class GodaddyServiceImpl implements GodaddyService {
     private GodaddyCertificateDao godaddyCertificateDao;
     @Autowired
     private GodaddyDomainDao godaddyDomainDao;
+    @Autowired
+    private RefreshService refreshService;
 
     private HashMap<String, String> userNameMap = new HashMap<>();
 
@@ -41,7 +44,7 @@ public class GodaddyServiceImpl implements GodaddyService {
         LogRefresh log = new LogRefresh();
         log.setTime(new Date());
         log.setType("godaddy");
-        new RefreshServiceImpl().saveRefreshLog(log);
+        refreshService.saveRefreshLog(log);
         // 刷新
         this.freshDomain(keyId, keySecret);
         this.freshCertificate(keyId, keySecret);
@@ -117,7 +120,7 @@ public class GodaddyServiceImpl implements GodaddyService {
     // 获取userName
     public String getUserName(String accessKeyId) throws Exception {
         if (this.userNameMap.get(accessKeyId) == null) {
-            GodaddyAccount godaddyAccount = godaddyAccountDao.getByAccessKeyId(accessKeyId);
+            GodaddyAccount godaddyAccount = godaddyAccountDao.findGodaddyAccountByAccessKeyId(accessKeyId);
             this.userNameMap.put(accessKeyId, godaddyAccount.getUserName());
             return godaddyAccount.getUserName();
         } else {

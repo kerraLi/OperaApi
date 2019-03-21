@@ -63,7 +63,7 @@ public class AwsAccountServiceImpl implements AwsAccountService {
     // 删除账号
     public void deleteAccount(int id) {
         // update Data
-        AwsAccount awsAccount = awsAccountDao.getOne(id);
+        AwsAccount awsAccount = awsAccountDao.findAwsAccountById(id);
         if (awsAccount.getStatus().equals("normal")) {
             // update Data & 异步
             AsyncHandler handler = new AsyncHandler() {

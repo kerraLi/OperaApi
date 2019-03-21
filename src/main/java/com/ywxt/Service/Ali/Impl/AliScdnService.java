@@ -109,7 +109,7 @@ public class AliScdnService {
         ExceptionUtil.isTrue(domain==null,"url错误");
         AliScdn scdn = aliScdnDao.findByDomainName(domain);
         ExceptionUtil.isTrue(scdn==null,"url错误");
-        AliAccount aliAccount = aliAccountDao.getByAccessKeyId(scdn.getAccessKeyId());
+        AliAccount aliAccount = aliAccountDao.findAliAccountByAccessKeyId(scdn.getAccessKeyId());
 
         //获取连接
         IAcsClient client = getAliClient(aliAccount);
@@ -210,7 +210,7 @@ public class AliScdnService {
     public void updateScdn(Long id) throws Exception {
         AliScdnTask aliScdnTask = aliScdnTaskDao.getOne(id);
         ExceptionUtil.isTrue(aliScdnTask==null,"id不正确");
-        AliAccount aliAccount = aliAccountDao.getByAccessKeyId(aliScdnTask.getAccessKeyId());
+        AliAccount aliAccount = aliAccountDao.findAliAccountByAccessKeyId(aliScdnTask.getAccessKeyId());
         //获取连接
         IAcsClient client = getAliClient(aliAccount);
 
