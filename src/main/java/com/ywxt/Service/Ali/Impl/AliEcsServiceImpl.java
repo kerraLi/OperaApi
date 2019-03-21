@@ -69,12 +69,16 @@ public class AliEcsServiceImpl implements AliEcsService {
     }
 
     // ecs-查询所有实例的详细信息&分页
-    public Page<AliEcs> getList(Map<String, String[]> params) throws Exception {
-        int pageNumber = params.get("page") == null ? 1 : Integer.parseInt(params.get("page")[0]);
-        int pageSize = params.get("limit") == null ? 10 : Integer.parseInt(params.get("limit")[0]);
+    public Page<AliEcs> getList(Map<String, String> params) throws Exception {
+        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
+        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
         AliEcs aliEcs = new AliEcs();
-        aliEcs.setStatus(params.get("status") == null ? null : params.get("status")[0]);
-        aliEcs.setLockReason(params.get("lockReason") == null ? null : params.get("lockReason")[0]);
+        if (params.containsKey("status")) {
+            aliEcs.setStatus(params.get("status"));
+        }
+        if (params.containsKey("lockReason")) {
+            aliEcs.setStatus(params.get("lockReason"));
+        }
         // 排除忽略数据
         String[] markValues = ignoreService.getMarkedValues("AliEcs");
         // 处理过期数据
@@ -87,8 +91,8 @@ public class AliEcsServiceImpl implements AliEcsService {
             public Predicate toPredicate(Root<AliEcs> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
                 // filter批量过滤
-                if (params.get("key") != null && !params.get("key")[0].equals("")) {
-                    String filter = "%" + params.get("key")[0] + "%";
+                if (params.containsKey("key")) {
+                    String filter = "%" + params.get("key") + "%";
                     Field[] fields = aliEcs.getClass().getDeclaredFields();
                     // 多个or条件
                     List<Predicate> psOr = new ArrayList<>();
@@ -101,7 +105,7 @@ public class AliEcsServiceImpl implements AliEcsService {
                 }
                 // 忽略数据
                 if (markValues.length > 0) {
-                    if (params.get("ifMarked") != null && params.get("ifMarked")[0].equals("true")) {
+                    if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
                         // 多个or条件
                         List<Predicate> psOr = new ArrayList<>();
                         for (String s : markValues) {
@@ -116,7 +120,7 @@ public class AliEcsServiceImpl implements AliEcsService {
                     }
                 }
                 // 过期数据
-                if (params.get("ifExpired") != null && params.get("ifExpired")[0].equals("true")) {
+                if (params.containsKey("ifExpired") && params.get("ifExpired").equals("true")) {
                     predicates.add(cb.equal(root.get("status").as(String.class), "Running"));
                     predicates.add(cb.lessThanOrEqualTo(root.get("expiredTime"), thresholdDate));
                     cb.asc(root.get("expiredTime"));

@@ -6,6 +6,7 @@ import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Domain.ApiResult;
 import com.ywxt.Service.Ali.AliEcsService;
+import com.ywxt.Utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +20,10 @@ public class AliEcsController extends CommonController {
     @Autowired
     private AliEcsService aliEcsService;
 
-    // todo ecs:服务器列表
     @NotOperationAction
     @PostMapping(value = {"/list"}, name = "列表")
     public ApiResult ecsList(HttpServletRequest request) throws Exception {
-        Map<String, String[]> params = request.getParameterMap();
+        Map<String, String> params = CommonUtils.preSpringParams(request.getParameterMap());
         return ApiResult.successWithObject(aliEcsService.getList(params));
     }
 
@@ -43,11 +43,11 @@ public class AliEcsController extends CommonController {
 
     // 预付费服务器
     @PostMapping(value = {"/perpay"}, name = "预付费")
-    public AliEcs ecsPerPay(@RequestBody JSONObject jsonObject) throws Exception {
+    public ApiResult ecsPerPay(@RequestBody JSONObject jsonObject) throws Exception {
         String instanceId = (String) jsonObject.get("instanceId");
         String periodUnit = (String) jsonObject.get("periodUnit");
         int period = Integer.parseInt((String) jsonObject.get("period"));
-        return aliEcsService.perPay(instanceId, periodUnit, period);
+        return ApiResult.successWithObject(aliEcsService.perPay(instanceId, periodUnit, period));
     }
 
 }

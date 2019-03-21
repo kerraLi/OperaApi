@@ -1,101 +1,196 @@
 package com.ywxt.Service.Ali.Impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.cdn.model.v20141111.*;
 import com.ywxt.Dao.Ali.AliCdnDao;
 import com.ywxt.Dao.Ali.AliCdnTaskDao;
 import com.ywxt.Domain.Ali.AliCdn;
+import com.ywxt.Domain.Ali.AliCdnTask;
 import com.ywxt.Enum.AliRegion;
 import com.ywxt.Service.Ali.AliCdnService;
 import com.ywxt.Service.Ali.AliService;
-import com.ywxt.Service.System.Impl.IgnoreServiceImpl;
+import com.ywxt.Service.System.IgnoreService;
+import com.ywxt.Service.System.ParameterService;
+import com.ywxt.Utils.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Transient;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
+public class AliCdnServiceImpl implements AliCdnService {
 
 
-    @Autowired
-    private AliService aliService;
     @Autowired
     private AliCdnDao aliCdnDao;
     @Autowired
     private AliCdnTaskDao aliCdnTaskDao;
+    @Autowired
+    private AliService aliService;
+    @Autowired
+    private IgnoreService ignoreService;
+    @Autowired
+    private ParameterService parameterService;
 
-    private HashMap<String, String> userNameMap = new HashMap<>();
-
-    // 获取dash数据
-    //public HashMap<String, Object> getDashData() throws Exception {
-    //    HashMap<String, Object> resultParams = new HashMap<String, Object>();
-    //    // normal invalid
-    //    HashMap<String, Object> params = new HashMap<String, Object>();
-    //    for (Object[] os : new AliCdnDaoImpl().getCountGroup(params)) {
-    //        if (os[0].equals("online")) {
-    //            resultParams.put("ali-cdn-" + os[1] + "-normal", os[2]);
-    //        } else {
-    //            resultParams.put("ali-cdn-" + os[1] + "-invalid", os[2]);
-    //        }
-    //    }
-    //    // deprecated
-    //    params = new HashMap<String, Object>();
-    //    params.put("ifMarked", "true");
-    //    for (Object[] os : this.getCdnTotalByAccount(params)) {
-    //        resultParams.put("ali-cdn-" + os[0] + "-deprecated", os[1]);
-    //    }
-    //    return resultParams;
-    //}
-//
-    //// CDN-获取个数按account分组
-    //public List<Object[]> getCdnTotalByAccount(HashMap<String, Object> params) throws Exception {
-    //    // 是否弃用标记
-    //    String coulmn = new IgnoreServiceImpl().getMarkKey(AliCdn.class);
-    //    String[] markeValues = new IgnoreServiceImpl().getMarkedValues(AliCdn.class);
-    //    HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-    //    return new AliCdnDaoImpl().getCdnTotalByAccount(filterParams);
-    //}
-
-    // todo CDN-获取个数
-    public int getCdnTotal(HashMap<String, Object> params) throws Exception {
-        // 是否弃用标记
-        //String coulmn = new IgnoreServiceImpl().getMarkKey(AliCdn.class);
-        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(AliCdn.class);
-        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        //return new AliCdnDaoImpl().getCdnTotal(filterParams);
-        return 1;
+    // CDN-域名列表&分页信息
+    public Page<AliCdn> getList(Map<String, String> params) throws Exception {
+        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
+        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        // 排除忽略数据
+        String[] markValues = ignoreService.getMarkedValues("AliCdn");
+        // 处理查询条件
+        Specification<AliCdn> specification = new Specification<AliCdn>() {
+            @Override
+            public Predicate toPredicate(Root<AliCdn> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                // filter批量过滤
+                if (params.containsKey("key")) {
+                    String filter = "%" + params.get("key") + "%";
+                    Field[] fields = AliCdn.class.getDeclaredFields();
+                    // 多个or条件
+                    List<Predicate> psOr = new ArrayList<>();
+                    for (Field f : fields) {
+                        if (f.getType() == String.class && !f.isAnnotationPresent(Transient.class)) {
+                            psOr.add(cb.like(root.get(f.getName()).as(String.class), filter));
+                        }
+                    }
+                    predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                }
+                // 忽略数据
+                if (markValues.length > 0) {
+                    if (params.containsKey("ifMarked") && params.get("ifMarked").equals("true")) {
+                        // 多个or条件
+                        List<Predicate> psOr = new ArrayList<>();
+                        for (String s : markValues) {
+                            psOr.add(cb.like(root.get("instanceId").as(String.class), s));
+                        }
+                        predicates.add(cb.or(psOr.toArray(new Predicate[psOr.size()])));
+                    } else {
+                        for (String s : markValues) {
+                            predicates.add(cb.notEqual(root.get("instanceId").as(String.class), s));
+                        }
+                    }
+                }
+                // status
+                if (params.containsKey("status")) {
+                    if (params.get("status").equals("others")) {
+                        predicates.add(cb.notEqual(root.get("status").as(String.class), "online"));
+                        predicates.add(cb.notEqual(root.get("status").as(String.class), "offline"));
+                    } else {
+                        predicates.add(cb.equal(root.get("status").as(String.class), params.get("status")));
+                    }
+                }
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<AliCdn> page = aliCdnDao.findAll(specification, pageable);
+        // 查询后处理
+        for (AliCdn ae : page.getContent()) {
+            // 弃用
+            if (ArrayUtils.hasString(markValues, ae.getDomainName())) {
+                ae.setAlertMarked(true);
+            }
+            ae.setUserName(aliService.getUserName(ae.getAccessKeyId()));
+        }
+        return page;
     }
 
-    // CDN-获取单个
-    public AliCdn getCdn(int id) {
-        return aliCdnDao.getOne(id);
+    // CDN-TASK-刷新预热任务列表(page&从数据库中读取)
+    public Page<AliCdnTask> getTaskList(Map<String, String> params) throws Exception {
+        int pageNumber = params.containsKey("page") ? 1 : Integer.parseInt(params.get("page"));
+        int pageSize = params.containsKey("limit") ? 10 : Integer.parseInt(params.get("limit"));
+        Specification<AliCdnTask> specification = new Specification<AliCdnTask>() {
+            @Override
+            public Predicate toPredicate(Root<AliCdnTask> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (params.containsKey("operDate")) {
+                    String[] operateDate = params.get("operDate").split(",");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    predicates.add(cb.greaterThan(root.get("creationTime"), operateDate[0] + " 00:00:00"));
+                    predicates.add(cb.lessThan(root.get("creationTime"), operateDate[1] + " 23:59:59"));
+                }
+                if (params.containsKey("url")) {
+                    predicates.add(cb.like(root.get("objectPath"), "%" + params.get("url") + "%"));
+                }
+                if (params.containsKey("operType")) {
+                    switch (params.get("operType")) {
+                        case "url-refresh":
+                            predicates.add(cb.equal(root.get("objectType"), "file"));
+                            break;
+                        case "content-refresh":
+                            predicates.add(cb.equal(root.get("objectType"), "path"));
+                            break;
+                        case "url-warm":
+                            predicates.add(cb.equal(root.get("objectType"), "preload"));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                cb.desc(root.get("creationTime"));
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<AliCdnTask> page = aliCdnTaskDao.findAll(specification, pageable);
+        // 查询后处理
+        for (AliCdnTask act : page.getContent()) {
+            // 更新状态&进度
+            IAcsClient client = null;
+            if (act.getStatus().equals("Refreshing") || act.getStatus().equals("Pending")) {
+                if (client == null) {
+                    String keyId = act.getAccessKeyId();
+                    String keySecret = aliService.getAccessKeySecret(keyId);
+                    client = aliService.getAliClient(AliRegion.QINGDAO.getRegion(), keyId, keySecret);
+                }
+                // 接口只支持查3天内数据
+                List<DescribeRefreshTasksResponse.CDNTask> l = this.getCdnRefreshTask(client, act.getTaskId());
+                if (l.size() > 0) {
+                    DescribeRefreshTasksResponse.CDNTask temp = l.get(0);
+                    act.setProcess(temp.getProcess());
+                    act.setStatus(temp.getStatus());
+                    aliCdnTaskDao.saveAndFlush(act);
+                }
+            }
+            act.setUserName(aliService.getUserName(act.getAccessKeyId()));
+        }
+        return page;
     }
 
-    // todo CDN-域名列表&分页信息
-    public JSONObject getCdnDomainList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        // 是否弃用标记
-        //String coulmn = new IgnoreServiceImpl().getMarkKey(AliCdn.class);
-        //String[] markeValues = new IgnoreServiceImpl().getMarkedValues(AliCdn.class);
-        //HashMap<String, Object> filterParams = this.filterParamMarked(params, coulmn, markeValues);
-        // todo 查询后操作
-        //List<AliCdn> list = new AliCdnDaoImpl().getCdnList(filterParams, pageNumber, pageSize);
-        //for (AliCdn ac : list) {
-        //    if (ArrayUtils.hasString(markeValues, ac.getDomainName())) {
-        //        ac.setAlertMarked(true);
-        //    }
-        //    ac.setUserName(this.getUserName(ac.getAccessKeyId()));
-        //}
-        JSONObject jsonObject = new JSONObject();
-        //jsonObject.put("total", new AliCdnDaoImpl().getCdnTotal(filterParams));
-        //jsonObject.put("items", list);
-        return jsonObject;
+    // CDN-TASK-刷新预热任务(更新process与status)
+    public AliCdnTask updateTask(int id) throws Exception {
+        AliCdnTask act = aliCdnTaskDao.getOne(id);
+        String keyId = act.getAccessKeyId();
+        String keySecret = aliService.getAccessKeySecret(keyId);
+        IAcsClient client = aliService.getAliClient(AliRegion.QINGDAO.getRegion(), keyId, keySecret);
+        // 接口只支持查3天内数据
+        List<DescribeRefreshTasksResponse.CDNTask> l = this.getCdnRefreshTask(client, act.getTaskId());
+        if (l.size() > 0) {
+            DescribeRefreshTasksResponse.CDNTask temp = l.get(0);
+            act.setProcess(temp.getProcess());
+            act.setStatus(temp.getStatus());
+            aliCdnTaskDao.saveAndFlush(act);
+        } else {
+            throw new Exception("接口只只差查询3天内数据，下次请及时查看刷新哦~若需查看具体完成情况，可登陆阿里云查看。");
+        }
+        return act;
     }
 
-    // CDN-刷新&预热
+    // CDN-TASK-刷新&预热操作
     // 刷新后task存入本地数据库 & 综合所有账号
     public Map<String, String> refreshCdn(String operateType, String refreshType, String objectPath) throws Exception {
         String regex = "[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\\.?";
@@ -109,7 +204,7 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
             throw new Exception("输入DOMAIN错误。");
         }
         String keyId = c.getAccessKeyId();
-        String keySecret = this.getAccessKeySecret(keyId);
+        String keySecret = aliService.getAccessKeySecret(keyId);
         IAcsClient client = aliService.getAliClient(AliRegion.QINGDAO.getRegion(), keyId, keySecret);
         Map<String, String> result = new HashMap<>();
         if (operateType.equals("refresh")) {
@@ -127,16 +222,15 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         }
         // 多个任务id
         String[] taskIds = (result.get("taskIds")).split(",");
-//        List<DescribeRefreshTasksResponse.CDNTask> cdnTasks = this.getCdnRefreshTask(taskIds.length, 1);
-//        for (DescribeRefreshTasksResponse.CDNTask cdnTask : cdnTasks) {
-//            AliCdnTask aliCdnTask = new AliCdnTask(keyId, cdnTask);
-//            aliCdnTaskDao.save(aliCdnTask);
-//        }
-//        aliCdnTaskDao.flush();
+        List<DescribeRefreshTasksResponse.CDNTask> cdnTasks = this.getCdnRefreshTask(client, taskIds.length, 1);
+        for (DescribeRefreshTasksResponse.CDNTask cdnTask : cdnTasks) {
+            aliCdnTaskDao.save(new AliCdnTask(keyId, cdnTask));
+        }
+        aliCdnTaskDao.flush();
         return result;
     }
 
-    // CDN-刷新
+    // CDN-TASK-刷新
     private Map<String, String> refreshCdnObjectCaches(IAcsClient client, String objectPath, String objectType) throws Exception {
         RefreshObjectCachesRequest request = new RefreshObjectCachesRequest();
         // 设置刷新域名多个URL使用换行符分隔"\n"或者"\r\n"
@@ -151,7 +245,7 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         return map;
     }
 
-    // CDN-预热
+    // CDN-TASK-预热
     private Map<String, String> pushObjectCache(IAcsClient client, String objectPath) throws Exception {
         PushObjectCacheRequest request = new PushObjectCacheRequest();
         // 设置刷新域名多个URL使用换行符分隔"\n"或者"\r\n"
@@ -164,7 +258,7 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         return map;
     }
 
-    // CDN-刷新预热任务列表
+    // CDN-TASK-更新-刷新预热任务列表
     private List<DescribeRefreshTasksResponse.CDNTask> getCdnRefreshTask(IAcsClient client, String taskId) throws Exception {
         DescribeRefreshTasksRequest request = new DescribeRefreshTasksRequest();
         request.setTaskId(taskId);
@@ -172,62 +266,13 @@ public class AliCdnServiceImpl extends AliServiceImpl implements AliCdnService {
         return response.getTasks();
     }
 
-//    // CDN-刷新预热任务列表(page)
-//    public List<DescribeRefreshTasksResponse.CDNTask> getCdnRefreshTask(int pageSize, int pageNumber) throws Exception {
-//        IClientProfile profile = DefaultProfile.getProfile(AliRegion.QINGDAO.getRegion(), this.accessKeyId, this.accessKeySecret);
-//        IAcsClient client = new DefaultAcsClient(profile);
-//        DescribeRefreshTasksRequest request = new DescribeRefreshTasksRequest();
-//        request.setPageSize(pageSize);
-//        request.setPageNumber(pageNumber);
-//        DescribeRefreshTasksResponse response = client.getAcsResponse(request);
-//        return response.getTasks();
-//    }
-//
-//    // CDN-刷新预热任务列表(page&从数据库中读取)
-//    public JSONObject getCdnRefreshTaskList(HashMap<String, Object> params, int pageSize, int pageNumber) throws Exception {
-//        List<AliCdnTask> list = new AliCdnTaskDaoImpl().getList(params, pageNumber, pageSize);
-//        for (AliCdnTask act : list) {
-//            // 更新状态&进度
-//            if (act.getStatus().equals("Refreshing") || act.getStatus().equals("Pending")) {
-//                if (this.accessKeyId == null || this.accessKeySecret == null) {
-//                    this.accessKeyId = act.getAccessKeyId();
-//                    this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
-//                }
-//                // 接口只支持查3天内数据
-//                List<DescribeRefreshTasksResponse.CDNTask> l = this.getCdnRefreshTask(act.getTaskId());
-//                if (l.size() > 0) {
-//                    DescribeRefreshTasksResponse.CDNTask temp = l.get(0);
-//                    act.setProcess(temp.getProcess());
-//                    act.setStatus(temp.getStatus());
-//                    new AliCdnTaskDaoImpl().saveCdnTask(act);
-//                }
-//            }
-//            act.setUserName(this.getUserName(act.getAccessKeyId()));
-//        }
-//        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("total", new AliCdnTaskDaoImpl().getTotal(params));
-//        jsonObject.put("items", list);
-//        return jsonObject;
-//    }
-//
-//    // CDN-刷新预热任务(更新process与status)
-//    public AliCdnTask updateCdnRefreshTask(int id) throws Exception {
-//        AliCdnTask act = new AliCdnTaskDaoImpl().getCdnTask(id);
-//        if (this.accessKeyId == null || this.accessKeySecret == null) {
-//            this.accessKeyId = act.getAccessKeyId();
-//            this.accessKeySecret = this.getAccessKeySecret(this.accessKeyId);
-//        }
-//        // 接口只支持查3天内数据
-//        List<DescribeRefreshTasksResponse.CDNTask> l = this.getCdnRefreshTask(act.getTaskId());
-//        if (l.size() > 0) {
-//            DescribeRefreshTasksResponse.CDNTask temp = l.get(0);
-//            act.setProcess(temp.getProcess());
-//            act.setStatus(temp.getStatus());
-//            new AliCdnTaskDaoImpl().saveCdnTask(act);
-//        } else {
-//            throw new Exception("接口只只差查询3天内数据，下次请及时查看刷新哦~若需查看具体完成情况，可登陆阿里云查看。");
-//        }
-//        return act;
-//    }
+    // CDN-TASK-更新-刷新预热任务列表(page)
+    private List<DescribeRefreshTasksResponse.CDNTask> getCdnRefreshTask(IAcsClient client, int pageSize, int pageNumber) throws Exception {
+        DescribeRefreshTasksRequest request = new DescribeRefreshTasksRequest();
+        request.setPageSize(pageSize);
+        request.setPageNumber(pageNumber);
+        DescribeRefreshTasksResponse response = client.getAcsResponse(request);
+        return response.getTasks();
+    }
 
 }

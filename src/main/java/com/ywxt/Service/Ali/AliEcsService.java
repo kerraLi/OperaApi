@@ -16,7 +16,7 @@ public interface AliEcsService {
     List<AliEcs> getAlertList() throws Exception;
 
     // ecs-查询所有实例的详细信息&分页
-    Page<AliEcs> getList(Map<String, String[]> params) throws Exception;
+    Page<AliEcs> getList(Map<String, String> params) throws Exception;
 
     // ecs-最新状态
     AliEcs updateEcsStatus(AliEcs aliEcs) throws Exception;
