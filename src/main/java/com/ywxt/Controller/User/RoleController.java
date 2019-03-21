@@ -39,8 +39,7 @@ public class RoleController extends CommonController {
     @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
     public JSONObject save(@RequestBody UserRole userRole) throws Exception {
         roleService.save(userRole);
-        return this.returnObject(new HashMap<String, Object>() {{
-        }});
+        return this.returnObject();
     }
 
     @ResponseBody

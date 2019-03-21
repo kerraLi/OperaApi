@@ -1,6 +1,6 @@
 package com.ywxt.Command;
 
-import com.ywxt.Service.Impl.MessageServiceImpl;
+import com.ywxt.Service.System.Impl.MessageServiceImpl;
 import com.ywxt.Utils.TelegramUtils;
 
 import java.util.HashMap;

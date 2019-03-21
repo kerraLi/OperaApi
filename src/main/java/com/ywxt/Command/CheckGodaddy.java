@@ -3,6 +3,7 @@ package com.ywxt.Command;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Godaddy.GodaddyCertificate;
 import com.ywxt.Domain.Godaddy.GodaddyDomain;
+import com.ywxt.Service.Godaddy.GodaddyAccountService;
 import com.ywxt.Service.Godaddy.GodaddyCertificateService;
 import com.ywxt.Service.Godaddy.GodaddyDomainService;
 import com.ywxt.Service.Godaddy.GodaddyService;
@@ -19,6 +20,8 @@ public class CheckGodaddy extends Check {
 
     @Autowired
     private GodaddyService godaddyService;
+    @Autowired
+    private GodaddyAccountService godaddyAccountService;
     @Autowired
     private GodaddyCertificateService godaddyCertificateService;
     @Autowired
@@ -70,7 +73,7 @@ public class CheckGodaddy extends Check {
     @Scheduled(cron = "0 0 0/5 * * ?")
     private void refreshData() {
         try {
-            List<GodaddyAccount> list = new GodaddyAccountServiceImpl().getList();
+            List<GodaddyAccount> list = godaddyAccountService.getList();
             for (GodaddyAccount godaddyAccount : list) {
                 if (godaddyAccount.getStatus().equals("normal")) {
                     godaddyService.freshSourceData(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret());

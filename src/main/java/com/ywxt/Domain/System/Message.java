@@ -1,11 +1,16 @@
-package com.ywxt.Domain;
+package com.ywxt.Domain.System;
 
 import com.ywxt.Annotation.NotFilterColumn;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "system_message")
 public class Message {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private Date createdTime;
     private Date modifyTime;

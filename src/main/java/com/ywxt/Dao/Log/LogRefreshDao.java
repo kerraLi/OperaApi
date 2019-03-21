@@ -1,10 +1,8 @@
 package com.ywxt.Dao.Log;
 
 import com.ywxt.Domain.Log.LogRefresh;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LogRefreshDao {
+public interface LogRefreshDao extends JpaRepository<LogRefresh, Integer> {
 
-    public LogRefresh getLast(String type);
-
-    public int saveLogRefresh(LogRefresh logRefresh);
 }

@@ -1,8 +1,6 @@
 package com.ywxt.Service.System.Impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Dao.Log.Impl.LogRefreshDaoImpl;
-import com.ywxt.Dao.Log.LogRefreshDao;
 import com.ywxt.Domain.Ali.AliAccount;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;

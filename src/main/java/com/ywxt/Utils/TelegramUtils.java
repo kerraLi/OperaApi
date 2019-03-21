@@ -25,13 +25,4 @@ public class TelegramUtils {
             HttpUtils.sendConnGet(Parameter.telegramBotUrl + Parameter.telegramBotActions.get("SEND_MESSAGE"), param, new HashMap<String, String>());
         }
     }
-
-    //主函数调用测试
-    // public static void main(String[] args) {
-    //     System.out.println("telegram");
-    //     TelegramUtils.sendMessage("ALI_ACCOUNT_NO_MONEY", new HashMap<String, String>() {{
-    //         put("accountName", "test");
-    //         put("balance", "5000.00");
-    //     }});
-    // }
 }

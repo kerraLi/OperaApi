@@ -1,6 +1,7 @@
 package com.ywxt.Command;
 
 import com.ywxt.Domain.Aws.AwsAccount;
+import com.ywxt.Service.Aws.AwsAccountService;
 import com.ywxt.Service.Aws.AwsService;
 import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
 import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
@@ -15,12 +16,14 @@ public class CheckAws extends Check {
 
     @Autowired
     private AwsService awsService;
+    @Autowired
+    private AwsAccountService awsAccountService;
 
     // 刷新数据
     @Scheduled(cron = "0 0 0/5 * * ?")
     private void refreshData() {
         try {
-            List<AwsAccount> list = new AwsAccountServiceImpl().getList();
+            List<AwsAccount> list = awsAccountService.getList();
             for (AwsAccount awsAccount : list) {
                 if (awsAccount.getStatus().equals("normal")) {
                     awsService.freshSourceData(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret());
