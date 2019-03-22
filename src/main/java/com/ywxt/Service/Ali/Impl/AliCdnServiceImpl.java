@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -156,11 +157,11 @@ public class AliCdnServiceImpl implements AliCdnService {
                             break;
                     }
                 }
-                cb.desc(root.get("creationTime"));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Sort sort = new Sort(Sort.Direction.DESC, "creationTime");
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
         Page<AliCdnTask> page = aliCdnTaskDao.findAll(specification, pageable);
         // 查询后处理
         for (AliCdnTask act : page.getContent()) {

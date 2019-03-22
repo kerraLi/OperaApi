@@ -14,10 +14,6 @@ public class Parameter {
 
     // 环境变量["dev":"测试";"prod":"正式"]
     public static String ENV = "dev";
-    // 调用本机websocket http
-    public static String urlWebsocket = "http://10.10.24.56:9000/api/message/websocket";
-    // test环境
-    // public static String urlWebsocket = "http://47.75.103.32:8080/api/message/websocket";
     // redis
     public static String redisHost = "127.0.0.1";
     public static int redisPort = 63790;
@@ -42,8 +38,8 @@ public class Parameter {
 
     // telegram bot
     // test环境
-//    public static String telegramBotUrl = "";
-    public static String telegramBotUrl = "https://api.telegram.org/bot739033903:AAHMeAiArCp6jmQIE3u3MT_wkV_vFX2oNK4";
+    public static String telegramBotUrl = "";
+    // public static String telegramBotUrl = "https://api.telegram.org/bot739033903:AAHMeAiArCp6jmQIE3u3MT_wkV_vFX2oNK4";
     public static Map<String, String> telegramBotActions = new HashMap<String, String>() {{
         put("SEND_MESSAGE", "/sendMessage");
     }};

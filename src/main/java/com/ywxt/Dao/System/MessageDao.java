@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MessageDao extends JpaRepository<Message, Integer> {
 
+    Message findMessageById(Integer id);
+
     int countByStatus(String status);
 
     Page<Message> findAll(Specification<Message> specification, Pageable pageable);

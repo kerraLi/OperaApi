@@ -1,19 +1,13 @@
 package com.ywxt.Controller.System;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Annotation.PassToken;
-import com.ywxt.Command.Websocket;
 import com.ywxt.Controller.CommonController;
 import com.ywxt.Domain.ApiResult;
-import com.ywxt.Domain.System.Message;
-import com.ywxt.Service.System.Impl.MessageServiceImpl;
 import com.ywxt.Service.System.MessageService;
 import com.ywxt.Utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,15 +89,6 @@ public class MessageController extends CommonController {
         otherParam.put("imageUrl", String.valueOf(requestMap.get("imageUrl")));
         otherParam.put("evalMatches", requestMap.get("evalMatches").toString());
         messageService.create("WEBHOOK_MESSAGE", requestMap.get("ruleId") + "-" + requestMap.get("state"), msgParam, otherParam);
-        return "success";
-    }
-
-    // 发送websocket消息
-    @PassToken(login = true)
-    @NotOperationAction
-    @PostMapping(value = {"/websocket"})
-    public String sendWebsocketMessage(String message) {
-        new Websocket().sendMessageToAllUser(message);
         return "success";
     }
 

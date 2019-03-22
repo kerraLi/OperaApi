@@ -19,12 +19,12 @@ import java.util.*;
 
 @ServerEndpoint(value = "/websocket/{userId}")
 public class Websocket {
-    //日志记录
-    private Logger logger = LoggerFactory.getLogger(Websocket.class);
-
     //记录当前在线链接
-    private static Map<Long, Websocket> userSocket = new HashMap<>();
-    private static Map<String, HashMap<Long, Websocket>> featureSocket = new HashMap<>();
+    public static Map<Long, Websocket> userSocket = new HashMap<>();
+    public static Map<String, HashMap<Long, Websocket>> featureSocket = new HashMap<>();
+
+    //日志记录
+    private static Logger logger = LoggerFactory.getLogger(Websocket.class);
 
     private Session session;
     private Long userId;
@@ -105,21 +105,6 @@ public class Websocket {
         }
     }
 
-    // message订阅-发送给所有用户
-    public void sendMessageToAllUser(String message) {
-        Map<Long, Websocket> map = featureSocket.get("message");
-        for (Map.Entry<Long, Websocket> entry : map.entrySet()) {
-            Websocket ws = entry.getValue();
-            logger.debug("sessionId为:{}", ws.session.getId());
-            try {
-                ws.session.getBasicRemote().sendText(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-                logger.debug(" 给用户id为：{}发送消息失败", userId);
-            }
-        }
-    }
-
     // speed-test订阅
     private void speedTest(String code) throws IOException {
         // speed test
@@ -184,6 +169,20 @@ public class Websocket {
         this.unSubscription("speed-monitor-" + code);
     }
 
+    // message订阅-发送给所有用户
+    public static void sendMessageToAllUser(String message) {
+        Map<Long, Websocket> map = featureSocket.get("message");
+        for (Map.Entry<Long, Websocket> entry : map.entrySet()) {
+            Websocket ws = entry.getValue();
+            logger.debug("sessionId为:{}", ws.session.getId());
+            try {
+                ws.session.getBasicRemote().sendText(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+                logger.debug(" 给用户id为：{}发送消息失败", ws.session.getId());
+            }
+        }
+    }
 
     // json-通用
     private String getJsonInfo(String action, String type, String msg) {

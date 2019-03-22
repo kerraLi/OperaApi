@@ -7,22 +7,19 @@ import com.ywxt.Dao.System.MessageDao;
 import com.ywxt.Domain.System.Message;
 import com.ywxt.Service.System.MessageService;
 import com.ywxt.Service.System.ParameterService;
-import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -81,18 +78,18 @@ public class MessageServiceImpl implements MessageService {
                     Predicate predicate = cb.equal(root.get("title").as(String.class), params.get("title"));
                     predicates.add(predicate);
                 }
-                cb.desc(root.get("createdTime"));
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Sort sort = new Sort(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
         return messageDao.findAll(specification, pageable);
     }
 
     // 批量设置状态
     public void setAllStatus(List<Integer> ids, String status) {
         for (Integer id : ids) {
-            Message message = messageDao.getOne(id);
+            Message message = messageDao.findMessageById(id);
             message.setStatus(status);
             message.setModifyTime(new Date());
             messageDao.save(message);
@@ -102,7 +99,7 @@ public class MessageServiceImpl implements MessageService {
 
     // 设置状态
     public void setStatus(int id, String status) {
-        Message message = messageDao.getOne(id);
+        Message message = messageDao.findMessageById(id);
         message.setStatus(status);
         message.setModifyTime(new Date());
         messageDao.saveAndFlush(message);
@@ -154,28 +151,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     // 发送ws消息
-    private void sendWebsocket(JSONObject jsonObject) throws Exception {
-        if (this.isHttpEnvironment()) {
-            System.out.println("================send ws http===================");
-            new Websocket().sendMessageToAllUser(jsonObject.toJSONString());
-        } else {
-            System.out.println("================send ws no http===================" + Parameter.urlWebsocket);
-            String params = HttpUtils.getParamContext(new HashMap<String, String>() {{
-                put("message", jsonObject.toString());
-            }});
-            HttpUtils.sendConnPost(Parameter.urlWebsocket, params);
-        }
-    }
-
-    // 判断当前环境
-    private boolean isHttpEnvironment() {
-        try {
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        } catch (NullPointerException e) {
-            // 非http请求
-            return false;
-        }
-        return true;
+    private void sendWebsocket(JSONObject jsonObject) {
+        Websocket.sendMessageToAllUser(jsonObject.toJSONString());
     }
 
     // 根据action获取输出内容

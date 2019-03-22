@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -133,7 +134,6 @@ public class AliEcsServiceImpl implements AliEcsService {
                 if (params.containsKey("ifExpired") && params.get("ifExpired").equals("true")) {
                     predicates.add(cb.equal(root.get(paramStatusColumn).as(String.class), paramStatusNormal));
                     predicates.add(cb.lessThanOrEqualTo(root.get(paramExpiresColumn), thresholdDate));
-                    cb.asc(root.get(paramExpiresColumn));
                 }
                 if (StringUtils.isNoneBlank(aliEcs.getStatus())) {
                     Predicate predicate = cb.equal(root.get("status").as(String.class), aliEcs.getStatus());
@@ -146,7 +146,13 @@ public class AliEcsServiceImpl implements AliEcsService {
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Pageable pageable = null;
+        if (params.containsKey("ifExpired") && params.get("ifExpired").equals("true")) {
+            Sort sort = new Sort(Sort.Direction.ASC, paramExpiresColumn);
+            pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+        } else {
+            pageable = PageRequest.of(pageNumber - 1, pageSize);
+        }
         Page<AliEcs> page = aliEcsDao.findAll(specification, pageable);
         // 查询后处理
         for (AliEcs ae : page.getContent()) {
