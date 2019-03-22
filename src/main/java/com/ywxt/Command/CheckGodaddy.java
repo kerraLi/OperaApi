@@ -7,7 +7,7 @@ import com.ywxt.Service.Godaddy.GodaddyAccountService;
 import com.ywxt.Service.Godaddy.GodaddyCertificateService;
 import com.ywxt.Service.Godaddy.GodaddyDomainService;
 import com.ywxt.Service.Godaddy.GodaddyService;
-import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
+import com.ywxt.Service.System.MessageService;
 import com.ywxt.Utils.TelegramUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class CheckGodaddy extends Check {
+public class CheckGodaddy {
 
     @Autowired
     private GodaddyService godaddyService;
@@ -26,6 +26,8 @@ public class CheckGodaddy extends Check {
     private GodaddyCertificateService godaddyCertificateService;
     @Autowired
     private GodaddyDomainService godaddyDomainService;
+    @Autowired
+    private MessageService messageService;
 
     // 校验域名有效期
     @Scheduled(cron = "0 10 0/5 * * ?")
@@ -40,11 +42,11 @@ public class CheckGodaddy extends Check {
             if (count > 0) {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("count", count + "");
-                setMessage(action, action, param);
+                messageService.create(action, action, param);
                 TelegramUtils.sendMessage(action, param);
             }
         } catch (Exception e) {
-            sendException("GODADDY", "domain", e);
+            TelegramUtils.sendException("GODADDY-domain", e);
         }
     }
 
@@ -61,11 +63,11 @@ public class CheckGodaddy extends Check {
             if (count > 0) {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("count", count + "");
-                setMessage(action, action, param);
+                messageService.create(action, action, param);
                 TelegramUtils.sendMessage(action, param);
             }
         } catch (Exception e) {
-            sendException("GODADDY", "certificate", e);
+            TelegramUtils.sendException("GODADDY-certificate", e);
         }
     }
 
@@ -80,7 +82,7 @@ public class CheckGodaddy extends Check {
                 }
             }
         } catch (Exception e) {
-            sendException("GODADDY", "refresh", e);
+            TelegramUtils.sendException("GODADDY-refresh", e);
         }
     }
 }

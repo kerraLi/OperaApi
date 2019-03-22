@@ -6,6 +6,7 @@ import com.ywxt.Service.Ali.AliAccountService;
 import com.ywxt.Service.Ali.AliEcsService;
 import com.ywxt.Service.Ali.AliService;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
+import com.ywxt.Service.System.MessageService;
 import com.ywxt.Utils.TelegramUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class CheckAli extends Check {
+public class CheckAli {
 
     @Autowired
     private AliService aliService;
@@ -22,6 +23,8 @@ public class CheckAli extends Check {
     private AliAccountService aliAccountService;
     @Autowired
     private AliEcsService aliEcsService;
+    @Autowired
+    private MessageService messageService;
 
     // 校验余额
     @Scheduled(cron = "0 0 0/1 * * ?")
@@ -34,12 +37,13 @@ public class CheckAli extends Check {
                     Map<String, String> param = new HashMap<String, String>();
                     param.put("accountName", aliAccount.getUserName());
                     param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
-                    setMessage(action, aliAccount.getUserName(), param);
+                    messageService.create(action, aliAccount.getUserName(), param);
+                    // telegram
                     TelegramUtils.sendMessage(action, param);
                 }
             }
         } catch (Exception e) {
-            sendException("ALI", "account", e);
+            TelegramUtils.sendException("ALI-account", e);
         }
     }
 
@@ -56,11 +60,11 @@ public class CheckAli extends Check {
             if (count > 0) {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("count", count + "");
-                setMessage(action, action, param);
+                messageService.create(action, action, param);
                 TelegramUtils.sendMessage(action, param);
             }
         } catch (Exception e) {
-            CheckAli.sendException("ALI", "ecs", e);
+            TelegramUtils.sendException("ALI-ecs", e);
         }
 
     }
@@ -76,7 +80,7 @@ public class CheckAli extends Check {
                 }
             }
         } catch (Exception e) {
-            CheckAli.sendException("ALI", "refresh", e);
+            TelegramUtils.sendException("ALI-refresh", e);
         }
     }
 

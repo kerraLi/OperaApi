@@ -12,6 +12,22 @@ public class TelegramUtils {
 
     /**
      * 内容：
+     * 发送错误到telegram
+     */
+    public static void sendException(String msg, Exception e) {
+        try {
+            Map<String, String> param = new HashMap<String, String>();
+            param.put("message", msg + "-" + e.getMessage());
+            param.put("class", e.getClass().toString());
+            TelegramUtils.sendMessage("ERROR", param);
+            e.printStackTrace();
+        } catch (Exception e2) {
+            e2.printStackTrace();
+        }
+    }
+
+    /**
+     * 内容：
      * 时间、主体（ali/godaddy/tencent等）、账号、业务标题、业务内容
      */
     public static void sendMessage(String action, Map<String, String> parameters) throws Exception {

@@ -106,6 +106,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     // 新建消息
+    public void create(String action, String themeId, Map<String, String> msgParam) throws Exception {
+        this.create(action, themeId, msgParam, new HashMap<>());
+    }
+
+    // 新建消息
     public void create(String action, String themeId, Map<String, String> msgParam, Map<String, String> otherParam) throws Exception {
         Message message = new Message();
         String context = Parameter.MessageActions.get(action);

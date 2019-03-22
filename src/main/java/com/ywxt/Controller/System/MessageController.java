@@ -94,7 +94,7 @@ public class MessageController extends CommonController {
         Map<String, String> otherParam = new HashMap<String, String>();
         otherParam.put("imageUrl", String.valueOf(requestMap.get("imageUrl")));
         otherParam.put("evalMatches", requestMap.get("evalMatches").toString());
-        messageService.create("WEBHOOK_MESSAGE", String.valueOf(requestMap.get("ruleId")) + "-" + requestMap.get("state"), msgParam, otherParam);
+        messageService.create("WEBHOOK_MESSAGE", requestMap.get("ruleId") + "-" + requestMap.get("state"), msgParam, otherParam);
         return "success";
     }
 

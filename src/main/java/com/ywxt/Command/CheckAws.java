@@ -3,8 +3,7 @@ package com.ywxt.Command;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Service.Aws.AwsAccountService;
 import com.ywxt.Service.Aws.AwsService;
-import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
-import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
+import com.ywxt.Utils.TelegramUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class CheckAws extends Check {
+public class CheckAws {
 
     @Autowired
     private AwsService awsService;
@@ -30,7 +29,7 @@ public class CheckAws extends Check {
                 }
             }
         } catch (Exception e) {
-            CheckAli.sendException("AWS", "refresh", e);
+            TelegramUtils.sendException("AWS-refresh", e);
         }
     }
 
