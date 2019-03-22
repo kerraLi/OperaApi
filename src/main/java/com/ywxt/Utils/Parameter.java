@@ -58,29 +58,18 @@ public class Parameter {
         put("GET_CERTIFICATE_LIST", "/v1/certificates");
     }};
 
-    // todo message 消息
-    private static String getParamValue(String key) {
-        try {
-            return new ParameterServiceImpl().getValue(key);
-        } catch (Exception e) {
-            //
-            System.out.println("找不到key");
-        }
-        return "";
-    }
-
     private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     public static Map<String, String> MessageActions = new HashMap<String, String>() {{
         put("ERROR", "错误类：{class}\r\n错误信息{message}");
-        put("ALI_ACCOUNT_NO_MONEY", "您好，阿里云账号余额已少于" + Parameter.getParamValue("ALI_ACCOUNT_BALANCE") + "元，请及时充值。\r\n账号：{accountName}\r\n当前余额{balance}");
+        put("ALI_ACCOUNT_NO_MONEY", "您好，阿里云账号余额已少于{ALI_ACCOUNT_BALANCE}元，请及时充值。\r\n账号：{accountName}\r\n当前余额{balance}");
         // count
-        put("ALI_ECS_EXPIRED_NUM", "您好，已有{count}台阿里云服务器有效时间已少于" + Parameter.getParamValue("ALI_ECS_EXPIRED_DAY") + "天，请及时登陆平台查看，续费。\r\n");
-        put("GODADDY_DOMAIN_EXPIRED_NUM", "您好，已有{count}个GODADDY域名有效时间已少于" + Parameter.getParamValue("GODADDY_DOMAIN_EXPIRED_DAY") + "天，请及时登陆平台查看，续费。\r\n");
-        put("GODADDY_CERTIFICATE_EXPIRED_NUM", "您好，已有{count}个GODADDY证书有效时间已少于" + Parameter.getParamValue("GODADDY_CERTIFICATE_EXPIRED_DAY") + "天，请及时登陆平台查看，续费。\r\n");
+        put("ALI_ECS_EXPIRED_NUM", "您好，已有{count}台阿里云服务器有效时间已少于{ALI_ECS_EXPIRED_DAY}天，请及时登陆平台查看，续费。\r\n");
+        put("GODADDY_DOMAIN_EXPIRED_NUM", "您好，已有{count}个GODADDY域名有效时间已少于{GODADDY_DOMAIN_EXPIRED_DAY}天，请及时登陆平台查看，续费。\r\n");
+        put("GODADDY_CERTIFICATE_EXPIRED_NUM", "您好，已有{count}个GODADDY证书有效时间已少于{GODADDY_CERTIFICATE_EXPIRED_DAY}天，请及时登陆平台查看，续费。\r\n");
         // message
-        put("ALI_ECS_EXPIRED", "您好，阿里云服务器有效时间已少于" + Parameter.getParamValue("ALI_ECS_EXPIRED_DAY") + "天，请及时续费。\r\n账号：{accountName}\r\n服务器ID:{ecsId}\r\n服务器名称:{ecsName}\r\n过期时间：{expiredTime}");
-        put("GODADDY_DOMAIN_EXPIRED", "您好，Godaddy域名有效时间已少于" + Parameter.getParamValue("GODADDY_DOMAIN_EXPIRED_DAY") + "天，请及时续费。\r\n账号：{accountName}\r\n域名ID:{domainId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n到期是否受保护：{expirationProtected}");
-        put("GODADDY_CERTIFICATE_EXPIRED", "您好，Godaddy证书有效时间已少于" + Parameter.getParamValue("GODADDY_CERTIFICATE_EXPIRED_DAY") + "天，请及时续费。\r\n账号：{accountName}\r\n证书ID:{certificateId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n主体备选域名：{subjectAlternativeNames}");
+        put("ALI_ECS_EXPIRED", "您好，阿里云服务器有效时间已少于{ALI_ECS_EXPIRED_DAY}天，请及时续费。\r\n账号：{accountName}\r\n服务器ID:{ecsId}\r\n服务器名称:{ecsName}\r\n过期时间：{expiredTime}");
+        put("GODADDY_DOMAIN_EXPIRED", "您好，Godaddy域名有效时间已少于{GODADDY_DOMAIN_EXPIRED_DAY}天，请及时续费。\r\n账号：{accountName}\r\n域名ID:{domainId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n到期是否受保护：{expirationProtected}");
+        put("GODADDY_CERTIFICATE_EXPIRED", "您好，Godaddy证书有效时间已少于{GODADDY_CERTIFICATE_EXPIRED_DAY}天，请及时续费。\r\n账号：{accountName}\r\n证书ID:{certificateId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n主体备选域名：{subjectAlternativeNames}");
         put("WEBHOOK_MESSAGE", "*****报警信息*****\r\n标题：{ruleName}\r\n报警连接：{ruleUrl}\r\n状态:{state}\r\n内容：{title}\r\n具体消息：{message}");
     }};
 

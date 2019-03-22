@@ -6,6 +6,7 @@ import com.ywxt.Command.Websocket;
 import com.ywxt.Dao.System.MessageDao;
 import com.ywxt.Domain.System.Message;
 import com.ywxt.Service.System.MessageService;
+import com.ywxt.Service.System.ParameterService;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private MessageDao messageDao;
+    @Autowired
+    private ParameterService parameterService;
 
     // 获取类型
     public List<String> getTypes() {
@@ -113,7 +116,7 @@ public class MessageServiceImpl implements MessageService {
     // 新建消息
     public void create(String action, String themeId, Map<String, String> msgParam, Map<String, String> otherParam) throws Exception {
         Message message = new Message();
-        String context = Parameter.MessageActions.get(action);
+        String context = this.getContextByAction(action);
         for (Map.Entry<String, String> e : msgParam.entrySet()) {
             String value = (e.getValue() == null) ? "" : e.getValue();
             context = context.replace("{" + e.getKey() + "}", value);
@@ -173,5 +176,15 @@ public class MessageServiceImpl implements MessageService {
             return false;
         }
         return true;
+    }
+
+    // 根据action获取输出内容
+    private String getContextByAction(String action) {
+        String context = Parameter.MessageActions.get(action);
+        List<com.ywxt.Domain.System.Parameter> ps = parameterService.getList();
+        for (com.ywxt.Domain.System.Parameter p : ps) {
+            context = context.replace("{" + p.getKey() + "}", p.getValue());
+        }
+        return context;
     }
 }

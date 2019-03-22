@@ -10,7 +10,7 @@ public interface ParameterService {
     String getValue(String key);
 
     // 获取列表
-    List<Parameter> getList() throws Exception;
+    List<Parameter> getList();
 
     // 修改value
     void updateValue(int id, String value);

@@ -23,7 +23,7 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
     // 获取列表
-    public List<Parameter> getList() throws Exception {
+    public List<Parameter> getList() {
         return parameterDao.findAll();
     }
 
