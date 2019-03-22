@@ -18,7 +18,7 @@ public class ParameterServiceImpl implements ParameterService {
 
     // 获取value
     public String getValue(String key) {
-        Parameter parameter = parameterDao.getByKey(key);
+        Parameter parameter = parameterDao.findParameterByKey(key);
         return parameter.getValue();
     }
 
@@ -29,14 +29,14 @@ public class ParameterServiceImpl implements ParameterService {
 
     // 修改value
     public void updateValue(int id, String value) {
-        Parameter parameter = parameterDao.getOne(id);
+        Parameter parameter = parameterDao.findParameterById(id);
         parameter.setValue(value);
         parameterDao.saveAndFlush(parameter);
     }
 
     // 创建key-value
     public Parameter createKeyValue(String key, String value) throws Exception {
-        Parameter parameter = parameterDao.getByKey(key);
+        Parameter parameter = parameterDao.findParameterByKey(key);
         if (parameter != null) {
             throw new Exception("该KEY值已存在，请更换后重试。");
         }
@@ -50,7 +50,7 @@ public class ParameterServiceImpl implements ParameterService {
 
     // 创建key-value-introduce
     public Parameter createKeyValue(String key, String value, String introduce) throws Exception {
-        Parameter parameter = parameterDao.getByKey(key);
+        Parameter parameter = parameterDao.findParameterByKey(key);
         if (parameter != null) {
             throw new Exception("该KEY值已存在，请更换后重试。");
         }

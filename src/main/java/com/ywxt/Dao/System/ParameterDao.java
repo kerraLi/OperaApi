@@ -5,5 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ParameterDao extends JpaRepository<Parameter, Integer> {
 
-    Parameter getByKey(String key);
+    Parameter findParameterById(Integer id);
+
+    Parameter findParameterByKey(String key);
 }

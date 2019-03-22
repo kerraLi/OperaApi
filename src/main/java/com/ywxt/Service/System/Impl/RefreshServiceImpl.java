@@ -7,12 +7,15 @@ import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Domain.Godaddy.GodaddyAccount;
 import com.ywxt.Domain.Log.LogRefresh;
 import com.ywxt.Handler.AsyncHandler;
+import com.ywxt.Service.Ali.AliAccountService;
 import com.ywxt.Service.Ali.AliService;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.Ali.Impl.AliServiceImpl;
+import com.ywxt.Service.Aws.AwsAccountService;
 import com.ywxt.Service.Aws.AwsService;
 import com.ywxt.Service.Aws.Impl.AwsAccountServiceImpl;
 import com.ywxt.Service.Aws.Impl.AwsServiceImpl;
+import com.ywxt.Service.Godaddy.GodaddyAccountService;
 import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Service.Godaddy.Impl.GodaddyAccountServiceImpl;
 import com.ywxt.Service.Godaddy.Impl.GodaddyServiceImpl;
@@ -32,9 +35,15 @@ public class RefreshServiceImpl implements RefreshService {
     @Autowired
     private LogRefreshDao logRefreshDao;
     @Autowired
+    private AliAccountService aliAccountService;
+    @Autowired
     private AliService aliService;
     @Autowired
+    private AwsAccountService awsAccountService;
+    @Autowired
     private AwsService awsService;
+    @Autowired
+    private GodaddyAccountService godaddyAccountService;
     @Autowired
     private GodaddyService godaddyService;
 
@@ -61,7 +70,7 @@ public class RefreshServiceImpl implements RefreshService {
                 try {
                     switch (type) {
                         case "ali":
-                            List<AliAccount> aliAccounts = new AliAccountServiceImpl().getList();
+                            List<AliAccount> aliAccounts = aliAccountService.getList();
                             for (AliAccount aliAccount : aliAccounts) {
                                 if (aliAccount.getStatus().equals("normal")) {
                                     aliService.freshSourceData(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret());
@@ -69,7 +78,7 @@ public class RefreshServiceImpl implements RefreshService {
                             }
                             break;
                         case "aws":
-                            List<AwsAccount> awsAccounts = new AwsAccountServiceImpl().getList();
+                            List<AwsAccount> awsAccounts = awsAccountService.getList();
                             for (AwsAccount awsAccount : awsAccounts) {
                                 if (awsAccount.getStatus().equals("normal")) {
                                     awsService.freshSourceData(awsAccount.getAccessKeyId(), awsAccount.getAccessKeySecret());
@@ -77,7 +86,7 @@ public class RefreshServiceImpl implements RefreshService {
                             }
                             break;
                         case "go":
-                            List<GodaddyAccount> goAccounts = new GodaddyAccountServiceImpl().getList();
+                            List<GodaddyAccount> goAccounts = godaddyAccountService.getList();
                             for (GodaddyAccount godaddyAccount : goAccounts) {
                                 if (godaddyAccount.getStatus().equals("normal")) {
                                     godaddyService.freshSourceData(godaddyAccount.getAccessKeyId(), godaddyAccount.getAccessKeySecret());

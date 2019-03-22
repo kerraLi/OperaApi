@@ -1,5 +1,6 @@
 package com.ywxt.Controller.Ali;
 
+import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Domain.Ali.AliScdn;
 import com.ywxt.Domain.ApiResult;
 import com.ywxt.Domain.in.AliScdnIn;
@@ -26,6 +27,7 @@ public class AliScdnController {
      * @param limit
      * @return
      */
+    @NotOperationAction
     @PostMapping("/list/{page}/{limit}")
     public ApiResult getList(@RequestBody AliScdn aliScdn, @PathVariable() Integer page, @PathVariable Integer limit) {
         page = page == null ? 1 : page;
@@ -65,6 +67,7 @@ public class AliScdnController {
      * @param aliScdnIn
      * @return
      */
+    @NotOperationAction
     @PostMapping("/refreshList")
     public ApiResult refreshList(@RequestBody AliScdnIn aliScdnIn) {
         if (aliScdnIn.getEndTime() != null) {
