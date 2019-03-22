@@ -7,7 +7,7 @@ import com.ywxt.Service.Ali.AliEcsService;
 import com.ywxt.Service.Ali.AliService;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
 import com.ywxt.Service.System.MessageService;
-import com.ywxt.Utils.TelegramUtils;
+import com.ywxt.Service.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -25,6 +25,8 @@ public class CheckAli {
     private AliEcsService aliEcsService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private TelegramService telegramService;
 
     // 校验余额
     @Scheduled(cron = "0 0 0/1 * * ?")
@@ -39,11 +41,11 @@ public class CheckAli {
                     param.put("balance", aliAccount.getBalanceData().getAvailableAmount());
                     messageService.create(action, aliAccount.getUserName(), param);
                     // telegram
-                    TelegramUtils.sendMessage(action, param);
+                    telegramService.sendMessage(action, param);
                 }
             }
         } catch (Exception e) {
-            TelegramUtils.sendException("ALI-account", e);
+            telegramService.sendException("ALI-account", e);
         }
     }
 
@@ -61,10 +63,10 @@ public class CheckAli {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("count", count + "");
                 messageService.create(action, action, param);
-                TelegramUtils.sendMessage(action, param);
+                telegramService.sendMessage(action, param);
             }
         } catch (Exception e) {
-            TelegramUtils.sendException("ALI-ecs", e);
+            telegramService.sendException("ALI-ecs", e);
         }
 
     }
@@ -80,7 +82,7 @@ public class CheckAli {
                 }
             }
         } catch (Exception e) {
-            TelegramUtils.sendException("ALI-refresh", e);
+            telegramService.sendException("ALI-refresh", e);
         }
     }
 

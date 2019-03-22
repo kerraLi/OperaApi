@@ -1,32 +1,33 @@
-package com.ywxt.Utils;
+package com.ywxt.Service;
 
 import com.ywxt.Service.System.ParameterService;
+import com.ywxt.Utils.HttpUtils;
+import com.ywxt.Utils.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TelegramUtils {
+@Service("telegramService")
+public class TelegramService {
 
     @Autowired
-    private static ParameterService parameterService;
+    private ParameterService parameterService;
 
     /**
      * 内容：
      * 发送错误到telegram
      */
-    public static void sendException(String msg, Exception e) {
+    public void sendException(String msg, Exception e) {
         try {
             Map<String, String> param = new HashMap<String, String>();
             param.put("message", msg + "-" + e.getMessage());
             param.put("class", e.getClass().toString());
-            TelegramUtils.sendMessage("ERROR", param);
+            this.sendMessage("ERROR", param);
             e.printStackTrace();
         } catch (Exception e2) {
             e2.printStackTrace();
@@ -37,7 +38,7 @@ public class TelegramUtils {
      * 内容：
      * 时间、主体（ali/godaddy/tencent等）、账号、业务标题、业务内容
      */
-    public static void sendMessage(String action, Map<String, String> parameters) throws Exception {
+    public void sendMessage(String action, Map<String, String> parameters) throws Exception {
         // context
         String context = Parameter.MessageActions.get(action);
         List<com.ywxt.Domain.System.Parameter> ps = parameterService.getList();

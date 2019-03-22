@@ -42,8 +42,8 @@ public class Parameter {
 
     // telegram bot
     // test环境
-    public static String telegramBotUrl = "";
-    //public static String telegramBotUrl = "https://api.telegram.org/bot739033903:AAHMeAiArCp6jmQIE3u3MT_wkV_vFX2oNK4";
+//    public static String telegramBotUrl = "";
+    public static String telegramBotUrl = "https://api.telegram.org/bot739033903:AAHMeAiArCp6jmQIE3u3MT_wkV_vFX2oNK4";
     public static Map<String, String> telegramBotActions = new HashMap<String, String>() {{
         put("SEND_MESSAGE", "/sendMessage");
     }};

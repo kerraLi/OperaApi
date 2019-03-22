@@ -8,7 +8,7 @@ import com.ywxt.Service.Godaddy.GodaddyCertificateService;
 import com.ywxt.Service.Godaddy.GodaddyDomainService;
 import com.ywxt.Service.Godaddy.GodaddyService;
 import com.ywxt.Service.System.MessageService;
-import com.ywxt.Utils.TelegramUtils;
+import com.ywxt.Service.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -28,6 +28,8 @@ public class CheckGodaddy {
     private GodaddyDomainService godaddyDomainService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private TelegramService telegramService;
 
     // 校验域名有效期
     @Scheduled(cron = "0 10 0/5 * * ?")
@@ -43,10 +45,10 @@ public class CheckGodaddy {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("count", count + "");
                 messageService.create(action, action, param);
-                TelegramUtils.sendMessage(action, param);
+                telegramService.sendMessage(action, param);
             }
         } catch (Exception e) {
-            TelegramUtils.sendException("GODADDY-domain", e);
+            telegramService.sendException("GODADDY-domain", e);
         }
     }
 
@@ -64,10 +66,10 @@ public class CheckGodaddy {
                 Map<String, String> param = new HashMap<String, String>();
                 param.put("count", count + "");
                 messageService.create(action, action, param);
-                TelegramUtils.sendMessage(action, param);
+                telegramService.sendMessage(action, param);
             }
         } catch (Exception e) {
-            TelegramUtils.sendException("GODADDY-certificate", e);
+            telegramService.sendException("GODADDY-certificate", e);
         }
     }
 
@@ -82,7 +84,7 @@ public class CheckGodaddy {
                 }
             }
         } catch (Exception e) {
-            TelegramUtils.sendException("GODADDY-refresh", e);
+            telegramService.sendException("GODADDY-refresh", e);
         }
     }
 }

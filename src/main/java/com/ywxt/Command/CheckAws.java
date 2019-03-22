@@ -3,7 +3,7 @@ package com.ywxt.Command;
 import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Service.Aws.AwsAccountService;
 import com.ywxt.Service.Aws.AwsService;
-import com.ywxt.Utils.TelegramUtils;
+import com.ywxt.Service.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,8 @@ public class CheckAws {
     private AwsService awsService;
     @Autowired
     private AwsAccountService awsAccountService;
+    @Autowired
+    private TelegramService telegramService;
 
     // 刷新数据
     @Scheduled(cron = "0 0 0/5 * * ?")
@@ -29,7 +31,7 @@ public class CheckAws {
                 }
             }
         } catch (Exception e) {
-            TelegramUtils.sendException("AWS-refresh", e);
+            telegramService.sendException("AWS-refresh", e);
         }
     }
 
