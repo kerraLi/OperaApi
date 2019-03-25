@@ -16,7 +16,7 @@ public class RedisService {
     private int redisPort;
 
     public Jedis getJedis() {
-        if (jedis == null) {
+        if (jedis == null || !jedis.isConnected()) {
             jedis = new Jedis(redisHost, redisPort);
         }
         return this.jedis;

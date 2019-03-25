@@ -1,11 +1,8 @@
-package com.ywxt.Service.Monitor;
+package com.ywxt.Service.Monitor.Domain;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Domain.Monitor.MonitorPoint;
 
-import java.util.List;
-
-public interface MonitorSpeedService {
+public interface DomainSpeedService {
 
     public JSONObject speedTest(String url) throws Exception;
 

@@ -5,8 +5,6 @@ import com.ywxt.Service.System.MessageService;
 import com.ywxt.Service.System.ParameterService;
 import com.ywxt.Service.TelegramService;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageListener;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

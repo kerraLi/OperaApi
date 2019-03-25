@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,19 @@ public class HttpUtils {
     private static final int SUCCESS_CODE = 200;
 
     /**
+     * 发送带基本验证的GET请求
+     *
+     * @param url               请求url
+     * @param nameValuePairList 请求参数
+     * @return JSON或者字符串
+     * @throws Exception
+     */
+    public static String sendHttpGetWithBasicAuth(String username, String password, String url, List<NameValuePair> nameValuePairList, Map<String, String> paramMap) throws Exception {
+        paramMap.put("Authorization", "Basic " + Base64.getUrlEncoder().encodeToString((username + ":" + password).getBytes()));
+        return sendHttpGet(url, nameValuePairList, paramMap);
+    }
+
+    /**
      * 发送GET请求
      *
      * @param url               请求url
@@ -47,8 +61,7 @@ public class HttpUtils {
      * @return JSON或者字符串
      * @throws Exception
      */
-    public static Object sendHttpGet(String url, List<NameValuePair> nameValuePairList, Map<String, String> paramMap) throws Exception {
-        JSONObject jsonObject = null;
+    public static String sendHttpGet(String url, List<NameValuePair> nameValuePairList, Map<String, String> paramMap) throws Exception {
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
         try {
@@ -61,9 +74,9 @@ public class HttpUtils {
             // 创建HttpGet
             HttpGet httpGet = new HttpGet(uriBuilder.build());
             // 设置请求头部编码
-            httpGet.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+            httpGet.setHeader(new BasicHeader("Content-Type", "application/json; charset=utf-8"));
             // 设置返回编码
-            httpGet.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
+            // httpGet.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
             // 请求头
             if (paramMap.size() > 0) {
                 for (Map.Entry<String, String> e : paramMap.entrySet()) {
@@ -78,10 +91,7 @@ public class HttpUtils {
                 // 获取返回对象
                 HttpEntity entity = response.getEntity();
                 // 通过EntityUitls获取返回内容
-                String result = EntityUtils.toString(entity, "UTF-8");
-                // 转换成json,根据合法性返回json或者字符串
-                jsonObject = JSONObject.parseObject(result);
-                return jsonObject;
+                return EntityUtils.toString(entity, "UTF-8");
             } else {
                 throw new Exception("GET请求失败");
             }

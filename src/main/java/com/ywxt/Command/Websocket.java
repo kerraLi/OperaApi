@@ -2,7 +2,7 @@ package com.ywxt.Command;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Domain.Monitor.MonitorPoint;
+import com.ywxt.Domain.Monitor.Domain.MonitorPoint;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Service.RedisService;
@@ -201,7 +201,7 @@ public class Websocket extends TextWebSocketHandler {
     // json-通用
     private TextMessage getJsonInfo(String action, String type, String msg) {
         String str = new JSONObject() {{
-            put("time", new Date().getTime());
+            put("Time", new Date().getTime());
             put("action", action);
             put("type", type);
             put("msg", msg);
@@ -212,7 +212,7 @@ public class Websocket extends TextWebSocketHandler {
     // json-speed-test
     private TextMessage getSpeedJsonInfo(String action, int pointId, String type, String out) {
         String str = new JSONObject() {{
-            put("time", new Date().getTime());
+            put("Time", new Date().getTime());
             put("action", action);
             put("pointId", pointId);
             put("type", type);

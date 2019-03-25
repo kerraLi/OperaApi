@@ -1,11 +1,11 @@
-package com.ywxt.Dao.Monitor;
+package com.ywxt.Dao.Monitor.Domain;
 
-import com.ywxt.Domain.Monitor.MonitorDomain;
+import com.ywxt.Domain.Monitor.Domain.MonitorDomain;
 
 import java.util.HashMap;
 import java.util.List;
 
-public interface MonitorDomainDao {
+public interface DomainDomainDao {
 
     public int create(MonitorDomain monitorDomain);
 

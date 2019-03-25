@@ -1,12 +1,12 @@
-package com.ywxt.Service.Monitor;
+package com.ywxt.Service.Monitor.Domain;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Domain.Monitor.MonitorDomain;
+import com.ywxt.Domain.Monitor.Domain.MonitorDomain;
 
 import java.util.HashMap;
 import java.util.List;
 
-public interface MonitorDomainService {
+public interface DomainDomainService {
 
     public int create(MonitorDomain monitorDomain) throws Exception;
 

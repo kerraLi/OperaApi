@@ -1,7 +1,7 @@
-package com.ywxt.Dao.Monitor.Impl;
+package com.ywxt.Dao.Monitor.Domain.Impl;
 
-import com.ywxt.Dao.Monitor.MonitorDomainDao;
-import com.ywxt.Domain.Monitor.MonitorDomain;
+import com.ywxt.Dao.Monitor.Domain.DomainPointDao;
+import com.ywxt.Domain.Monitor.Domain.MonitorPoint;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -16,64 +16,64 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository("monitorDomainDao")
-public class MonitorDomainDaoImpl implements MonitorDomainDao {
+@Repository("monitorPointDao")
+public class DomainPointDaoImpl implements DomainPointDao {
 
     @PersistenceContext
     private EntityManager em;
 
+    // 新建
     @Transactional
-    public int create(MonitorDomain monitorDomain) {
-        em.persist(monitorDomain);
-        return monitorDomain.getId();
+    public int create(MonitorPoint monitorPoint) {
+        em.persist(monitorPoint);
+        return monitorPoint.getId();
     }
 
     @Transactional
     public boolean delete(int id) {
-        em.remove(this.getMonitorDomain(id));
+        em.remove(this.getMonitorPoint(id));
         return true;
     }
 
     @Transactional
-    public boolean delete(MonitorDomain monitorDomain) {
-        em.remove(monitorDomain);
+    public boolean delete(MonitorPoint monitorPoint) {
+        em.remove(monitorPoint);
         return true;
     }
-
 
     // 更新
     @Transactional
-    public MonitorDomain update(MonitorDomain monitorDomain) {
-        em.merge(monitorDomain);
-        return monitorDomain;
+    public MonitorPoint update(MonitorPoint monitorPoint) {
+        em.merge(monitorPoint);
+        return monitorPoint;
     }
 
     @Transactional
-    public MonitorDomain getMonitorDomain(int id) {
-        return em.find(MonitorDomain.class, id);
+    public MonitorPoint getMonitorPoint(int id) {
+        return em.find(MonitorPoint.class, id);
     }
 
 
     @Transactional
-    public MonitorDomain getMonitorDomain(String path) {
+    public MonitorPoint getMonitorPoint(String path) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<MonitorDomain> criteriaQuery = criteriaBuilder.createQuery(MonitorDomain.class);
-        Root<MonitorDomain> from = criteriaQuery.from(MonitorDomain.class);
+        CriteriaQuery<MonitorPoint> criteriaQuery = criteriaBuilder.createQuery(MonitorPoint.class);
+        Root<MonitorPoint> from = criteriaQuery.from(MonitorPoint.class);
         // 设置查询属性
         criteriaQuery.select(from).where(from.get("path").in(path));
-        List<MonitorDomain> list = em.createQuery(criteriaQuery).getResultList();
+        List<MonitorPoint> list = em.createQuery(criteriaQuery).getResultList();
         if (list.size() == 0) {
             return null;
         }
-        return (MonitorDomain) list.get(0);
+        return (MonitorPoint) list.get(0);
     }
 
     // 列表查询
-    public List<MonitorDomain> getList(HashMap<String, Object> params) {
+    public List<MonitorPoint> getList(HashMap<String, Object> params) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<MonitorDomain> query = builder.createQuery(MonitorDomain.class);
+        CriteriaQuery<MonitorPoint> query = builder.createQuery(MonitorPoint.class);
         // 查询条件
-        Root<MonitorDomain> root = query.from(MonitorDomain.class);
+        Root<MonitorPoint> root = query.from(MonitorPoint.class);
         List<Predicate> predicates = this.filterParam(builder, root, params);
         Predicate[] p = new Predicate[predicates.size()];
         query.where(predicates.toArray(p));
@@ -83,12 +83,13 @@ public class MonitorDomainDaoImpl implements MonitorDomainDao {
                 .getResultList();
     }
 
+
     // 列表查询
-    public List<MonitorDomain> getList(HashMap<String, Object> params, int pageNumber, int pageSize) {
+    public List<MonitorPoint> getList(HashMap<String, Object> params, int pageNumber, int pageSize) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<MonitorDomain> query = builder.createQuery(MonitorDomain.class);
+        CriteriaQuery<MonitorPoint> query = builder.createQuery(MonitorPoint.class);
         // 查询条件
-        Root<MonitorDomain> root = query.from(MonitorDomain.class);
+        Root<MonitorPoint> root = query.from(MonitorPoint.class);
         List<Predicate> predicates = this.filterParam(builder, root, params);
         Predicate[] p = new Predicate[predicates.size()];
         query.where(predicates.toArray(p));
@@ -105,7 +106,7 @@ public class MonitorDomainDaoImpl implements MonitorDomainDao {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         // 查询条件
-        Root<MonitorDomain> root = query.from(MonitorDomain.class);
+        Root<MonitorPoint> root = query.from(MonitorPoint.class);
         List<Predicate> predicates = this.filterParam(builder, root, params);
         Predicate[] p = new Predicate[predicates.size()];
         query.select(builder.count(root));
@@ -115,7 +116,7 @@ public class MonitorDomainDaoImpl implements MonitorDomainDao {
 
 
     // 过滤params
-    private List<Predicate> filterParam(CriteriaBuilder builder, Root<MonitorDomain> root, HashMap<String, Object> params) {
+    private List<Predicate> filterParam(CriteriaBuilder builder, Root<MonitorPoint> root, HashMap<String, Object> params) {
         List<Predicate> predicates = new ArrayList<Predicate>();
         if (params != null) {
             for (Map.Entry<String, Object> e : params.entrySet()) {

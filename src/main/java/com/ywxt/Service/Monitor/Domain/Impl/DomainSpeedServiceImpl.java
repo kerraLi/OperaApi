@@ -1,11 +1,11 @@
-package com.ywxt.Service.Monitor.Impl;
+package com.ywxt.Service.Monitor.Domain.Impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Domain.Monitor.MonitorDomain;
-import com.ywxt.Domain.Monitor.MonitorPoint;
-import com.ywxt.Service.Monitor.MonitorDomainService;
-import com.ywxt.Service.Monitor.MonitorPointService;
-import com.ywxt.Service.Monitor.MonitorSpeedService;
+import com.ywxt.Domain.Monitor.Domain.MonitorDomain;
+import com.ywxt.Domain.Monitor.Domain.MonitorPoint;
+import com.ywxt.Service.Monitor.Domain.DomainDomainService;
+import com.ywxt.Service.Monitor.Domain.DomainPointService;
+import com.ywxt.Service.Monitor.Domain.DomainSpeedService;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Service.RedisService;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,13 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@Service("monitorSpeedService")
-public class MonitorSpeedServiceImpl implements MonitorSpeedService {
+@Service
+public class DomainSpeedServiceImpl implements DomainSpeedService {
 
     @Resource
-    private MonitorPointService monitorPointService;
+    private DomainPointService domainPointService;
     @Resource
-    private MonitorDomainService monitorDomainService;
+    private DomainDomainService domainDomainService;
     @Value("${redis.ttl.monitor}")
     private int redisTllMonitorSpeed;
     @Resource
@@ -32,7 +32,7 @@ public class MonitorSpeedServiceImpl implements MonitorSpeedService {
     public JSONObject speedTest(String url) throws Exception {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", "normal");
-        List<MonitorPoint> points = monitorPointService.getList(params);
+        List<MonitorPoint> points = domainPointService.getList(params);
         String unique = UUID.randomUUID().toString().replace("-", "");
         JSONObject object = new JSONObject();
         object.put("code", unique);
@@ -45,8 +45,8 @@ public class MonitorSpeedServiceImpl implements MonitorSpeedService {
     public JSONObject speedMonitor() throws Exception {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", "normal");
-        List<MonitorPoint> points = monitorPointService.getList(params);
-        List<MonitorDomain> domains = monitorDomainService.getList(params);
+        List<MonitorPoint> points = domainPointService.getList(params);
+        List<MonitorDomain> domains = domainDomainService.getList(params);
         List<String> urls = new ArrayList<>();
         for (MonitorDomain domain : domains) {
             urls.add(domain.getPath());

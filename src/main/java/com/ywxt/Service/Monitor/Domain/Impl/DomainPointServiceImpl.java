@@ -1,27 +1,27 @@
-package com.ywxt.Service.Monitor.Impl;
+package com.ywxt.Service.Monitor.Domain.Impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ywxt.Dao.Monitor.MonitorPointDao;
-import com.ywxt.Domain.Monitor.MonitorPoint;
-import com.ywxt.Service.Monitor.MonitorPointService;
+import com.ywxt.Dao.Monitor.Domain.DomainPointDao;
+import com.ywxt.Domain.Monitor.Domain.MonitorPoint;
+import com.ywxt.Service.Monitor.Domain.DomainPointService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 
-@Service("monitorPointService")
-public class MonitorPointServiceImpl implements MonitorPointService {
+@Service
+public class DomainPointServiceImpl implements DomainPointService {
 
     @Resource
-    private MonitorPointDao monitorPointDao;
+    private DomainPointDao domainPointDao;
 
     public int create(MonitorPoint monitorPoint) throws Exception {
-        return monitorPointDao.create(monitorPoint);
+        return domainPointDao.create(monitorPoint);
     }
 
     public boolean remove(int id) throws Exception {
-        return monitorPointDao.delete(id);
+        return domainPointDao.delete(id);
     }
 
     public boolean removeAll(Integer[] ids) throws Exception {
@@ -32,15 +32,15 @@ public class MonitorPointServiceImpl implements MonitorPointService {
     }
 
     public MonitorPoint update(MonitorPoint monitorPoint) throws Exception {
-        return monitorPointDao.update(monitorPoint);
+        return domainPointDao.update(monitorPoint);
     }
 
     public MonitorPoint getMonitorPoint(int id) throws Exception {
-        return monitorPointDao.getMonitorPoint(id);
+        return domainPointDao.getMonitorPoint(id);
     }
 
     public MonitorPoint getMonitorPoint(String path) throws Exception {
-        return monitorPointDao.getMonitorPoint(path);
+        return domainPointDao.getMonitorPoint(path);
     }
 
     public MonitorPoint save(MonitorPoint monitorPoint) throws Exception {
@@ -53,13 +53,13 @@ public class MonitorPointServiceImpl implements MonitorPointService {
     }
 
     public List<MonitorPoint> getList(HashMap<String, Object> params) throws Exception {
-        return monitorPointDao.getList(params);
+        return domainPointDao.getList(params);
     }
 
     public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception {
-        List<MonitorPoint> list = monitorPointDao.getList(params, pageNumber, pageSize);
+        List<MonitorPoint> list = domainPointDao.getList(params, pageNumber, pageSize);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", monitorPointDao.getListTotal(params));
+        jsonObject.put("total", domainPointDao.getListTotal(params));
         jsonObject.put("items", list);
         return jsonObject;
     }

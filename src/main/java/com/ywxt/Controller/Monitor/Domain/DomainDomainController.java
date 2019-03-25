@@ -1,10 +1,10 @@
-package com.ywxt.Controller.Monitor;
+package com.ywxt.Controller.Monitor.Domain;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Annotation.NotOperationAction;
 import com.ywxt.Controller.CommonController;
-import com.ywxt.Domain.Monitor.MonitorPoint;
-import com.ywxt.Service.Monitor.MonitorPointService;
+import com.ywxt.Domain.Monitor.Domain.MonitorDomain;
+import com.ywxt.Service.Monitor.Domain.DomainDomainService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 @Controller
-@RequestMapping(value = "/monitor/point", name = "监控点")
-public class PointController extends CommonController {
+@RequestMapping(value = "/monitor/domain/domain", name = "监控域名")
+public class DomainDomainController extends CommonController {
 
     @Resource
-    private MonitorPointService monitorPointService;
+    private DomainDomainService domainDomainService;
 
     @NotOperationAction
     @ResponseBody
@@ -29,27 +29,25 @@ public class PointController extends CommonController {
         if (!(request.getParameter("status") == null) && !(request.getParameter("status").isEmpty())) {
             params.put("status", request.getParameter("status"));
         }
-        return monitorPointService.getList(params, pageNumber, pageSize);
+        return domainDomainService.getList(params, pageNumber, pageSize);
     }
+
 
     @ResponseBody
     @RequestMapping(value = {"/save"}, name = "修改", method = RequestMethod.POST)
-    public JSONObject save(@RequestBody MonitorPoint monitorPoint) throws Exception {
-        if (monitorPoint.getLocation().isEmpty()) {
-            throw new Exception("监控点地区不能为空。");
+    public JSONObject save(@RequestBody MonitorDomain monitorDomain) throws Exception {
+        if (monitorDomain.getPath().isEmpty()) {
+            throw new Exception("域名路径不能为空");
         }
-        if (monitorPoint.getPath().isEmpty()) {
-            throw new Exception("监控路由不能为空。");
-        }
-        monitorPointService.save(monitorPoint);
-        return this.returnObject(new HashMap<String, Object>() {{
+        domainDomainService.save(monitorDomain);
+        return this.returnObject(new HashMap<>() {{
         }});
     }
 
     @ResponseBody
     @RequestMapping(value = {"/remove/{id}"}, name = "删除", method = RequestMethod.GET)
     public JSONObject remove(@PathVariable Integer id) throws Exception {
-        monitorPointService.remove(id);
+        domainDomainService.remove(id);
         return this.returnObject(new HashMap<>() {{
         }});
     }
@@ -57,7 +55,7 @@ public class PointController extends CommonController {
     @ResponseBody
     @RequestMapping(value = {"/remove"}, name = "批量删除", method = RequestMethod.POST)
     public JSONObject removeAll(Integer[] ids) throws Exception {
-        monitorPointService.removeAll(ids);
+        domainDomainService.removeAll(ids);
         return this.returnObject(new HashMap<>() {{
         }});
     }

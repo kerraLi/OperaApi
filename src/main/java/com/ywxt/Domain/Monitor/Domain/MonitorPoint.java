@@ -1,9 +1,9 @@
-package com.ywxt.Domain.Monitor;
+package com.ywxt.Domain.Monitor.Domain;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "monitor_point")
+@Table(name = "monitor_domain_point")
 public class MonitorPoint {
 
     @Id
