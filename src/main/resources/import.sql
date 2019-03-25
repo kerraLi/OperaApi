@@ -3,10 +3,11 @@ INSERT INTO `users` (`username`, `password`, `nickname`, `introduction`, `avatar
 INSERT INTO `user_roles` (`id`, `code`, `name`) VALUES (1, 'admin', '超级管理员');
 
 -- 系统参数
-INSERT INTO `system_parameter` (`key`, `value`, `status`) VALUES ('ALI_ACCOUNT_BALANCE', '3000.00', 'fixed');
-INSERT INTO `system_parameter` (`key`, `value`, `status`) VALUES ('ALI_ECS_EXPIRED_DAY', '3', 'fixed');
-INSERT INTO `system_parameter` (`key`, `value`, `status`) VALUES ('GODADDY_DOMAIN_EXPIRED_DAY', '30', 'fixed');
-INSERT INTO `system_parameter` (`key`, `value`, `status`) VALUES ('GODADDY_CERTIFICATE_EXPIRED_DAY', '30', 'fixed');
+INSERT INTO `system_parameter` (`introduce`, `key`, `status`, `value`) VALUES ('阿里云-账号余额报警阈值（单位：元）', 'ALI_ACCOUNT_BALANCE', 'fixed', '3000.00');
+INSERT INTO `system_parameter` (`introduce`, `key`, `status`, `value`) VALUES ('阿里云-ECS服务器到期日期报警阈值（单位：天）', 'ALI_ECS_EXPIRED_DAY', 'fixed', '30');
+INSERT INTO `system_parameter` (`introduce`, `key`, `status`, `value`) VALUES ('GODADDY-域名到期日期报警阈值（单位：天）', 'GODADDY_DOMAIN_EXPIRED_DAY', 'fixed', '30');
+INSERT INTO `system_parameter` (`introduce`, `key`, `status`, `value`) VALUES ('GODADDY-证书到期日期报警阈值（单位：天）', 'GODADDY_CERTIFICATE_EXPIRED_DAY', 'fixed', '30');
+INSERT INTO `system_parameter` (`introduce`, `key`, `status`, `value`) VALUES ('监控-服务器时间差报警阈值（单位：秒）', 'MONITORTIME_TIMEOUT_SECOND', 'fixed', '5');
 
 
 -- 资源类型 resource_type
