@@ -29,7 +29,7 @@ public class CheckAli {
     private TelegramService telegramService;
 
     // 校验余额
-    @Scheduled(cron = "0/20 * * * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     private void checkAccount() {
         try {
             List<AliAccount> list = aliAccountService.getList(true);
