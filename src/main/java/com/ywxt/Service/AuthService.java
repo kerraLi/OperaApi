@@ -8,7 +8,7 @@ import com.ywxt.Domain.User.UserRole;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.MD5Utils;
 import com.ywxt.Utils.Parameter;
-import com.ywxt.Utils.RedisUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +22,10 @@ public class AuthService {
     private UserDao userDao;
     @Resource
     private UserPermissionDao userPermissionDao;
+    @Value("${redis.ttl.user}")
+    private int redisTllUserToken;
+    @Resource
+    private RedisService redisService;
 
     public String login(String clientUsername, String clientPassword) throws Exception {
         User u = userDao.getUser(clientUsername);
@@ -33,7 +37,7 @@ public class AuthService {
         }
         String authToken = AuthUtils.createJWT(Parameter.loginTtlMs, u);
         // 存入redis(单位秒)
-        new RedisUtils().getJedis().setex(Parameter.redisKeyUserToken.replace("{token}", authToken), Parameter.redisTllUserToken, authToken);
+        redisService.getJedis().setex(Parameter.redisKeyUserToken.replace("{token}", authToken), redisTllUserToken, authToken);
         return authToken;
     }
 
@@ -52,7 +56,7 @@ public class AuthService {
 
     public boolean logout(String token) {
         // 删除redis记录
-        new RedisUtils().getJedis().del(Parameter.redisKeyUserToken.replace("{token}", token));
+        redisService.getJedis().del(Parameter.redisKeyUserToken.replace("{token}", token));
         return true;
     }
 

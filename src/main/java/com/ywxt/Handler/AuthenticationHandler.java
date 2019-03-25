@@ -10,7 +10,7 @@ import com.ywxt.Service.User.RolePermissionService;
 import com.ywxt.Service.User.UserService;
 import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
-import com.ywxt.Utils.RedisUtils;
+import com.ywxt.Service.RedisService;
 
 import io.jsonwebtoken.SignatureException;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +30,8 @@ public class AuthenticationHandler implements HandlerInterceptor {
     private UserService userService;
     @Resource
     private RolePermissionService rolePermissionService;
+    @Resource
+    private RedisService redisService;
 
     // 在业务处理器处理请求之前被调用
     @Override
@@ -72,7 +74,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
             throw new RuntimeException("401");
         }
         // 校验会话是否失效
-        if (!(new RedisUtils().getJedis().exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
+        if (!(redisService.getJedis().exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
             // 会话已失效，请重新登陆
             throw new RuntimeException("401");
         }

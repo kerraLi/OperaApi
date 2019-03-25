@@ -1,13 +1,10 @@
 package com.ywxt.Domain.User;
 
-import org.hibernate.annotations.DynamicUpdate;
-
 import javax.persistence.*;
-import java.util.Arrays;
 
 @Entity
 @Table(name = "users")
-@DynamicUpdate
+//todo @DynamicUpdate
 public class User {
 
     @Id

@@ -2,14 +2,9 @@ package com.ywxt.Service.User;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Domain.User.User;
-import com.ywxt.Utils.AuthUtils;
-import com.ywxt.Utils.MD5Utils;
-import com.ywxt.Utils.Parameter;
-import com.ywxt.Utils.RedisUtils;
 
 
 import java.util.HashMap;
-import java.util.List;
 
 public interface UserService {
 

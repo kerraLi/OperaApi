@@ -7,7 +7,8 @@ import com.ywxt.Service.Monitor.MonitorDomainService;
 import com.ywxt.Service.Monitor.MonitorPointService;
 import com.ywxt.Service.Monitor.MonitorSpeedService;
 import com.ywxt.Utils.Parameter;
-import com.ywxt.Utils.RedisUtils;
+import com.ywxt.Service.RedisService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +24,10 @@ public class MonitorSpeedServiceImpl implements MonitorSpeedService {
     private MonitorPointService monitorPointService;
     @Resource
     private MonitorDomainService monitorDomainService;
+    @Value("${redis.ttl.monitor}")
+    private int redisTllMonitorSpeed;
+    @Resource
+    private RedisService redisService;
 
     public JSONObject speedTest(String url) throws Exception {
         HashMap<String, Object> params = new HashMap<String, Object>();
@@ -33,7 +38,7 @@ public class MonitorSpeedServiceImpl implements MonitorSpeedService {
         object.put("code", unique);
         object.put("url", url);
         object.put("points", points);
-        new RedisUtils().getJedis().setex(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), Parameter.redisTllMonitorSpeed, object.toJSONString());
+        redisService.getJedis().setex(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), redisTllMonitorSpeed, object.toJSONString());
         return object;
     }
 
@@ -51,7 +56,7 @@ public class MonitorSpeedServiceImpl implements MonitorSpeedService {
         object.put("code", unique);
         object.put("urls", urls);
         object.put("points", points);
-        new RedisUtils().getJedis().setex(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), Parameter.redisTllMonitorSpeed, object.toJSONString());
+        redisService.getJedis().setex(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), redisTllMonitorSpeed, object.toJSONString());
         return object;
     }
 

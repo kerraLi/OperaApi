@@ -1,9 +1,9 @@
 package com.ywxt.Handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
 import com.ywxt.Domain.ApiResult;
 import com.ywxt.Exception.MTMException;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,16 +72,18 @@ public class ExceptionsHandler {
     }
 
     // 可以直接写@EceptionHandler，IOExeption继承于Exception
-    //@ResponseBody
-    //@ExceptionHandler(Exception.class)
-    //public String defaultExceptionHandler(HttpServletRequest request, Exception exception) {
-    //    JSONObject jsonObject = new JSONObject();
-    //    jsonObject.put("timestamp", System.currentTimeMillis());
-    //    jsonObject.put("status", "error");
-    //    jsonObject.put("message", exception.getMessage());
-    //    jsonObject.put("class", exception.getClass());
-    //    jsonObject.put("line", exception.toString());
-    //    jsonObject.put("path", request.getPathInfo());
-    //    return jsonObject.toString();
-    //}
+    @ResponseBody
+    @ExceptionHandler(Exception.class)
+    public String defaultExceptionHandler(HttpServletRequest request, Exception exception) {
+        // print
+        exception.printStackTrace();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("timestamp", System.currentTimeMillis());
+        jsonObject.put("status", "error");
+        jsonObject.put("message", exception.getMessage());
+        jsonObject.put("class", exception.getClass());
+        jsonObject.put("line", exception.toString());
+        jsonObject.put("path", request.getPathInfo());
+        return jsonObject.toString();
+    }
 }

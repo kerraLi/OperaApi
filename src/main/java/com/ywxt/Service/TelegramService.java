@@ -4,6 +4,7 @@ import com.ywxt.Service.System.ParameterService;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
@@ -17,6 +18,15 @@ public class TelegramService {
 
     @Autowired
     private ParameterService parameterService;
+    @Value("${tel.url}")
+    private String telegramBotUrl;
+    @Value("${tel.chat_id}")
+    private String telegramChatId = "-374037814";
+    // telegram bot
+    private Map<String, String> telegramBotActions = new HashMap<String, String>() {{
+        put("SEND_MESSAGE", "/sendMessage");
+    }};
+
 
     /**
      * 内容：
@@ -50,9 +60,9 @@ public class TelegramService {
             String value = (e.getValue() == null) ? "" : e.getValue();
             context = context.replace("{" + e.getKey() + "}", value);
         }
-        String param = "chat_id=" + Parameter.telegramChatId + "&text=" + URLEncoder.encode(context, StandardCharsets.UTF_8);
-        if (!Parameter.telegramBotUrl.isEmpty()) {
-            HttpUtils.sendConnGet(Parameter.telegramBotUrl + Parameter.telegramBotActions.get("SEND_MESSAGE"), param, new HashMap<String, String>());
+        String param = "chat_id=" + telegramChatId + "&text=" + URLEncoder.encode(context, StandardCharsets.UTF_8);
+        if (!telegramBotUrl.isEmpty()) {
+            HttpUtils.sendConnGet(telegramBotUrl + telegramBotActions.get("SEND_MESSAGE"), param, new HashMap<String, String>());
         }
     }
 }

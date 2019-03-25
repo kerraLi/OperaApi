@@ -1,24 +1,21 @@
 package com.ywxt.Command;
 
-import javax.websocket.*;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Domain.Monitor.MonitorPoint;
 import com.ywxt.Utils.HttpUtils;
 import com.ywxt.Utils.Parameter;
-import com.ywxt.Utils.RedisUtils;
+import com.ywxt.Service.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.socket.*;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.*;
 
-
-@ServerEndpoint(value = "/websocket/{userId}")
-public class Websocket {
+public class Websocket extends TextWebSocketHandler {
     //记录当前在线链接
     public static Map<Long, Websocket> userSocket = new HashMap<>();
     public static Map<String, HashMap<Long, Websocket>> featureSocket = new HashMap<>();
@@ -26,13 +23,20 @@ public class Websocket {
     //日志记录
     private static Logger logger = LoggerFactory.getLogger(Websocket.class);
 
-    private Session session;
+    @Autowired
+    private RedisService redisService;
+    private WebSocketSession session;
     private Long userId;
 
-    @OnOpen
-    public void onOpen(@PathParam("userId") Long userId, Session session) throws IOException {
+    // 建立连接
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         this.session = session;
-        this.userId = userId;
+        String[] path = session.getUri().getPath().split("/");
+        if (path.length < 3 || path[2].isEmpty()) {
+            throw new Exception("链接信息错误");
+        }
+        userId = Long.parseLong(path[2]);
         //根据该用户当前是否已经在别的终端登录进行添加操作
         if (userSocket.containsKey(this.userId)) {
             logger.debug("当前用户id:{}已有其他终端登录", this.userId);
@@ -43,45 +47,54 @@ public class Websocket {
         logger.debug("当前在线用户数为：{}", userSocket.size());
     }
 
-    @OnClose
-    public void onClose() {
-        //移除当前用户终端登录的websocket信息,如果该用户的所有终端都下线了，则删除该用户的记录
-        userSocket.remove(this.userId);
-        this.unSubscription("message");
-        logger.debug("当前在线用户数为：{}", userSocket.size());
-    }
-
-    @OnMessage
-    public void onMessage(String message, Session session) throws IOException {
+    @Override
+    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         logger.debug("收到来自用户id为：{}的消息：{}", this.userId, message);
-        JSONObject jsonObject = JSONObject.parseObject(message);
+        String msg = message.getPayload().toString();
+        JSONObject jsonObject = JSONObject.parseObject(msg);
         String action = (String) jsonObject.get("action");
         // 订阅message
         if (action.equals("message")) {
             this.subscription("message");
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "start", "subscription:" + action));
+            session.sendMessage(this.getJsonInfo(action, "start", "subscription:" + action));
         }
         // 订阅speed
         if (action.equals("speed-test")) {
             String code = (String) jsonObject.get("code");
             this.subscription("speed-test-" + code);
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "start", "subscription:" + action));
+            session.sendMessage(this.getJsonInfo(action, "start", "subscription:" + action));
             this.speedTest(code);
         }
         // 订阅speed-monitor
         if (action.equals("speed-monitor")) {
             String code = (String) jsonObject.get("code");
             this.subscription("speed-monitor-" + code);
-            this.session.getBasicRemote().sendText(this.getJsonInfo(action, "start", "subscription:" + action));
+            session.sendMessage(this.getJsonInfo(action, "start", "subscription:" + action));
             this.speedMonitor(code);
         }
         if (session == null) logger.debug("session null");
     }
 
-    @OnError
-    public void onError(Session session, Throwable error) {
+    // 处理error
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         logger.debug("用户id为：{}的连接发送错误", this.userId);
-        error.printStackTrace();
+        exception.printStackTrace();
+    }
+
+    // 关闭连接
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        //移除当前用户终端登录的websocket信息,如果该用户的所有终端都下线了，则删除该用户的记录
+        userSocket.remove(this.userId);
+        this.unSubscription("message");
+        logger.debug("当前在线用户数为：{}", userSocket.size());
+    }
+
+    // 是否处理分片消息
+    @Override
+    public boolean supportsPartialMessages() {
+        return false;
     }
 
     // 订阅
@@ -108,9 +121,9 @@ public class Websocket {
     // speed-test订阅
     private void speedTest(String code) throws IOException {
         // speed test
-        String speedInfo = new RedisUtils().getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
+        String speedInfo = redisService.getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
         if (speedInfo == null) {
-            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-test", 0, "end", ""));
+            session.sendMessage(this.getSpeedJsonInfo("speed-test", 0, "end", ""));
             return;
         }
         JSONObject infoJson = JSONObject.parseObject(speedInfo);
@@ -130,19 +143,19 @@ public class Websocket {
                 // 监控点未响应
                 msg = "error";
             }
-            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-test", point.getId(), "new", msg));
+            session.sendMessage(this.getSpeedJsonInfo("speed-test", point.getId(), "new", msg));
         }
-        this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-test", 0, "end", ""));
+        session.sendMessage(this.getSpeedJsonInfo("speed-test", 0, "end", ""));
         // 取消订阅
         this.unSubscription("speed-test-" + code);
     }
 
     // speed-monitor订阅
     private void speedMonitor(String code) throws IOException {
-        // speed test
-        String speedInfo = new RedisUtils().getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
+        // speed monitor
+        String speedInfo = redisService.getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
         if (speedInfo == null) {
-            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-monitor", 0, "end", ""));
+            session.sendMessage(this.getSpeedJsonInfo("speed-monitor", 0, "end", ""));
             return;
         }
         JSONObject infoJson = JSONObject.parseObject(speedInfo);
@@ -162,47 +175,50 @@ public class Websocket {
                 // 监控点未响应
                 msg = "error";
             }
-            this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-monitor", point.getId(), "new", msg));
+            session.sendMessage(this.getSpeedJsonInfo("speed-monitor", point.getId(), "new", msg));
         }
-        this.session.getBasicRemote().sendText(this.getSpeedJsonInfo("speed-monitor", 0, "end", ""));
+        session.sendMessage(this.getSpeedJsonInfo("speed-monitor", 0, "end", ""));
         // 取消订阅
         this.unSubscription("speed-monitor-" + code);
     }
 
     // message订阅-发送给所有用户
     public static void sendMessageToAllUser(String message) {
-        Map<Long, Websocket> map = featureSocket.get("message");
-        for (Map.Entry<Long, Websocket> entry : map.entrySet()) {
-            Websocket ws = entry.getValue();
-            logger.debug("sessionId为:{}", ws.session.getId());
-            try {
-                ws.session.getBasicRemote().sendText(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-                logger.debug(" 给用户id为：{}发送消息失败", ws.session.getId());
+        if (featureSocket.containsKey("message")) {
+            for (Map.Entry<Long, Websocket> entry : featureSocket.get("message").entrySet()) {
+                Websocket ws = entry.getValue();
+                logger.debug("sessionId为:{}", ws.session.getId());
+                try {
+                    ws.session.sendMessage(new TextMessage(message));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    logger.debug(" 给用户id为：{}发送消息失败", ws.session.getId());
+                }
             }
         }
     }
 
     // json-通用
-    private String getJsonInfo(String action, String type, String msg) {
-        return new JSONObject() {{
+    private TextMessage getJsonInfo(String action, String type, String msg) {
+        String str = new JSONObject() {{
             put("time", new Date().getTime());
             put("action", action);
             put("type", type);
             put("msg", msg);
         }}.toJSONString();
+        return new TextMessage(str);
     }
 
     // json-speed-test
-    private String getSpeedJsonInfo(String action, int pointId, String type, String out) {
-        return new JSONObject() {{
+    private TextMessage getSpeedJsonInfo(String action, int pointId, String type, String out) {
+        String str = new JSONObject() {{
             put("time", new Date().getTime());
             put("action", action);
             put("pointId", pointId);
             put("type", type);
             put("result", out);
         }}.toJSONString();
+        return new TextMessage(str);
     }
 
 }
