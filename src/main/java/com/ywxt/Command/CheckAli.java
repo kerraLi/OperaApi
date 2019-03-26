@@ -1,8 +1,10 @@
 package com.ywxt.Command;
 
 import com.ywxt.Domain.Ali.AliAccount;
+import com.ywxt.Domain.Ali.AliCdn;
 import com.ywxt.Domain.Ali.AliEcs;
 import com.ywxt.Service.Ali.AliAccountService;
+import com.ywxt.Service.Ali.AliCdnService;
 import com.ywxt.Service.Ali.AliEcsService;
 import com.ywxt.Service.Ali.AliService;
 import com.ywxt.Service.Ali.Impl.AliAccountServiceImpl;
@@ -23,6 +25,8 @@ public class CheckAli {
     private AliAccountService aliAccountService;
     @Autowired
     private AliEcsService aliEcsService;
+    @Autowired
+    private AliCdnService aliCdnService;
     @Autowired
     private MessageService messageService;
     @Autowired
@@ -67,6 +71,28 @@ public class CheckAli {
             }
         } catch (Exception e) {
             telegramService.sendException("ALI-ecs", e);
+        }
+
+    }
+
+    // 校验cdn状态
+    @Scheduled(cron = "0 10 0/5 * * ?")
+    private void checkCdnStatus() {
+        try {
+            List<AliCdn> list = aliCdnService.getAlertList();
+            String action = "ALI_CDN_ABNORMAL_NUM";
+            int count = 0;
+            for (AliCdn aliCdn : list) {
+                count++;
+            }
+            if (count > 0) {
+                Map<String, String> param = new HashMap<String, String>();
+                param.put("count", count + "");
+                messageService.create(action, action, param);
+                telegramService.sendMessage(action, param);
+            }
+        } catch (Exception e) {
+            telegramService.sendException("ALI-cdn", e);
         }
 
     }

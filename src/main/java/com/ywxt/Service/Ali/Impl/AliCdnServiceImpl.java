@@ -54,6 +54,28 @@ public class AliCdnServiceImpl implements AliCdnService {
     @Autowired
     private ParameterService parameterService;
 
+    // CDN-查询报警
+    public List<AliCdn> getAlertList() throws Exception {
+        Specification<AliCdn> specification = new Specification<AliCdn>() {
+            @Override
+            public Predicate toPredicate(Root<AliCdn> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+                List<Predicate> predicates = new ArrayList<>();
+                // 忽略数据
+                String[] markValues = ignoreService.getMarkedValues(paramIgnoreDomain);
+                if (markValues.length > 0) {
+                    for (String s : markValues) {
+                        Predicate predicate = cb.notEqual(root.get(paramIgnoreColumn).as(String.class), s);
+                        predicates.add(predicate);
+                    }
+                }
+                // 状态异常数据
+                predicates.add(cb.notEqual(root.get(paramStatusColumn).as(String.class), paramStatusNormal));
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+        };
+        return aliCdnDao.findAll(specification);
+    }
+
     // CDN-域名列表&分页信息
     public Page<AliCdn> getList(Map<String, String> params) throws Exception {
         int pageNumber = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;

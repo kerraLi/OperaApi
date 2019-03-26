@@ -37,6 +37,7 @@ public class Parameter {
         put("ALI_ACCOUNT_NO_MONEY", "您好，阿里云账号余额已少于{ALI_ACCOUNT_BALANCE}元，请及时充值。\r\n账号：{accountName}\r\n当前余额{balance}");
         // count
         put("ALI_ECS_EXPIRED_NUM", "您好，已有{count}台阿里云服务器有效时间已少于{ALI_ECS_EXPIRED_DAY}天，请及时登陆平台查看，续费。\r\n");
+        put("ALI_CDN_ABNORMAL_NUM", "您好，已有{count}阿里云CDN状态异常，请及时登陆平台查看，处理。\r\n");
         put("GODADDY_DOMAIN_EXPIRED_NUM", "您好，已有{count}个GODADDY域名有效时间已少于{GODADDY_DOMAIN_EXPIRED_DAY}天，请及时登陆平台查看，续费。\r\n");
         put("GODADDY_CERTIFICATE_EXPIRED_NUM", "您好，已有{count}个GODADDY证书有效时间已少于{GODADDY_CERTIFICATE_EXPIRED_DAY}天，请及时登陆平台查看，续费。\r\n");
         // message
@@ -50,6 +51,7 @@ public class Parameter {
     public static Map<String, String> MessageTitles = new HashMap<String, String>() {{
         put("ALI_ACCOUNT_NO_MONEY", "续费");
         put("ALI_ECS_EXPIRED_NUM", "ALI服务器过期");
+        put("ALI_CDN_ABNORMAL_NUM", "ALICDN异常");
         put("ALI_ECS_EXPIRED", "ALI服务器过期");
         put("GODADDY_DOMAIN_EXPIRED_NUM", "GO域名过期");
         put("GODADDY_DOMAIN_EXPIRED", "GO域名过期");

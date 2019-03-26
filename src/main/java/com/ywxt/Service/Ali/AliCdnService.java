@@ -12,6 +12,9 @@ import java.util.Map;
 
 public interface AliCdnService {
 
+    // CDN：查询报警
+    List<AliCdn> getAlertList() throws Exception;
+
     // CDN：列表
     Page<AliCdn> getList(Map<String, String> params) throws Exception;
 
