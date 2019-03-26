@@ -13,6 +13,7 @@ import com.ywxt.Utils.Parameter;
 import com.ywxt.Service.RedisService;
 
 import io.jsonwebtoken.SignatureException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,8 @@ public class AuthenticationHandler implements HandlerInterceptor {
     private RolePermissionService rolePermissionService;
     @Resource
     private RedisService redisService;
+    @Value("${redis.ttl.user}")
+    private int redisTllUserToken;
 
     // 在业务处理器处理请求之前被调用
     @Override
@@ -75,7 +78,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
         } catch (JWTDecodeException j) {
             throw new RuntimeException("401");
         }
-        // reid:校验会话是否失效
+        // redis:校验会话是否失效
         if (!(redisService.getJedis().exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
             // 会话已失效，请重新登陆
             throw new RuntimeException("401");
@@ -95,6 +98,8 @@ public class AuthenticationHandler implements HandlerInterceptor {
         } catch (SignatureException e) {
             throw new RuntimeException("401");
         }
+        // redis:延长登陆时间
+        redisService.getJedis().setex(Parameter.redisKeyUserToken.replace("{token}", authToken), redisTllUserToken, authToken);
 
         /**
          * three:判断接口权限

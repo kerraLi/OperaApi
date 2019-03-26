@@ -1,6 +1,8 @@
 package com.ywxt.Domain.Godaddy;
 
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -8,6 +10,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Entity
 @Table(name = "godaddy_account")
+@DynamicInsert
+@DynamicUpdate
 public class GodaddyAccount {
 
     @Id
