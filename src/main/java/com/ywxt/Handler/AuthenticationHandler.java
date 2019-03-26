@@ -13,6 +13,8 @@ import com.ywxt.Utils.Parameter;
 import com.ywxt.Service.RedisService;
 
 import io.jsonwebtoken.SignatureException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -73,7 +75,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
         } catch (JWTDecodeException j) {
             throw new RuntimeException("401");
         }
-        // 校验会话是否失效
+        // reid:校验会话是否失效
         if (!(redisService.getJedis().exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
             // 会话已失效，请重新登陆
             throw new RuntimeException("401");
@@ -108,10 +110,20 @@ public class AuthenticationHandler implements HandlerInterceptor {
                 return true;
             }
         }
-        // todo
-        RequestMapping mMapping = method.getAnnotation(RequestMapping.class);
+        //
+        String mName = "";
         RequestMapping cMapping = handlerMethod.getBeanType().getAnnotation(RequestMapping.class);
-        String action = cMapping.value()[0] + mMapping.value()[0];
+        if (method.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping mMapping = method.getAnnotation(RequestMapping.class);
+            mName = mMapping.value()[0];
+        } else if (method.isAnnotationPresent(GetMapping.class)) {
+            GetMapping mMapping = method.getAnnotation(GetMapping.class);
+            mName = mMapping.value()[0];
+        } else if (method.isAnnotationPresent(PostMapping.class)) {
+            PostMapping mMapping = method.getAnnotation(PostMapping.class);
+            mName = mMapping.value()[0];
+        }
+        String action = cMapping.value()[0] + mName;
         boolean hasPermission = rolePermissionService.checkRolePermission("api", action, user.getRole().getId());
         // 无权限
         if (!hasPermission) {

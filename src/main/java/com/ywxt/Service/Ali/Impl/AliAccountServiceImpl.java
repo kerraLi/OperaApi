@@ -16,6 +16,7 @@ import com.ywxt.Service.System.IgnoreService;
 import com.ywxt.Service.System.ParameterService;
 import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.AsyncUtils;
+import com.ywxt.Utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,36 @@ public class AliAccountServiceImpl implements AliAccountService {
         return list;
     }
 
+    // 列表&校验金额&设置密钥权限
+    public List<AliAccount> getList(boolean checkMoney, boolean isSpecialPermission) throws Exception {
+        List<AliAccount> list = aliAccountDao.findAll();
+        if (checkMoney) {
+            // 是否弃用标记
+            String[] markValues = ignoreService.getMarkedValues("AliAccount");
+            for (AliAccount aa : list) {
+                if (aa.getStatus().equals("normal")) {
+                    QueryAccountBalanceResponse.Data data = this.getAccountBalance(aa.getAccessKeyId(), aa.getAccessKeySecret());
+                    aa.setBalanceData(data);
+                    // ali 金额 带千分符(,)
+                    if (new DecimalFormat().parse(data.getAvailableAmount()).doubleValue()
+                            <= Double.parseDouble(parameterService.getValue("ALI_ACCOUNT_BALANCE"))) {
+                        aa.setIsAlertBalance(true);
+                    }
+                }
+                if (ArrayUtils.hasString(markValues, aa.getAccessKeyId())) {
+                    aa.setIsAlertMarked(true);
+                }
+                // 设置密钥权限
+                aa.setIsHiddenSecrete(isSpecialPermission);
+                if (isSpecialPermission) {
+                    aa.setAccessKeySecret(null);
+                }
+            }
+        }
+        return list;
+    }
+
+
     // 新增/修改
     public AliAccount saveAliAccount(AliAccount aliAccount) throws Exception {
         // check ali key
@@ -88,6 +119,11 @@ public class AliAccountServiceImpl implements AliAccountService {
             AsyncUtils.asyncWork(handler);
         } else {
             aliAccount.setStatus("invalid");
+        }
+        // 单独处理password
+        if (aliAccount.getId() != 0 && aliAccount.getAccessKeySecret() == null) {
+            AliAccount oldAccount = aliAccountDao.findAliAccountById(aliAccount.getId());
+            aliAccount.setAccessKeySecret(oldAccount.getAccessKeySecret());
         }
         return aliAccountDao.saveAndFlush(aliAccount);
     }

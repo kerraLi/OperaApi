@@ -15,3 +15,9 @@ INSERT INTO `resource_type` (`id`, `code`, `name`, `column`, `remark`) VALUES (1
 INSERT INTO `resource_type` (`id`, `code`, `name`, `column`, `remark`) VALUES (2, 'kcpj', '库存（配件）', '["类型","品牌","容量","数量","更新","备注"]', NULL);
 INSERT INTO `resource_type` (`id`, `code`, `name`, `column`, `remark`) VALUES (3, 'kcfwq', '库存（服务器）', '["型号","厂家","资产编号","SN","CPU","内存","硬盘","电源","U数","备注"]', NULL);
 INSERT INTO `resource_type` (`id`, `code`, `name`, `column`, `remark`) VALUES (4, 'kcbgjl', '库存变更记录', '["操作人","类型","操作"]', NULL);
+
+
+-- 特殊权限
+INSERT INTO `user_permissions` (`action`, `name`, `parentId`, `type`) VALUES ('AliAccountSecrete', '阿里云密钥', 0, 'special');
+INSERT INTO `user_permissions` (`action`, `name`, `parentId`, `type`) VALUES ('AwsAccountSecrete', '亚马逊密钥', 0, 'special');
+INSERT INTO `user_permissions` (`action`, `name`, `parentId`, `type`) VALUES ('GodaddyAccountSecrete', 'GODADDY密钥', 0, 'special');

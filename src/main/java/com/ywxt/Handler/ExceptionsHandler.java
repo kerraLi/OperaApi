@@ -83,7 +83,7 @@ public class ExceptionsHandler {
         jsonObject.put("message", exception.getMessage());
         jsonObject.put("class", exception.getClass());
         jsonObject.put("line", exception.toString());
-        jsonObject.put("path", request.getPathInfo());
+        jsonObject.put("path", request.getRequestURI());
         return jsonObject.toString();
     }
 }

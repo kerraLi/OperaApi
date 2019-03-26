@@ -9,16 +9,16 @@ import java.util.List;
 
 public interface PermissionService {
 
-    public List<UserPermission> refreshApi(HttpServletRequest request) throws Exception;
+    List<UserPermission> refreshApi(HttpServletRequest request) throws Exception;
 
-    public List<UserPermission> refreshMenu(ArrayList<JSONObject> list) throws Exception;
+    List<UserPermission> refreshMenu(ArrayList<JSONObject> list) throws Exception;
 
-    public List<UserPermission> getList() throws Exception;
+    List<UserPermission> getList() throws Exception;
 
-    public List<UserPermission> getList(String type) throws Exception;
+    List<UserPermission> getList(String type) throws Exception;
 
-    public Long create(UserPermission userPermission);
+    Long create(UserPermission userPermission);
 
-    public void removeByType(String type);
+    void removeByType(String type);
 
 }

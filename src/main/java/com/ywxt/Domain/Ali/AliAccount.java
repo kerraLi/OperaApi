@@ -1,26 +1,25 @@
 package com.ywxt.Domain.Ali;
 
 import com.aliyuncs.bssopenapi.model.v20171214.QueryAccountBalanceResponse;
-import com.ywxt.Annotation.MarkCloumn;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "ali_account")
+@DynamicInsert
+@DynamicUpdate
 public class AliAccount implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotBlank
     private String userName;
-    @NotBlank
     private String accessKeyId;
-    @NotBlank
     private String accessKeySecret;
     // status:正常使用normal/账号异常invalid（取数据错误）
     private String status = "invalid";
@@ -30,6 +29,8 @@ public class AliAccount implements Serializable {
     private Boolean isAlertBalance = false;
     @Transient
     private Boolean isAlertMarked = false;
+    @Transient
+    private Boolean isHiddenSecrete = false;
 
     public AliAccount() {
     }

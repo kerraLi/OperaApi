@@ -155,7 +155,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     public List<UserPermission> getList(String type) throws Exception {
-        if (!type.equals("menu") && !type.equals("api")) {
+        if (!type.equals("menu") && !type.equals("api") && !type.equals("special")) {
             throw new Exception("权限类型错误");
         }
         return userPermissionDao.getList(new HashMap<>() {{

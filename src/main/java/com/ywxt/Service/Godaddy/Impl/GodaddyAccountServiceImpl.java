@@ -30,6 +30,19 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
         return godaddyAccountDao.findAll();
     }
 
+    // 列表&设置密钥权限
+    public List<GodaddyAccount> getList(boolean isSpecialPermission) {
+        List<GodaddyAccount> list = godaddyAccountDao.findAll();
+        for (GodaddyAccount ga : list) {
+            // 设置密钥权限
+            ga.setIsHiddenSecrete(isSpecialPermission);
+            if (isSpecialPermission) {
+                ga.setAccessKeySecret(null);
+            }
+        }
+        return list;
+    }
+
     // 新增/修改
     public GodaddyAccount saveAccount(GodaddyAccount godaddyAccount) throws Exception {
         // check key
@@ -50,6 +63,11 @@ public class GodaddyAccountServiceImpl implements GodaddyAccountService {
             AsyncUtils.asyncWork(handler);
         } else {
             godaddyAccount.setStatus("invalid");
+        }
+        // 单独处理password
+        if (godaddyAccount.getId() != 0 && godaddyAccount.getAccessKeySecret() == null) {
+            GodaddyAccount oldAccount = godaddyAccountDao.findGodaddyAccountById(godaddyAccount.getId());
+            godaddyAccount.setAccessKeySecret(oldAccount.getAccessKeySecret());
         }
         return godaddyAccountDao.saveAndFlush(godaddyAccount);
     }

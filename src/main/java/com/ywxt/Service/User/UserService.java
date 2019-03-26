@@ -9,18 +9,18 @@ import java.util.HashMap;
 public interface UserService {
 
 
-    public User getUser(Long id);
+    User getUser(Long id);
 
-    public User getUser(String username) throws Exception;
+    User getUser(String username) throws Exception;
 
     // 用户列表
-    public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 
-    public long create(User user);
+    long create(User user);
 
-    public boolean remove(long id);
+    boolean remove(long id);
 
-    public User update(User user);
+    User update(User user);
 
-    public User save(User user) throws Exception;
+    User save(User user) throws Exception;
 }

@@ -15,6 +15,9 @@ public interface AliAccountService {
     // 列表&校验金额
     List<AliAccount> getList(boolean checkMoney) throws Exception;
 
+    // 列表&校验金额&设置密钥权限
+    List<AliAccount> getList(boolean checkMoney, boolean isSpecialPermission) throws Exception;
+
     // 新增/修改
     AliAccount saveAliAccount(AliAccount aliAccount) throws Exception;
 

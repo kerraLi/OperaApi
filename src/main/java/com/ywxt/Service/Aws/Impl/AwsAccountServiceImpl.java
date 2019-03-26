@@ -5,6 +5,7 @@ import com.ywxt.Domain.Aws.AwsAccount;
 import com.ywxt.Handler.AsyncHandler;
 import com.ywxt.Service.Aws.AwsAccountService;
 import com.ywxt.Service.Aws.AwsService;
+import com.ywxt.Utils.ArrayUtils;
 import com.ywxt.Utils.AsyncUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,19 @@ public class AwsAccountServiceImpl implements AwsAccountService {
     // 列表
     public List<AwsAccount> getList() {
         return awsAccountDao.findAll();
+    }
+
+    // 列表&设置密钥权限
+    public List<AwsAccount> getList(boolean isSpecialPermission) {
+        List<AwsAccount> list = awsAccountDao.findAll();
+        for (AwsAccount aa : list) {
+            // 设置密钥权限
+            aa.setIsHiddenSecrete(isSpecialPermission);
+            if (isSpecialPermission) {
+                aa.setAccessKeySecret(null);
+            }
+        }
+        return list;
     }
 
     // 新增/修改
@@ -56,6 +70,11 @@ public class AwsAccountServiceImpl implements AwsAccountService {
             AsyncUtils.asyncWork(handler);
         } else {
             awsAccount.setStatus("invalid");
+        }
+        // 单独处理password
+        if (awsAccount.getId() != 0 && awsAccount.getAccessKeySecret() == null) {
+            AwsAccount oldAccount = awsAccountDao.findAwsAccountById(awsAccount.getId());
+            awsAccount.setAccessKeySecret(oldAccount.getAccessKeySecret());
         }
         return awsAccountDao.saveAndFlush(awsAccount);
     }

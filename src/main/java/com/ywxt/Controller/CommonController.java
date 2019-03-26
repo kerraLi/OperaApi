@@ -18,8 +18,6 @@ public class CommonController {
     @Resource
     private UserService userService;
 
-    protected User user;
-
     // 从token中获取当前登陆用户Id
     protected Long getUserIdFromAuthToken(HttpServletRequest request) {
         String authToken = request.getHeader("Authorization");
@@ -28,12 +26,8 @@ public class CommonController {
 
     // 从token中获取当前登陆用户信息
     protected User getUserFromAuthToken(HttpServletRequest request) {
-        if (this.user == null) {
-            String authToken = request.getHeader("Authorization");
-            long userId = Long.parseLong(AuthUtils.getSubject(authToken));
-            this.user = userService.getUser(userId);
-        }
-        return this.user;
+        String authToken = request.getHeader("Authorization");
+        return userService.getUser(Long.parseLong(AuthUtils.getSubject(authToken)));
     }
 
     // 统一返回接口

@@ -6,20 +6,20 @@ import java.util.List;
 
 public interface RoleService {
 
-    public List<UserRole> getList() throws Exception;
+    List<UserRole> getList() throws Exception;
 
-    public List<UserRole> getListValid() throws Exception;
+    List<UserRole> getListValid() throws Exception;
 
-    public Long save(UserRole userRole) throws Exception;
+    Long save(UserRole userRole) throws Exception;
 
-    public Long create(UserRole userRole) throws Exception;
+    Long create(UserRole userRole) throws Exception;
 
-    public Long update(UserRole userRole) throws Exception;
+    Long update(UserRole userRole) throws Exception;
 
-    public UserRole getRole(Long id) throws Exception;
+    UserRole getRole(Long id) throws Exception;
 
-    public Boolean remove(Long id) throws Exception;
+    Boolean remove(Long id) throws Exception;
 
-    public Boolean remove(UserRole userRole) throws Exception;
+    Boolean remove(UserRole userRole) throws Exception;
 
 }
