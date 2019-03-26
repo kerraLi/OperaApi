@@ -99,7 +99,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
             throw new RuntimeException("401");
         }
         // redis:延长登陆时间
-        redisService.getJedis().setex(Parameter.redisKeyUserToken.replace("{token}", authToken), redisTllUserToken, authToken);
+        redisService.getJedis().expire(Parameter.redisKeyUserToken.replace("{token}", authToken), redisTllUserToken);
 
         /**
          * three:判断接口权限
