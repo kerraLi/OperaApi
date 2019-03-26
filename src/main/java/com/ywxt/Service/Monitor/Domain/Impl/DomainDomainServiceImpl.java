@@ -7,6 +7,7 @@ import com.ywxt.Service.Monitor.Domain.DomainDomainService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +16,12 @@ public class DomainDomainServiceImpl implements DomainDomainService {
 
     @Resource
     private DomainDomainDao domainDomainDao;
+
+    public void upload(ArrayList<MonitorDomain> list) {
+        for (MonitorDomain monitorDomain : list) {
+            domainDomainDao.create(monitorDomain);
+        }
+    }
 
     public int create(MonitorDomain monitorDomain) throws Exception {
         return domainDomainDao.create(monitorDomain);

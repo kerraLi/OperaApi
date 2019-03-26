@@ -8,21 +8,21 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface DataService {
-    public void upload(int categoryId, List<JSONArray> list) throws Exception;
+    void upload(int categoryId, List<JSONArray> list) throws Exception;
 
-    public int create(Data data) throws Exception;
+    int create(Data data) throws Exception;
 
-    public boolean remove(int id) throws Exception;
+    boolean remove(int id) throws Exception;
 
-    public boolean removeAll(Integer[] ids) throws Exception;
+    boolean removeAll(Integer[] ids) throws Exception;
 
-    public Data update(Data data);
+    Data update(Data data);
 
-    public Data getData(int id);
+    Data getData(int id);
 
-    public Data save(Data data) throws Exception;
+    Data save(Data data) throws Exception;
 
-    public List<Data> getList(HashMap<String, Object> params);
+    List<Data> getList(HashMap<String, Object> params);
 
-    public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 }

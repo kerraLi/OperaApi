@@ -3,26 +3,29 @@ package com.ywxt.Service.Monitor.Domain;
 import com.alibaba.fastjson.JSONObject;
 import com.ywxt.Domain.Monitor.Domain.MonitorDomain;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public interface DomainDomainService {
 
-    public int create(MonitorDomain monitorDomain) throws Exception;
+    void upload(ArrayList<MonitorDomain> list);
 
-    public boolean remove(int id) throws Exception;
+    int create(MonitorDomain monitorDomain) throws Exception;
 
-    public boolean removeAll(Integer[] ids) throws Exception;
+    boolean remove(int id) throws Exception;
 
-    public MonitorDomain update(MonitorDomain monitorDomain) throws Exception;
+    boolean removeAll(Integer[] ids) throws Exception;
 
-    public MonitorDomain getMonitorDomain(int id) throws Exception;
+    MonitorDomain update(MonitorDomain monitorDomain) throws Exception;
 
-    public MonitorDomain getMonitorDomain(String path) throws Exception;
+    MonitorDomain getMonitorDomain(int id) throws Exception;
 
-    public MonitorDomain save(MonitorDomain monitorDomain) throws Exception;
+    MonitorDomain getMonitorDomain(String path) throws Exception;
 
-    public List<MonitorDomain> getList(HashMap<String, Object> params) throws Exception;
+    MonitorDomain save(MonitorDomain monitorDomain) throws Exception;
 
-    public JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
+    List<MonitorDomain> getList(HashMap<String, Object> params) throws Exception;
+
+    JSONObject getList(HashMap<String, Object> params, int pageNumber, int pageSize) throws Exception;
 }

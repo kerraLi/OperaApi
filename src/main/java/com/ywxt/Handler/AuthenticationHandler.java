@@ -108,6 +108,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
                 return true;
             }
         }
+        // todo
         RequestMapping mMapping = method.getAnnotation(RequestMapping.class);
         RequestMapping cMapping = handlerMethod.getBeanType().getAnnotation(RequestMapping.class);
         String action = cMapping.value()[0] + mMapping.value()[0];

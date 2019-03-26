@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Controller
@@ -18,6 +19,13 @@ public class DomainDomainController extends CommonController {
 
     @Resource
     private DomainDomainService domainDomainService;
+
+    @ResponseBody
+    @PostMapping(value = {"/upload"}, name = "上传")
+    public JSONObject list(@RequestBody ArrayList<MonitorDomain> list) {
+        domainDomainService.upload(list);
+        return this.returnObject();
+    }
 
     @NotOperationAction
     @ResponseBody
@@ -40,23 +48,20 @@ public class DomainDomainController extends CommonController {
             throw new Exception("域名路径不能为空");
         }
         domainDomainService.save(monitorDomain);
-        return this.returnObject(new HashMap<>() {{
-        }});
+        return this.returnObject();
     }
 
     @ResponseBody
     @RequestMapping(value = {"/remove/{id}"}, name = "删除", method = RequestMethod.GET)
     public JSONObject remove(@PathVariable Integer id) throws Exception {
         domainDomainService.remove(id);
-        return this.returnObject(new HashMap<>() {{
-        }});
+        return this.returnObject();
     }
 
     @ResponseBody
     @RequestMapping(value = {"/remove"}, name = "批量删除", method = RequestMethod.POST)
     public JSONObject removeAll(Integer[] ids) throws Exception {
         domainDomainService.removeAll(ids);
-        return this.returnObject(new HashMap<>() {{
-        }});
+        return this.returnObject();
     }
 }
