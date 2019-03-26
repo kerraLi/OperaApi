@@ -101,7 +101,7 @@ public class CheckAli {
     @Scheduled(cron = "0 0 0/5 * * ?")
     private void refreshData() {
         try {
-            List<AliAccount> list = new AliAccountServiceImpl().getList();
+            List<AliAccount> list = aliAccountService.getList();
             for (AliAccount aliAccount : list) {
                 if (aliAccount.getStatus().equals("normal")) {
                     aliService.freshSourceData(aliAccount.getAccessKeyId(), aliAccount.getAccessKeySecret());

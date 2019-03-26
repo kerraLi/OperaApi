@@ -8,10 +8,7 @@ import org.apache.http.NameValuePair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,19 +29,21 @@ public class TimePointServiceImpl implements TimePointService {
         List<MonitorPoint> list = new ArrayList<>();
         List<JSONObject> chanList = JSONObject.parseArray(chanStr, JSONObject.class);
         for (JSONObject chan : chanList) {
-            JSONObject msgStats = JSONObject.parseObject(chan.get("message_stats").toString());
-            if (msgStats.containsKey("publish")) {
-                MonitorPoint mp = new MonitorPoint();
-                // conn info
-                JSONObject conn = JSONObject.parseObject(chan.get("connection_details").toString());
-                mp.setName(conn.getString("name"));
-                mp.setHost(conn.getString("peer_host"));
-                mp.setPort(conn.getInteger("peer_port"));
-                // state
-                mp.setState(chan.getString("state"));
-                // publish
-                mp.setPublish(msgStats.getInteger("publish"));
-                list.add(mp);
+            if (chan.containsValue("message_stats")) {
+                JSONObject msgStats = JSONObject.parseObject(chan.get("message_stats").toString());
+                if (msgStats.containsKey("publish")) {
+                    MonitorPoint mp = new MonitorPoint();
+                    // conn info
+                    JSONObject conn = JSONObject.parseObject(chan.get("connection_details").toString());
+                    mp.setName(conn.getString("name"));
+                    mp.setHost(conn.getString("peer_host"));
+                    mp.setPort(conn.getInteger("peer_port"));
+                    // state
+                    mp.setState(chan.getString("state"));
+                    // publish
+                    mp.setPublish(msgStats.getInteger("publish"));
+                    list.add(mp);
+                }
             }
         }
         return list;

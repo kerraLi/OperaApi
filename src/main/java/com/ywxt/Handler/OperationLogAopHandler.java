@@ -80,10 +80,14 @@ public class OperationLogAopHandler {
     public void afterThrowingLog(Throwable e) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String requestId = (String) request.getAttribute("requestId");
+        //
+        e.printStackTrace();
         LogOperation logOperation = logOperationService.getLogOperation(requestId);
-        logOperation.setStatus("error");
-        logOperation.setOutParam("[" + e.getClass() + ":=:" + e.getMessage() + "]");
-        logOperationService.update(logOperation);
+        if (logOperation != null) {
+            logOperation.setStatus("error");
+            logOperation.setOutParam("[" + e.getClass() + ":=:" + e.getMessage() + "]");
+            logOperationService.update(logOperation);
+        }
     }
 
     // 获取真实ip
