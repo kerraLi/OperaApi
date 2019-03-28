@@ -121,7 +121,7 @@ public class Websocket extends TextWebSocketHandler {
     // speed-test订阅
     private void speedTest(String code) throws IOException {
         // speed test
-        String speedInfo = redisService.getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
+        String speedInfo = redisService.get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
         if (speedInfo == null) {
             session.sendMessage(this.getSpeedJsonInfo("speed-test", 0, "end", ""));
             return;
@@ -153,7 +153,7 @@ public class Websocket extends TextWebSocketHandler {
     // speed-monitor订阅
     private void speedMonitor(String code) throws IOException {
         // speed monitor
-        String speedInfo = redisService.getJedis().get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
+        String speedInfo = redisService.get(Parameter.redisKeyMonitorSpeed.replace("{code}", code));
         if (speedInfo == null) {
             session.sendMessage(this.getSpeedJsonInfo("speed-monitor", 0, "end", ""));
             return;

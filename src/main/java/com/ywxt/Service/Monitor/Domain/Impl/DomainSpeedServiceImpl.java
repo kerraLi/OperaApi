@@ -38,7 +38,7 @@ public class DomainSpeedServiceImpl implements DomainSpeedService {
         object.put("code", unique);
         object.put("url", url);
         object.put("points", points);
-        redisService.getJedis().setex(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), redisTllMonitorSpeed, object.toJSONString());
+        redisService.set(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), object.toJSONString(), redisTllMonitorSpeed);
         return object;
     }
 
@@ -56,7 +56,7 @@ public class DomainSpeedServiceImpl implements DomainSpeedService {
         object.put("code", unique);
         object.put("urls", urls);
         object.put("points", points);
-        redisService.getJedis().setex(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), redisTllMonitorSpeed, object.toJSONString());
+        redisService.set(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), object.toJSONString(), redisTllMonitorSpeed);
         return object;
     }
 

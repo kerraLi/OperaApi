@@ -79,7 +79,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
             throw new RuntimeException("401");
         }
         // redis:校验会话是否失效
-        if (!(redisService.getJedis().exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
+        if (!(redisService.exists(Parameter.redisKeyUserToken.replace("{token}", authToken)))) {
             // 会话已失效，请重新登陆
             throw new RuntimeException("401");
         }
@@ -99,7 +99,7 @@ public class AuthenticationHandler implements HandlerInterceptor {
             throw new RuntimeException("401");
         }
         // redis:延长登陆时间
-        redisService.getJedis().expire(Parameter.redisKeyUserToken.replace("{token}", authToken), redisTllUserToken);
+        redisService.expire(Parameter.redisKeyUserToken.replace("{token}", authToken), redisTllUserToken);
 
         /**
          * three:判断接口权限

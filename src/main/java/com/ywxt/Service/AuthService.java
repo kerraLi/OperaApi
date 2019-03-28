@@ -37,7 +37,7 @@ public class AuthService {
         }
         String authToken = AuthUtils.createJWT(Parameter.loginTtlMs, u);
         // 存入redis(单位秒)
-        redisService.getJedis().setex(Parameter.redisKeyUserToken.replace("{token}", authToken), redisTllUserToken, authToken);
+        redisService.set(Parameter.redisKeyUserToken.replace("{token}", authToken), authToken, redisTllUserToken);
         return authToken;
     }
 
@@ -56,7 +56,7 @@ public class AuthService {
 
     public boolean logout(String token) {
         // 删除redis记录
-        redisService.getJedis().del(Parameter.redisKeyUserToken.replace("{token}", token));
+        redisService.delete(Parameter.redisKeyUserToken.replace("{token}", token));
         return true;
     }
 
