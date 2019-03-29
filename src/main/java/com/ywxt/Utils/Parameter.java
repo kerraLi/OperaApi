@@ -12,6 +12,7 @@ public class Parameter {
     // redis-key
     public static String redisKeyUserToken = "USER_TOKEN_{token}";
     public static String redisKeyMonitorSpeed = "MONITOR_SPEED_{code}";
+    public static String redisKeyMonitorDomains = "MONITOR_DOMAINS";
 
     // 新建用户默认头像
     public static String defaultAvatar = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif";
@@ -46,6 +47,9 @@ public class Parameter {
         put("GODADDY_CERTIFICATE_EXPIRED", "您好，Godaddy证书有效时间已少于{GODADDY_CERTIFICATE_EXPIRED_DAY}天，请及时续费。\r\n账号：{accountName}\r\n证书ID:{certificateId}\r\n域名:{domain}\r\n过期时间：{expiredTime}\r\n主体备选域名：{subjectAlternativeNames}");
         put("WEBHOOK_MESSAGE", "*****报警信息*****\r\n标题：{ruleName}\r\n报警连接：{ruleUrl}\r\n状态:{state}\r\n内容：{title}\r\n具体消息：{message}");
         put("MONITORTIME_TIMEOUT", "您好，您有服务器异常时间超过{MONITORTIME_TIMEOUT_SECOND}秒，请及时检查时间。\r\nIP：{server_ip}\r\n名称:{server_name}\r\n服务器时间:{server_time}\r\n标准时间：{current_time}");
+        put("MONITORTIME_DOMAIN_ERROR", "您好，您有域名异常，请及时检查。\r\n" +
+                "监控节点：{server_name}({server_ip})\r\n" +
+                "URL：{url}\r\n解析IP:{ip}\r\n状态码:{http_code}\r\n错误信息：{msg}");
     }};
 
     public static Map<String, String> MessageTitles = new HashMap<String, String>() {{

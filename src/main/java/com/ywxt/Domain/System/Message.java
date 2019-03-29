@@ -17,6 +17,7 @@ public class Message {
     private String title;
     private String theme;
     private String themeId;
+    @Column(columnDefinition = "TEXT")
     private String message;
     private String status;
     @NotFilterColumn

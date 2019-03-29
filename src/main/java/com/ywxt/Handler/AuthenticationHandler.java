@@ -12,6 +12,8 @@ import com.ywxt.Utils.AuthUtils;
 import com.ywxt.Utils.Parameter;
 import com.ywxt.Service.RedisService;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,7 +97,8 @@ public class AuthenticationHandler implements HandlerInterceptor {
                 // 非法访问
                 throw new RuntimeException("401");
             }
-        } catch (SignatureException e) {
+        } catch (JwtException eje) {
+            // 非法 || 过期 等
             throw new RuntimeException("401");
         }
         // redis:延长登陆时间
