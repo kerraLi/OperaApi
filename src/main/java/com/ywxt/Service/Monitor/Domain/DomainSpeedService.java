@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 public interface DomainSpeedService {
 
-    public JSONObject speedTest(String url) throws Exception;
+    JSONObject speedTest(String url) throws Exception;
 
-    public JSONObject speedMonitor() throws Exception;
+    JSONObject speedMonitor() throws Exception;
 }

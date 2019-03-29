@@ -138,7 +138,7 @@ public class Websocket extends TextWebSocketHandler {
             }});
             String msg = "";
             try {
-                msg = HttpUtils.sendConnPost(point.getPath(), params);
+                msg = HttpUtils.sendConnPost("http://" + point.getPath() + ":8888/speed", params);
             } catch (Exception e) {
                 // 监控点未响应
                 msg = "error";
@@ -165,12 +165,11 @@ public class Websocket extends TextWebSocketHandler {
         for (Object object : points) {
             MonitorPoint point = JSONObject.toJavaObject((JSONObject) object, MonitorPoint.class);
             String params = HttpUtils.getParamContext(new HashMap<String, String>() {{
-                put("url", String.join(",", urls.toJavaList(String.class)));
                 put("action", "speed_monitor");
             }});
             String msg = "";
             try {
-                msg = HttpUtils.sendConnPost(point.getPath(), params);
+                msg = HttpUtils.sendConnPost("http://" + point.getPath() + ":8888/speed", params);
             } catch (Exception e) {
                 // 监控点未响应
                 msg = "error";

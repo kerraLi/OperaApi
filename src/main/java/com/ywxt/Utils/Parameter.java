@@ -63,6 +63,7 @@ public class Parameter {
         put("GODADDY_CERTIFICATE_EXPIRED", "GO证书过期");
         put("WEBHOOK_MESSAGE", "WEBHOOK报警");
         put("MONITORTIME_TIMEOUT", "服务器时间");
+        put("MONITORTIME_DOMAIN_ERROR", "域名异常");
     }};
 
 }

@@ -42,19 +42,15 @@ public class DomainSpeedServiceImpl implements DomainSpeedService {
         return object;
     }
 
+    // 域名监控：不存储域名；域名在redis中节点直接读取
     public JSONObject speedMonitor() throws Exception {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", "normal");
         List<MonitorPoint> points = domainPointService.getList(params);
         List<MonitorDomain> domains = domainDomainService.getList(params);
-        List<String> urls = new ArrayList<>();
-        for (MonitorDomain domain : domains) {
-            urls.add(domain.getPath());
-        }
         String unique = UUID.randomUUID().toString().replace("-", "");
         JSONObject object = new JSONObject();
         object.put("code", unique);
-        object.put("urls", urls);
         object.put("points", points);
         redisService.set(Parameter.redisKeyMonitorSpeed.replace("{code}", unique), object.toJSONString(), redisTllMonitorSpeed);
         return object;
