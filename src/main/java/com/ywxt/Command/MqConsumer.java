@@ -7,6 +7,7 @@ import com.ywxt.Service.TelegramService;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -25,7 +26,7 @@ public class MqConsumer {
     @Autowired
     private ParameterService parameterService;
 
-    @RabbitListener(queues = "test_monitor_time")
+    @RabbitListener(queues = "monitor_time")
     public void onMonitorTime(Message message) {
         try {
             JSONObject obj = JSONObject.parseObject(new String(message.getBody()));
@@ -55,7 +56,7 @@ public class MqConsumer {
         }
     }
 
-    @RabbitListener(queues = "test_monitor_domain")
+    @RabbitListener(queues = "monitor_domain")
     public void onMonitorDomain(Message message) {
         try {
             JSONObject obj = JSONObject.parseObject(new String(message.getBody()));
