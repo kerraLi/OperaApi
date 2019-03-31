@@ -59,8 +59,8 @@ public class DataDaoImpl implements DataDao {
         List<Predicate> predicates = this.filterParam(builder, root, params);
         Predicate[] p = new Predicate[predicates.size()];
         query.where(predicates.toArray(p));
-        // 默认按照id倒叙
-        query.orderBy(builder.desc(root.get("id")));
+        // 默认按照id正序
+        query.orderBy(builder.asc(root.get("id")));
         return em.createQuery(query)
                 .getResultList();
     }
@@ -73,8 +73,8 @@ public class DataDaoImpl implements DataDao {
         List<Predicate> predicates = this.filterParam(builder, root, params);
         Predicate[] p = new Predicate[predicates.size()];
         query.where(predicates.toArray(p));
-        // 默认按照id倒叙
-        query.orderBy(builder.desc(root.get("id")));
+        // 默认按照id正序
+        query.orderBy(builder.asc(root.get("id")));
         return em.createQuery(query)
                 .setFirstResult((pageNumber - 1) * pageSize)
                 .setMaxResults(pageSize)
